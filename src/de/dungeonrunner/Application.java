@@ -1,60 +1,99 @@
 package de.dungeonrunner;
 
 import org.jsfml.graphics.RenderWindow;
-import org.jsfml.graphics.View;
-import org.jsfml.system.Vector2f;
+import org.jsfml.system.Clock;
+import org.jsfml.system.Time;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
-import tiled.core.Map;
-
 public class Application {
 
-	public static void main(String[] args) {
-		Map map = null;
-		SFMLTileRenderer renderer = null;
+	private final Time FPS = Time.getSeconds(1.0f / 60.0f);
+	private RenderWindow mRenderWindow;
+	private Clock mClock;
+	private GameWorld mGameWorld;
 
-		for (String arg : args) {
-			map = TmxMapLoader.loadMap(arg);
-		}
-
-		if (map != null) {
-			TextureHolder.getInstance().loadTiledTextures(map);
-			renderer = new SFMLTileRenderer(map);
-		}
-
-		RenderWindow window = new RenderWindow();
-		window.create(new VideoMode(800, 480, 32), "Test");
-		window.setFramerateLimit(30);
+	public Application() {
+		mRenderWindow = new RenderWindow();
+		mRenderWindow.create(new VideoMode(800, 480, 32), "DungeonRunner");
+		mRenderWindow.setFramerateLimit(30);
 		
-		View view = new View(new Vector2f(window.getSize().x / 2, window.getSize().y / 2), new Vector2f(window.getSize()));
-		window.setView(view);
+		mGameWorld = new GameWorld(mRenderWindow);
 
-		while (window.isOpen()) {
-			for (Event event : window.pollEvents()) {
-				
-				switch(event.type){
-				case  CLOSED:
-					window.close();
-					break;
-				case RESIZED:
-					view= new View(new Vector2f(window.getSize().x / 2, window.getSize().y / 2), new Vector2f(window.getSize()));
-					window.setView(view);
-					break;
-				case KEY_PRESSED:
-					view.move(new Vector2f(10, 0));
-					window.setView(view);
-				default:
-					break;
-				}
-			}
+		mClock = new Clock();
 
-			window.clear();
-			if (renderer != null) {
-				window.draw(renderer);
+	}
+
+	public void run() {
+		Time timeSinceLastUpdate = Time.ZERO;
+		while (mRenderWindow.isOpen()) {
+			timeSinceLastUpdate = Time.add(timeSinceLastUpdate, mClock.restart());
+			while (timeSinceLastUpdate.asMicroseconds() > FPS.asMilliseconds()) {
+				timeSinceLastUpdate = Time.sub(timeSinceLastUpdate, FPS);
+				processEvents();
+				update(FPS);
 			}
-			window.display();
+			render();
 		}
+	}
+
+	private void processEvents() {
+		for (Event event : mRenderWindow.pollEvents())
+			if (event.type == Event.Type.CLOSED) {
+				mRenderWindow.close();
+			}
+	}
+
+	private void update(Time fPS2) {
+		mGameWorld.update(fPS2);
+
+	}
+
+	private void render() {
+		mRenderWindow.clear();
+		mGameWorld.draw();
+		mRenderWindow.display();
+
+	}
+
+	public static void main(String[] args) {
+
+		Application application = new Application();
+		application.run();
+		// GameWorld world = new GameWorld(window);
+
+//		while (window.isOpen()) {
+//			window.clear();
+//			// world.draw();
+//			window.display();
+//		}
+
+		// while (window.isOpen()) {
+		// for (Event event : window.pollEvents()) {
+		//
+		// switch (event.type) {
+		// case CLOSED:
+		// window.close();
+		// break;
+		// case RESIZED:
+		// view = new View(new Vector2f(window.getSize().x / 2,
+		// window.getSize().y / 2),
+		// new Vector2f(window.getSize()));
+		// window.setView(view);
+		// break;
+		// case KEY_PRESSED:
+		// view.move(new Vector2f(10, 0));
+		// window.setView(view);
+		// default:
+		// break;
+		// }
+		// }
+		//
+		// window.clear();
+		//
+		// window.draw(playerEntity);
+		// window.display();
+		// }
 
 	}
 }

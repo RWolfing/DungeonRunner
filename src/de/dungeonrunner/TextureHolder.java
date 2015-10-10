@@ -16,7 +16,7 @@ import tiled.core.TileSet;
 public class TextureHolder {
 
 	public enum TextureID {
-
+		ANIM_IDLE
 	}
 
 	private static TextureHolder mInstance;
@@ -63,7 +63,7 @@ public class TextureHolder {
 
 		return true;
 	}
-	
+
 	public void loadTiledTextures(Map tiledMap) {
 		final int numberTileSets = tiledMap.getTileSets().size();
 

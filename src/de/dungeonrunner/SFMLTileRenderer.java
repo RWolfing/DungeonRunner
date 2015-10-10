@@ -2,10 +2,10 @@ package de.dungeonrunner;
 
 import java.awt.Rectangle;
 
-import org.jsfml.graphics.Drawable;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
 import tiled.core.Map;
@@ -13,7 +13,7 @@ import tiled.core.MapLayer;
 import tiled.core.Tile;
 import tiled.core.TileLayer;
 
-public class SFMLTileRenderer implements Drawable {
+public class SFMLTileRenderer extends SceneNode {
 
 	private final Map mTiledMap;
 	private RectangleShape mCacheTile = new RectangleShape();
@@ -22,7 +22,16 @@ public class SFMLTileRenderer implements Drawable {
 		mTiledMap = map;
 	}
 
-	public void paintTileLayerTest(RenderTarget target, RenderStates states, TileLayer layer) {
+	@Override
+	protected void drawCurrent(RenderTarget target, RenderStates states) {
+		for (MapLayer layer : mTiledMap) {
+			if (layer instanceof TileLayer) {
+				paintTileLayer(target, states, (TileLayer) layer);
+			}
+		}
+	}
+
+	public void paintTileLayer(RenderTarget target, RenderStates states, TileLayer layer) {
 		final int tileWidth = mTiledMap.getTileWidth();
 		final int tileHeight = mTiledMap.getTileHeight();
 		final Rectangle boundsInTiles = layer.getBounds();
@@ -45,12 +54,8 @@ public class SFMLTileRenderer implements Drawable {
 	}
 
 	@Override
-	public void draw(RenderTarget target, RenderStates states) {
-		for (MapLayer layer : mTiledMap) {
-			if (layer instanceof TileLayer) {
-				paintTileLayerTest(target, states, (TileLayer) layer);
-			}
-		}
+	protected void updateCurrent(Time dt) {
+		// TODO Auto-generated method stub
 
 	}
 
