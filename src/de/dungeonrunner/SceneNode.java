@@ -1,5 +1,6 @@
 package de.dungeonrunner;
 
+import java.util.Properties;
 import java.util.Vector;
 
 import org.jsfml.graphics.BasicTransformable;
@@ -14,14 +15,16 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	private SceneNode mParentNode;
 	private Vector<SceneNode> mChildren;
+	private Properties mProperties;
 
 	public SceneNode() {
 		mChildren = new Vector<>();
+		mProperties = new Properties();
 	}
 
 	@Override
 	public void draw(RenderTarget target, RenderStates states) {
-		states = new RenderStates(states, getTransform());
+		states = new RenderStates(states,  Transform.combine(states.transform, getTransform()));
 		drawCurrent(target, states);
 		drawChildren(target, states);
 	}
@@ -70,7 +73,19 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	public void setParentNode(SceneNode node) {
 		mParentNode = node;
 	}
-
+	
+	public void setProperties(Properties props){
+		mProperties = props;
+	}
+	
+	public void addProperty(String key, String value){
+		mProperties.setProperty(key, value);
+	}
+	
+	public String removeProperty(String key){
+		return (String) mProperties.remove(key);
+	}
+	
 	public SceneNode getParentNode() {
 		return mParentNode;
 	}
