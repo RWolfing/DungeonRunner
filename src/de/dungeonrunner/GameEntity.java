@@ -1,18 +1,14 @@
 package de.dungeonrunner;
 
-import org.jsfml.graphics.IntRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
 public abstract class GameEntity extends SceneNode {
 
 	private Vector2f mVelocity;
-	private Vector2f mAfterCollVelocity;
-	private IntRect mCollisionRectangle;
 
 	public GameEntity() {
 		mVelocity = Vector2f.ZERO;
-		mAfterCollVelocity = mVelocity;
 	}
 
 	public void setVelocity(Vector2f velocity) {

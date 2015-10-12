@@ -1,5 +1,6 @@
 package de.dungeonrunner;
 
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
@@ -18,5 +19,9 @@ public class SpriteNode extends SceneNode {
 	protected void drawCurrent(RenderTarget target, RenderStates states) {
 		super.drawCurrent(target, states);
 		target.draw(mSprite);
+	}
+	
+	public FloatRect getBoundingRect(){
+		return getWorldTransform().transformRect(mSprite.getGlobalBounds());
 	}
 }

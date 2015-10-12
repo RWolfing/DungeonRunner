@@ -60,8 +60,8 @@ public class Animation implements Drawable, Transformable {
 
 		mSprite.setTextureRect(textureRect);
 	}
-	
-	public FloatRect getGlobalBounds(){
+
+	public FloatRect getGlobalBounds() {
 		return mSprite.getGlobalBounds();
 	}
 

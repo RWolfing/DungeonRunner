@@ -17,7 +17,7 @@ public class Application {
 		mRenderWindow = new RenderWindow();
 		mRenderWindow.create(new VideoMode(800, 480, 32), "DungeonRunner");
 		mRenderWindow.setFramerateLimit(30);
-		
+
 		mGameWorld = new GameWorld(mRenderWindow);
 
 		mClock = new Clock();
@@ -60,40 +60,5 @@ public class Application {
 
 		Application application = new Application();
 		application.run();
-		// GameWorld world = new GameWorld(window);
-
-//		while (window.isOpen()) {
-//			window.clear();
-//			// world.draw();
-//			window.display();
-//		}
-
-		// while (window.isOpen()) {
-		// for (Event event : window.pollEvents()) {
-		//
-		// switch (event.type) {
-		// case CLOSED:
-		// window.close();
-		// break;
-		// case RESIZED:
-		// view = new View(new Vector2f(window.getSize().x / 2,
-		// window.getSize().y / 2),
-		// new Vector2f(window.getSize()));
-		// window.setView(view);
-		// break;
-		// case KEY_PRESSED:
-		// view.move(new Vector2f(10, 0));
-		// window.setView(view);
-		// default:
-		// break;
-		// }
-		// }
-		//
-		// window.clear();
-		//
-		// window.draw(playerEntity);
-		// window.display();
-		// }
-
 	}
 }

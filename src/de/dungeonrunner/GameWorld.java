@@ -2,6 +2,8 @@ package de.dungeonrunner;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderWindow;
@@ -10,6 +12,7 @@ import org.jsfml.graphics.View;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
+import de.dungeonrunner.SceneNode.CollisionPair;
 import de.dungeonrunner.TextureHolder.TextureID;
 import tiled.core.Map;
 import tiled.core.Tile;
@@ -44,7 +47,6 @@ public class GameWorld {
 		loadMap();
 		loadTextures();
 		buildScene();
-
 	}
 
 	private void loadTextures() {
@@ -126,5 +128,7 @@ public class GameWorld {
 
 	public void update(Time dt) {
 		mSceneGraph.update(dt);
+		Set<CollisionPair> collisionPairs = new HashSet<>();
+		mSceneGraph.checkSceneCollision(mSceneGraph, collisionPairs);
 	}
 }
