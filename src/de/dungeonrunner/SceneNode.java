@@ -133,14 +133,17 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	public Transform getWorldTransform() {
 		Transform transform = Transform.IDENTITY;
+
 		for (SceneNode node = this; node != null; node = node.mParentNode) {
-			transform = Transform.combine(getTransform(), transform);
+			//System.out.println("Get Transform" + getTransform());
+			transform = Transform.combine(node.getTransform(), transform);
 		}
 		return transform;
 	}
 
 	public Vector2f getWorldPosition() {
 		return getWorldTransform().transformPoint(Vector2f.ZERO);
+
 	}
 
 	public Vector<SceneNode> getChildren() {

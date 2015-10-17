@@ -4,12 +4,11 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
-
-import de.dungeonrunner.TextureHolder.TextureID;
+import org.jsfml.system.Vector2f;
 
 public class SpriteNode extends SceneNode {
 
-	private Sprite mSprite;
+	protected Sprite mSprite;
 	
 	public SpriteNode(Sprite sprite){
 		mSprite = sprite;
@@ -18,10 +17,14 @@ public class SpriteNode extends SceneNode {
 	@Override
 	protected void drawCurrent(RenderTarget target, RenderStates states) {
 		super.drawCurrent(target, states);
-		target.draw(mSprite);
+		target.draw(mSprite, states);
 	}
 	
 	public FloatRect getBoundingRect(){
 		return getWorldTransform().transformRect(mSprite.getGlobalBounds());
+	}
+	
+	public void move(Vector2f velocity){
+		mSprite.move(velocity);
 	}
 }

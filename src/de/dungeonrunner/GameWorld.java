@@ -52,7 +52,7 @@ public class GameWorld {
 	private void loadTextures() {
 		TextureHolder holder = TextureHolder.getInstance();
 		holder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
-
+holder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		if (mMap != null) {
 			TextureHolder.getInstance().loadTiledTextures(mMap);
 		}
@@ -96,8 +96,9 @@ public class GameWorld {
 							} else {
 								Sprite cachedTile = new Sprite();
 								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
-								cachedTile.setPosition(x * tileWidth, y * tileHeight);
+					
 								SpriteNode node = new SpriteNode(cachedTile);
+								node.setPosition(x * tileWidth, y * tileHeight);
 								node.setProperties(tile.getProperties());
 
 								switch (i) {
@@ -119,6 +120,7 @@ public class GameWorld {
 
 		mPlayer = new PlayerEntity(TextureID.ANIM_IDLE);
 		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayer);
+		mPlayer.setPosition(20f, 20f);
 	}
 
 	public void draw() {

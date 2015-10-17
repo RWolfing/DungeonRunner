@@ -67,8 +67,7 @@ public class Animation implements Drawable, Transformable {
 
 	@Override
 	public void draw(RenderTarget target, RenderStates states) {
-		states = new RenderStates(states, Transform.combine(states.transform, getTransform()));
-		target.draw(mSprite);
+		mSprite.draw(target, states);
 	}
 
 	public Vector2i getFrameSize() {
