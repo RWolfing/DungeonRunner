@@ -97,7 +97,6 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	}
 
 	private FloatRect collides(SceneNode node1, SceneNode node2) {
-
 		Boolean isNode1Blocking = Boolean.valueOf(node1.getProperty("BlockVolume"));
 		Boolean isNode2Blocking = Boolean.valueOf(node2.getProperty("BlockVolume"));
 		if (isNode1Blocking && isNode2Blocking) {

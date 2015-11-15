@@ -15,7 +15,7 @@ public abstract class GameEntity extends SceneNode {
 
 	@Override
 	protected void updateCurrent(Time dt) {
-		moveChildren(Vector2f.mul(mVelocity, dt.asSeconds()));
+		move(Vector2f.mul(mVelocity, dt.asSeconds()));
 	}
 
 	public void setAnimation(AnimationNode activeAnimation) {
@@ -35,8 +35,17 @@ public abstract class GameEntity extends SceneNode {
 
 	@Override
 	public void setPosition(Vector2f v) {
+		super.setPosition(v);
 		if (mActiveAnimation != null) {
 			mActiveAnimation.setPosition(getWorldPosition());
+		}
+	}
+	
+	@Override
+	public void move(Vector2f v) {
+		super.move(v);
+		for(SceneNode child : mChildren){
+			child.move(v);
 		}
 	}
 
@@ -51,17 +60,8 @@ public abstract class GameEntity extends SceneNode {
 	public Vector2f getVelocity() {
 		return mVelocity;
 	}
-
-	public void moveChildren(Vector2f velocity) {
-		for(SceneNode child : mChildren){
-			child.move(velocity);
-		}
-	}
 	
-	public void setPoition(float x, float y){
-		setPosition(x, y);
-		if(mActiveAnimation != null){
-			mActiveAnimation.setPosition(x, y);
-		}
+	public void undo(){
+		setPosition(getPosition().x - mVelocity.x, getPosition().y - mVelocity.y);
 	}
 }

@@ -6,7 +6,7 @@ import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
-public class SpriteNode extends SceneNode {
+public class SpriteNode extends SceneNode{
 
 	protected Sprite mSprite;
 	
@@ -25,6 +25,7 @@ public class SpriteNode extends SceneNode {
 	}
 	
 	public void move(Vector2f velocity){
+		super.move(velocity);
 		mSprite.move(velocity);
 	}
 }

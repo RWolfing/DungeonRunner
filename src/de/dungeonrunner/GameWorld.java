@@ -43,7 +43,7 @@ public class GameWorld {
 				new Vector2f(window.getSize()));
 		window.setView(mWorldView);
 		mSpawnPosition = new Vector2f(window.getSize().x / 2, window.getSize().y / 2);
-
+	
 		loadMap();
 		loadTextures();
 		buildScene();
@@ -52,7 +52,7 @@ public class GameWorld {
 	private void loadTextures() {
 		TextureHolder holder = TextureHolder.getInstance();
 		holder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
-holder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
+		holder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		if (mMap != null) {
 			TextureHolder.getInstance().loadTiledTextures(mMap);
 		}
@@ -120,12 +120,12 @@ holder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.
 
 		mPlayer = new PlayerEntity(TextureID.ANIM_IDLE);
 		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayer);
-		mPlayer.setPosition(20f, 20f);
+		mPlayer.setPosition(100f, 0f);
 	}
 
-	public void draw() {
-		mRenderWindow.setView(new View(mWorldView.getCenter(), mWorldView.getSize()));
-		mRenderWindow.draw(mSceneGraph);
+	public void draw(RenderWindow renderWinodw) {
+		renderWinodw.setView(new View(mWorldView.getCenter(), mWorldView.getSize()));
+		renderWinodw.draw(mSceneGraph);
 	}
 
 	public void update(Time dt) {
