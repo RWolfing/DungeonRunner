@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.nodes;
 
 import java.util.Properties;
 import java.util.Set;
@@ -73,6 +73,15 @@ public class SceneNode extends BasicTransformable implements Drawable {
 			return null;
 		}
 	}
+	
+	public void checkSceneCollision(SceneNode sceneGraph, Set<CollisionPair> collisionPairs) {
+		checkNodeCollision(sceneGraph, collisionPairs);
+		for (SceneNode childNode : sceneGraph.mChildren) {
+			if (childNode != null) {
+				checkSceneCollision(childNode, collisionPairs);
+			}
+		}
+	}
 
 	void checkNodeCollision(SceneNode node, Set<CollisionPair> collisionPairs) {
 		if (this != node) {
@@ -87,15 +96,6 @@ public class SceneNode extends BasicTransformable implements Drawable {
 		}
 	}
 
-	public void checkSceneCollision(SceneNode sceneGraph, Set<CollisionPair> collisionPairs) {
-		checkNodeCollision(sceneGraph, collisionPairs);
-		for (SceneNode childNode : sceneGraph.mChildren) {
-			if (childNode != null) {
-				checkSceneCollision(childNode, collisionPairs);
-			}
-		}
-	}
-
 	private FloatRect collides(SceneNode node1, SceneNode node2) {
 		Boolean isNode1Blocking = Boolean.valueOf(node1.getProperty("BlockVolume"));
 		Boolean isNode2Blocking = Boolean.valueOf(node2.getProperty("BlockVolume"));
@@ -105,7 +105,42 @@ public class SceneNode extends BasicTransformable implements Drawable {
 			return null;
 		}
 	}
+	
+	private void drawBoundingRect(RenderTarget target, RenderStates states) {
+		FloatRect rect = getBoundingRect();
+		Boolean isNode1Blocking = Boolean.valueOf(getProperty("BlockVolume"));
+		if (isNode1Blocking) {
+			RectangleShape shape = new RectangleShape();
+			shape.setPosition(new Vector2f(rect.left, rect.top));
+			shape.setSize(new Vector2f(rect.width, rect.height));
+			shape.setFillColor(Color.TRANSPARENT);
+			shape.setOutlineColor(Color.GREEN);
+			shape.setOutlineThickness(1.0f);
+			target.draw(shape);
+		}
+	}
 
+	public Transform getWorldTransform() {
+		Transform transform = Transform.IDENTITY;
+
+		for (SceneNode node = this; node != null; node = node.mParentNode) {
+			transform = Transform.combine(node.getTransform(), transform);
+		}
+		return transform;
+	}
+
+	public Vector2f getWorldPosition() {
+		return getWorldTransform().transformPoint(Vector2f.ZERO);
+	}
+
+	public Vector<SceneNode> getChildren() {
+		return mChildren;
+	}
+
+	public FloatRect getBoundingRect() {
+		return null;
+	}
+	
 	public void setParentNode(SceneNode node) {
 		mParentNode = node;
 	}
@@ -128,85 +163,6 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	public SceneNode getParentNode() {
 		return mParentNode;
-	}
-
-	public Transform getWorldTransform() {
-		Transform transform = Transform.IDENTITY;
-
-		for (SceneNode node = this; node != null; node = node.mParentNode) {
-			//System.out.println("Get Transform" + getTransform());
-			transform = Transform.combine(node.getTransform(), transform);
-		}
-		return transform;
-	}
-
-	public Vector2f getWorldPosition() {
-		return getWorldTransform().transformPoint(Vector2f.ZERO);
-
-	}
-
-	public Vector<SceneNode> getChildren() {
-		return mChildren;
-	}
-
-	public FloatRect getBoundingRect() {
-		return null;
-	}
-
-	public static class CollisionPair {
-
-		public SceneNode mNode1;
-		public SceneNode mNode2;
-
-		public CollisionPair(SceneNode node1, SceneNode node2) {
-			mNode1 = node1;
-			mNode2 = node2;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((mNode1 == null) ? 0 : mNode1.hashCode());
-			result = prime * result + ((mNode2 == null) ? 0 : mNode2.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			CollisionPair other = (CollisionPair) obj;
-			if (mNode1 == null) {
-				if (other.mNode1 != null)
-					return false;
-			} else if (!mNode1.equals(other.mNode1))
-				return false;
-			if (mNode2 == null) {
-				if (other.mNode2 != null)
-					return false;
-			} else if (!mNode2.equals(other.mNode2))
-				return false;
-			return true;
-		}
-	}
-
-	private void drawBoundingRect(RenderTarget target, RenderStates states) {
-		FloatRect rect = getBoundingRect();
-		Boolean isNode1Blocking = Boolean.valueOf(getProperty("BlockVolume"));
-		if (isNode1Blocking) {
-			RectangleShape shape = new RectangleShape();
-			shape.setPosition(new Vector2f(rect.left, rect.top));
-			shape.setSize(new Vector2f(rect.width, rect.height));
-			shape.setFillColor(Color.TRANSPARENT);
-			shape.setOutlineColor(Color.GREEN);
-			shape.setOutlineThickness(1.0f);
-			target.draw(shape);
-		}
 	}
 	
 	protected void onCollision(SceneNode node){

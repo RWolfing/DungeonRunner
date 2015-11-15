@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.nodes;
 
 import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.Sprite;

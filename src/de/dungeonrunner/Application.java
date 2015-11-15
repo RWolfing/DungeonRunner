@@ -1,11 +1,8 @@
 package de.dungeonrunner;
 
-import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderWindow;
-import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
-import org.jsfml.system.Vector2f;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
@@ -41,14 +38,10 @@ public class Application {
 	}
 
 	private void processEvents() {
-		for (Event event : mRenderWindow.pollEvents())
-		{
+		for (Event event : mRenderWindow.pollEvents()) {
+			mGameWorld.handleEvent(event);
 			if (event.type == Event.Type.CLOSED) {
 				mRenderWindow.close();
-			}
-			if(event.type == Event.Type.RESIZED){
-				View view = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y), new Vector2f(mRenderWindow.getSize()));
-				mRenderWindow.setView(view);
 			}
 		}
 	}
@@ -59,13 +52,12 @@ public class Application {
 
 	private void render() {
 		mRenderWindow.clear();
-		mGameWorld.draw(mRenderWindow);
+		mGameWorld.draw();
 		mRenderWindow.display();
 
 	}
 
 	public static void main(String[] args) {
-
 		Application application = new Application();
 		application.run();
 	}

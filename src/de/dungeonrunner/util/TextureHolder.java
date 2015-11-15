@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.util;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

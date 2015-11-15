@@ -1,8 +1,11 @@
-package de.dungeonrunner;
+package de.dungeonrunner.entities;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
+
+import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.SceneNode;
 
 public abstract class GameEntity extends SceneNode {
 
@@ -33,22 +36,6 @@ public abstract class GameEntity extends SceneNode {
 		return mActiveAnimation.getBoundingRect();
 	}
 
-	@Override
-	public void setPosition(Vector2f v) {
-		super.setPosition(v);
-		if (mActiveAnimation != null) {
-			mActiveAnimation.setPosition(getWorldPosition());
-		}
-	}
-	
-	@Override
-	public void move(Vector2f v) {
-		super.move(v);
-		for(SceneNode child : mChildren){
-			child.move(v);
-		}
-	}
-
 	public void setVelocity(Vector2f velocity) {
 		mVelocity = velocity;
 	}
@@ -59,9 +46,5 @@ public abstract class GameEntity extends SceneNode {
 
 	public Vector2f getVelocity() {
 		return mVelocity;
-	}
-	
-	public void undo(){
-		setPosition(getPosition().x - mVelocity.x, getPosition().y - mVelocity.y);
 	}
 }

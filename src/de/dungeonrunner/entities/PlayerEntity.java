@@ -1,9 +1,7 @@
-package de.dungeonrunner;
+package de.dungeonrunner.entities;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
-
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -12,7 +10,10 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.TextureHolder.TextureID;
+import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.SceneNode;
+import de.dungeonrunner.util.TextureHolder;
+import de.dungeonrunner.util.TextureHolder.TextureID;
 
 public class PlayerEntity extends GameEntity {
 

@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import tiled.io.TMXMapReader;
 public class TmxMapLoader {
 
 	private static Map mMap;
-	private static List<Tile> mBlockingTiles;
 
 	public static Map loadMap(String filepath) {
 		String fileToOpen = filepath;

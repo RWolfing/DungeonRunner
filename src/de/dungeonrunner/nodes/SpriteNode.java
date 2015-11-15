@@ -1,10 +1,9 @@
-package de.dungeonrunner;
+package de.dungeonrunner.nodes;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
-import org.jsfml.system.Vector2f;
 
 public class SpriteNode extends SceneNode{
 
@@ -22,10 +21,5 @@ public class SpriteNode extends SceneNode{
 	
 	public FloatRect getBoundingRect(){
 		return getWorldTransform().transformRect(mSprite.getGlobalBounds());
-	}
-	
-	public void move(Vector2f velocity){
-		super.move(velocity);
-		mSprite.move(velocity);
 	}
 }

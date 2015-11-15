@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.util;
 
 import org.jsfml.graphics.Drawable;
 import org.jsfml.graphics.FloatRect;
@@ -12,7 +12,7 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.TextureHolder.TextureID;
+import de.dungeonrunner.util.TextureHolder.TextureID;
 
 public class Animation implements Drawable, Transformable {
 
