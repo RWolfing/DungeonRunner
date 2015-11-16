@@ -12,13 +12,13 @@ import org.jsfml.system.Vector2i;
 
 import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.SceneNode;
-import de.dungeonrunner.util.TextureHolder;
-import de.dungeonrunner.util.TextureHolder.TextureID;
+import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
 public class PlayerEntity extends GameEntity {
 
 	private Set<SceneNode> mCollidingNodes;
-	private final Vector2f mInitialVelocity = new Vector2f(40f, 5f);
+	private final Vector2f mInitialVelocity = new Vector2f(30f, 15f);
 	private Vector2f mPrePosition;
 
 	public PlayerEntity(TextureID textureID) {

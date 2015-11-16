@@ -1,4 +1,4 @@
-package de.dungeonrunner.util;
+package de.dungeonrunner.singleton;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -9,7 +9,7 @@ import org.jsfml.graphics.Font;
 public class FontHolder {
 
 	public enum FontID {
-
+		DUNGEON_FONT
 	}
 
 	private static FontHolder mInstance;

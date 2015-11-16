@@ -16,10 +16,11 @@ import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.nodes.CollisionPair;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
+import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
-import de.dungeonrunner.util.TextureHolder;
+import de.dungeonrunner.util.Context;
 import de.dungeonrunner.util.TmxMapLoader;
-import de.dungeonrunner.util.TextureHolder.TextureID;
 import tiled.core.Map;
 import tiled.core.Tile;
 import tiled.core.TileLayer;
@@ -33,6 +34,7 @@ public class GameWorld {
 	private RenderWindow mRenderWindow;
 	private View mWorldView;
 	private SceneNode mSceneGraph;
+	private SceneNode mCollisionGraph;
 
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
 
@@ -40,22 +42,19 @@ public class GameWorld {
 	private Vector2f mSpawnPosition;
 	private PlayerEntity mPlayer;
 
-	public GameWorld(RenderWindow window) {
-		mRenderWindow = window;
-		mWorldView = new View(new Vector2f(window.getSize().x / 2, window.getSize().y / 2),
-				new Vector2f(window.getSize()));
-		window.setView(mWorldView);
-		mSpawnPosition = new Vector2f(window.getSize().x / 2, window.getSize().y / 2);
-	
+	public GameWorld(Context context) {
+		mRenderWindow = context.mRenderWindow;
+		mWorldView = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize()));
+		mRenderWindow.setView(mWorldView);
+		mSpawnPosition = new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2);
+		mPlayer = context.mPlayer;
 		loadMap();
 		loadTextures();
 		buildScene();
 	}
 
 	private void loadTextures() {
-		TextureHolder holder = TextureHolder.getInstance();
-		holder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
-		holder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		if (mMap != null) {
 			TextureHolder.getInstance().loadTiledTextures(mMap);
 		}
@@ -97,7 +96,7 @@ public class GameWorld {
 							} else {
 								Sprite cachedTile = new Sprite();
 								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
-					
+
 								SpriteNode node = new SpriteNode(cachedTile);
 								node.setPosition(x * tileWidth, y * tileHeight);
 								node.setProperties(tile.getProperties());
@@ -119,32 +118,28 @@ public class GameWorld {
 			}
 		}
 
-		mPlayer = new PlayerEntity(TextureID.ANIM_IDLE);
 		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayer);
 		mPlayer.setPosition(mSpawnPosition);
 	}
 
-	public void handleEvent(Event event){
-		switch(event.type){
-		case RESIZED:
-			mWorldView = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2), new Vector2f(mRenderWindow.getSize()));
-			System.out.println(mPlayer.getPosition() + " / " + mPlayer.getWorldPosition());
-			mWorldView.setCenter(mPlayer.getWorldPosition());
-			mRenderWindow.setView(mWorldView);
-			break;
+	public void handleEvent(Event event) {
+		switch (event.type) {
 		default:
 			break;
 		}
 	}
+
 	public void draw() {
-		mWorldView.setCenter(mPlayer.getPosition());
-		mRenderWindow.setView(mWorldView);
+		View view = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize()));
+		view.setCenter(mPlayer.getPosition());
+		mRenderWindow.setView(view);
 		mRenderWindow.draw(mSceneGraph);
 	}
 
 	public void update(Time dt) {
 		mSceneGraph.update(dt);
 		Set<CollisionPair> collisionPairs = new HashSet<>();
-		mSceneGraph.checkSceneCollision(mSceneGraph, collisionPairs);
+		mSceneGraph.checkSceneCollision(mRenderLayers.get(RenderLayers.Middleground), collisionPairs);
 	}
 }

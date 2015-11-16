@@ -1,5 +1,7 @@
 package de.dungeonrunner.nodes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
@@ -163,6 +165,17 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	public SceneNode getParentNode() {
 		return mParentNode;
+	}
+	
+	public List<SceneNode> getCollisionGraph(){
+		List<SceneNode> collisionNodes = new ArrayList();
+		if(Boolean.valueOf(getProperty("BlockVolume"))){
+			collisionNodes.add(this);
+		}
+		for(SceneNode node : mChildren){
+			collisionNodes.addAll(getCollisionGraph());
+		}
+		return collisionNodes;
 	}
 	
 	protected void onCollision(SceneNode node){

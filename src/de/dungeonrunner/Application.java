@@ -1,10 +1,24 @@
 package de.dungeonrunner;
 
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
+import org.jsfml.system.Vector2f;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
+
+import de.dungeonrunner.entities.PlayerEntity;
+import de.dungeonrunner.singleton.FontHolder;
+import de.dungeonrunner.singleton.StateHolder;
+import de.dungeonrunner.singleton.FontHolder.FontID;
+import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.state.GameState;
+import de.dungeonrunner.state.States;
+import de.dungeonrunner.state.TitleState;
+import de.dungeonrunner.util.Constants;
+import de.dungeonrunner.util.Context;
 
 public class Application {
 
@@ -12,16 +26,29 @@ public class Application {
 	private RenderWindow mRenderWindow;
 	private Clock mClock;
 	private GameWorld mGameWorld;
+	private StateStack mStateStack;
+	private PlayerEntity mPlayer;
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
 		mRenderWindow.create(new VideoMode(800, 480, 32), "DungeonRunner");
 		mRenderWindow.setFramerateLimit(30);
 
-		mGameWorld = new GameWorld(mRenderWindow);
-
 		mClock = new Clock();
 
+		TextureHolder texHolder = TextureHolder.getInstance();
+		texHolder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
+		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
+		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
+		
+		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");
+		
+		
+		mStateStack = new StateStack();
+		mPlayer = new PlayerEntity(TextureID.ANIM_IDLE);
+		
+		registerStates();
+		mStateStack.pushState(States.Title);
 	}
 
 	public void run() {
@@ -30,16 +57,22 @@ public class Application {
 			timeSinceLastUpdate = Time.add(timeSinceLastUpdate, mClock.restart());
 			while (timeSinceLastUpdate.asMicroseconds() > FPS.asMilliseconds()) {
 				timeSinceLastUpdate = Time.sub(timeSinceLastUpdate, FPS);
+				long time = System.currentTimeMillis();
 				processEvents();
+				time = System.currentTimeMillis() - time;
+				//System.out.println("Update: " + time);
 				update(FPS);
 			}
+			long time = System.currentTimeMillis();
 			render();
+			time = System.currentTimeMillis() - time;
+			System.out.println("Draw: " + time);
 		}
 	}
 
 	private void processEvents() {
 		for (Event event : mRenderWindow.pollEvents()) {
-			mGameWorld.handleEvent(event);
+			mStateStack.handleEvent(event);
 			if (event.type == Event.Type.CLOSED) {
 				mRenderWindow.close();
 			}
@@ -47,14 +80,22 @@ public class Application {
 	}
 
 	private void update(Time fPS2) {
-		mGameWorld.update(fPS2);
+		mStateStack.update(fPS2);
 	}
 
 	private void render() {
 		mRenderWindow.clear();
-		mGameWorld.draw();
+		mRenderWindow.setView(mRenderWindow.getDefaultView());
+		mStateStack.draw();
 		mRenderWindow.display();
 
+	}
+	
+	private void registerStates(){
+		Context ctx = new Context(mRenderWindow, mPlayer);
+		StateHolder holder = StateHolder.getInstance();
+		holder.registerState(States.Title, new TitleState(mStateStack, ctx));
+		holder.registerState(States.Game, new GameState(mStateStack, ctx));
 	}
 
 	public static void main(String[] args) {

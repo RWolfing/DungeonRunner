@@ -1,4 +1,4 @@
-package de.dungeonrunner.util;
+package de.dungeonrunner.singleton;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import tiled.core.TileSet;
 public class TextureHolder {
 
 	public enum TextureID {
-		ANIM_IDLE, PLAYER_TEXTURE
+		ANIM_IDLE, PLAYER_TEXTURE, TITLE_BG_SCREEN
 	}
 
 	private static TextureHolder mInstance;

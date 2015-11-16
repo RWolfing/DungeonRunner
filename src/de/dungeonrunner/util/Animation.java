@@ -12,7 +12,8 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.util.TextureHolder.TextureID;
+import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
 public class Animation implements Drawable, Transformable {
 
