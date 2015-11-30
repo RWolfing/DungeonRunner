@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="15" tilewidth="64" tileheight="64" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="7" tilewidth="64" tileheight="64" nextobjectid="1">
  <tileset firstgid="1" name="Test" tilewidth="64" tileheight="64" tilecount="72">
   <image source="Tileset.png" width="512" height="576"/>
   <tile id="34">
    <properties>
     <property name="BlockVolume" value="true"/>
+    <property name="StaticObject" value="true"/>
    </properties>
   </tile>
   <tile id="35">
    <properties>
     <property name="BlockVolume" value="true"/>
+    <property name="StaticObject" value="true"/>
    </properties>
   </tile>
  </tileset>
- <layer name="Kachelebene 1" width="30" height="15">
+ <layer name="Hintergrund" width="50" height="7">
   <data encoding="base64" compression="zlib">
-   eJzjZGBg4CQCC1IZ09s+YuyllZ347KWlncSE80DF76i9Q9teYu2mdfoexaOYGhgA6kkbEw==
+   eJwTZGBgEBwATG0wEH4Y9ceoP0b9MeoPcgAAczwN8w==
   </data>
  </layer>
- <layer name="Kachelebene 2" width="30" height="15">
+ <layer name="Mittelgrund" width="50" height="7">
   <data encoding="base64" compression="zlib">
-   eJzjYmBg4KYz5gFiRQbCQJAINaQAVSLtpTYg1t6R5t9Re0ftHbV3aNmrgkcfLjlixUH2agKxMp2xLhADAHdBCbU=
+   eJxTZKAOUB5grDjqj1F/jPqDJH+o4HEvNjmVQeAPzUHgBmpgAKGQIk8=
   </data>
  </layer>
 </map>

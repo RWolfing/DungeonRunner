@@ -1,8 +1,10 @@
 package de.dungeonrunner;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jsfml.graphics.RenderWindow;
@@ -20,6 +22,7 @@ import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Context;
+import de.dungeonrunner.util.QuadTree;
 import de.dungeonrunner.util.TmxMapLoader;
 import tiled.core.Map;
 import tiled.core.Tile;
@@ -35,6 +38,7 @@ public class GameWorld {
 	private View mWorldView;
 	private SceneNode mSceneGraph;
 	private SceneNode mCollisionGraph;
+	private QuadTree mCollisionTree;
 
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
 
@@ -71,6 +75,7 @@ public class GameWorld {
 	private void buildScene() {
 		mSceneGraph = new SceneNode();
 		mRenderLayers = new HashMap<>();
+		mCollisionTree = new QuadTree(0, new Rectangle(0, 0, mRenderWindow.getSize().x, mRenderWindow.getSize().y));
 
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
@@ -139,7 +144,27 @@ public class GameWorld {
 
 	public void update(Time dt) {
 		mSceneGraph.update(dt);
-		Set<CollisionPair> collisionPairs = new HashSet<>();
-		mSceneGraph.checkSceneCollision(mRenderLayers.get(RenderLayers.Middleground), collisionPairs);
+
+		mCollisionTree.clear();
+		for (SceneNode node : mSceneGraph.getSceneGraph()) {
+			if (node.getBoundingRect() != null) {
+				mCollisionTree.insert(node);
+			}
+		}
+
+		List<SceneNode> collisionObjects = new ArrayList<>();
+		for (SceneNode node : mSceneGraph.getSceneGraph()) {
+			collisionObjects.clear();
+			mCollisionTree.retrieve(collisionObjects, node.getBoundingRect());
+			for(SceneNode sceneNode : collisionObjects) {
+				node.onCollision(sceneNode);
+			}
+		}
+//		 List<CollisionPair> collisionPairs = new ArrayList<>();
+//		 mSceneGraph.checkSceneCollision(mRenderLayers.get(RenderLayers.Middleground),
+//		 collisionPairs);
+//		 if(collisionPairs.size() > 0){
+//		 return;
+//		 }
 	}
 }

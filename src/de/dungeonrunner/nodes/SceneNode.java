@@ -17,10 +17,15 @@ import org.jsfml.graphics.Transform;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
+import de.dungeonrunner.util.QuadTree;
+
 public class SceneNode extends BasicTransformable implements Drawable {
 
 	public SceneNode mParentNode;
 	public Vector<SceneNode> mChildren;
+	public Vector<SceneNode> mStaticChildren;
+	public Vector<SceneNode> mDynamicChildren;
+	
 	public Properties mProperties;
 
 	public SceneNode() {
@@ -76,7 +81,7 @@ public class SceneNode extends BasicTransformable implements Drawable {
 		}
 	}
 	
-	public void checkSceneCollision(SceneNode sceneGraph, Set<CollisionPair> collisionPairs) {
+	public void checkSceneCollision(SceneNode sceneGraph, List<CollisionPair> collisionPairs) {
 		checkNodeCollision(sceneGraph, collisionPairs);
 		for (SceneNode childNode : sceneGraph.mChildren) {
 			if (childNode != null) {
@@ -85,12 +90,15 @@ public class SceneNode extends BasicTransformable implements Drawable {
 		}
 	}
 
-	void checkNodeCollision(SceneNode node, Set<CollisionPair> collisionPairs) {
+	void checkNodeCollision(SceneNode node, List<CollisionPair> collisionPairs) {
 		if (this != node) {
 			FloatRect collisionRect = collides(this, node);
 			if(collisionRect != null){
-				collisionPairs.add(new CollisionPair(this, node));
-				onCollision(node);
+				CollisionPair pair = new CollisionPair(this, node);
+				if(!collisionPairs.contains(pair)){
+					collisionPairs.add(pair);
+					onCollision(node);
+				}
 			}
 		}
 		for (SceneNode childNode : mChildren) {
@@ -178,7 +186,27 @@ public class SceneNode extends BasicTransformable implements Drawable {
 		return collisionNodes;
 	}
 	
-	protected void onCollision(SceneNode node){
+	public void onCollision(SceneNode node){
 		
+	}
+	
+	public void checkCollision(QuadTree collisionTree){
+		
+	}
+	
+	public void checkCollisions(QuadTree collisionTree){
+		this.checkCollision(collisionTree);
+		for(SceneNode child : mChildren){
+			child.checkCollisions(collisionTree);
+		}
+	}
+	
+	public Vector<SceneNode> getSceneGraph(){
+		Vector<SceneNode> sceneGraph = new Vector();
+		sceneGraph.add(this);
+		for(SceneNode node : mChildren){
+			sceneGraph.addAll(node.getSceneGraph());
+		}
+		return sceneGraph;
 	}
 }

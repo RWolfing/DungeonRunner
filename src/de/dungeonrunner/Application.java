@@ -66,7 +66,7 @@ public class Application {
 			long time = System.currentTimeMillis();
 			render();
 			time = System.currentTimeMillis() - time;
-			System.out.println("Draw: " + time);
+			//System.out.println("Draw: " + time);
 		}
 	}
 

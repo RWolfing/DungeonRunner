@@ -16,7 +16,9 @@ public class CollisionPair {
 		int result = 1;
 		result = prime * result + ((mNode1 == null) ? 0 : mNode1.hashCode());
 		result = prime * result + ((mNode2 == null) ? 0 : mNode2.hashCode());
+		//result = ((mNode1) == null) ? 0 : mNode1.hashCode();
 		return result;
+		
 	}
 
 	@Override
@@ -27,17 +29,17 @@ public class CollisionPair {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
+		//Check if it contains the same nodes
 		CollisionPair other = (CollisionPair) obj;
-		if (mNode1 == null) {
-			if (other.mNode1 != null)
-				return false;
-		} else if (!mNode1.equals(other.mNode1))
-			return false;
-		if (mNode2 == null) {
-			if (other.mNode2 != null)
-				return false;
-		} else if (!mNode2.equals(other.mNode2))
-			return false;
-		return true;
+		//Check if obj contains mNode1
+		if(mNode1.equals(other.mNode1) || mNode1.equals(other.mNode2)){
+			//check if obj contains mNode2
+			if(mNode2.equals(other.mNode1) || mNode2.equals(other.mNode2))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
