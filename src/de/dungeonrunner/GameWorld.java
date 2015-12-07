@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.entities.PlayerEntity;
@@ -75,7 +77,7 @@ public class GameWorld {
 	private void buildScene() {
 		mSceneGraph = new SceneNode();
 		mRenderLayers = new HashMap<>();
-		mCollisionTree = new QuadTree(0, new Rectangle(0, 0, mRenderWindow.getSize().x, mRenderWindow.getSize().y));
+		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(), (mMap.getHeight() * mMap.getTileHeight()) + 50));
 
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
@@ -140,31 +142,17 @@ public class GameWorld {
 		view.setCenter(mPlayer.getPosition());
 		mRenderWindow.setView(view);
 		mRenderWindow.draw(mSceneGraph);
+		mRenderWindow.draw(mCollisionTree);
 	}
 
 	public void update(Time dt) {
 		mSceneGraph.update(dt);
-
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {
 			if (node.getBoundingRect() != null) {
 				mCollisionTree.insert(node);
 			}
 		}
-
-		List<SceneNode> collisionObjects = new ArrayList<>();
-		for (SceneNode node : mSceneGraph.getSceneGraph()) {
-			collisionObjects.clear();
-			mCollisionTree.retrieve(collisionObjects, node.getBoundingRect());
-			for(SceneNode sceneNode : collisionObjects) {
-				node.onCollision(sceneNode);
-			}
-		}
-//		 List<CollisionPair> collisionPairs = new ArrayList<>();
-//		 mSceneGraph.checkSceneCollision(mRenderLayers.get(RenderLayers.Middleground),
-//		 collisionPairs);
-//		 if(collisionPairs.size() > 0){
-//		 return;
-//		 }
+		mSceneGraph.checkCollisions(mCollisionTree);
 	}
 }

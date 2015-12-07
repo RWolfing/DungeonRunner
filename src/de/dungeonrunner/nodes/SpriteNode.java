@@ -1,5 +1,6 @@
 package de.dungeonrunner.nodes;
 
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -11,6 +12,7 @@ public class SpriteNode extends SceneNode{
 	
 	public SpriteNode(Sprite sprite){
 		mSprite = sprite;
+		mColor = Color.GREEN;
 	}
 
 	@Override

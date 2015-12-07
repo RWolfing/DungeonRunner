@@ -3,7 +3,6 @@ package de.dungeonrunner.nodes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Vector;
 
 import org.jsfml.graphics.BasicTransformable;
@@ -21,11 +20,12 @@ import de.dungeonrunner.util.QuadTree;
 
 public class SceneNode extends BasicTransformable implements Drawable {
 
+	public Color mColor = Color.TRANSPARENT;
 	public SceneNode mParentNode;
 	public Vector<SceneNode> mChildren;
 	public Vector<SceneNode> mStaticChildren;
 	public Vector<SceneNode> mDynamicChildren;
-	
+
 	public Properties mProperties;
 
 	public SceneNode() {
@@ -42,6 +42,7 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	protected void drawCurrent(RenderTarget target, RenderStates states) {
 		drawBoundingRect(target, states);
+		mColor = Color.TRANSPARENT;
 	}
 
 	private void drawChildren(RenderTarget target, RenderStates states) {
@@ -80,7 +81,7 @@ public class SceneNode extends BasicTransformable implements Drawable {
 			return null;
 		}
 	}
-	
+
 	public void checkSceneCollision(SceneNode sceneGraph, List<CollisionPair> collisionPairs) {
 		checkNodeCollision(sceneGraph, collisionPairs);
 		for (SceneNode childNode : sceneGraph.mChildren) {
@@ -93,9 +94,9 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	void checkNodeCollision(SceneNode node, List<CollisionPair> collisionPairs) {
 		if (this != node) {
 			FloatRect collisionRect = collides(this, node);
-			if(collisionRect != null){
+			if (collisionRect != null) {
 				CollisionPair pair = new CollisionPair(this, node);
-				if(!collisionPairs.contains(pair)){
+				if (!collisionPairs.contains(pair)) {
 					collisionPairs.add(pair);
 					onCollision(node);
 				}
@@ -115,16 +116,15 @@ public class SceneNode extends BasicTransformable implements Drawable {
 			return null;
 		}
 	}
-	
+
 	private void drawBoundingRect(RenderTarget target, RenderStates states) {
 		FloatRect rect = getBoundingRect();
-		Boolean isNode1Blocking = Boolean.valueOf(getProperty("BlockVolume"));
-		if (isNode1Blocking) {
+		if (rect != null) {
 			RectangleShape shape = new RectangleShape();
 			shape.setPosition(new Vector2f(rect.left, rect.top));
 			shape.setSize(new Vector2f(rect.width, rect.height));
 			shape.setFillColor(Color.TRANSPARENT);
-			shape.setOutlineColor(Color.GREEN);
+			shape.setOutlineColor(mColor);
 			shape.setOutlineThickness(1.0f);
 			target.draw(shape);
 		}
@@ -150,7 +150,7 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	public FloatRect getBoundingRect() {
 		return null;
 	}
-	
+
 	public void setParentNode(SceneNode node) {
 		mParentNode = node;
 	}
@@ -174,37 +174,37 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	public SceneNode getParentNode() {
 		return mParentNode;
 	}
-	
-	public List<SceneNode> getCollisionGraph(){
+
+	public List<SceneNode> getCollisionGraph() {
 		List<SceneNode> collisionNodes = new ArrayList();
-		if(Boolean.valueOf(getProperty("BlockVolume"))){
+		if (Boolean.valueOf(getProperty("BlockVolume"))) {
 			collisionNodes.add(this);
 		}
-		for(SceneNode node : mChildren){
+		for (SceneNode node : mChildren) {
 			collisionNodes.addAll(getCollisionGraph());
 		}
 		return collisionNodes;
 	}
-	
-	public void onCollision(SceneNode node){
-		
+
+	public void onCollision(SceneNode node) {
+
 	}
-	
-	public void checkCollision(QuadTree collisionTree){
-		
+
+	public void checkCollision(QuadTree collisionTree) {
+
 	}
-	
-	public void checkCollisions(QuadTree collisionTree){
+
+	public void checkCollisions(QuadTree collisionTree) {
 		this.checkCollision(collisionTree);
-		for(SceneNode child : mChildren){
+		for (SceneNode child : mChildren) {
 			child.checkCollisions(collisionTree);
 		}
 	}
-	
-	public Vector<SceneNode> getSceneGraph(){
-		Vector<SceneNode> sceneGraph = new Vector();
+
+	public Vector<SceneNode> getSceneGraph() {
+		Vector<SceneNode> sceneGraph = new Vector<SceneNode>();
 		sceneGraph.add(this);
-		for(SceneNode node : mChildren){
+		for (SceneNode node : mChildren) {
 			sceneGraph.addAll(node.getSceneGraph());
 		}
 		return sceneGraph;

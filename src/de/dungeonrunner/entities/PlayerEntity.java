@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -20,14 +22,12 @@ import de.dungeonrunner.util.QuadTree;
 
 public class PlayerEntity extends GameEntity {
 
-	private Set<SceneNode> mCollidingNodes;
-	private final Vector2f mInitialVelocity = new Vector2f(30f, 0f);
+	private final Vector2f mInitialVelocity = new Vector2f(30f, 10f);
 	private Vector2f mPrePosition;
 	private List<SceneNode> mCollisionObjects;
 
 	public PlayerEntity(TextureID textureID) {
 		mProperties.setProperty("BlockVolume", "true");
-		mCollidingNodes = new HashSet<>();
 		mPrePosition = Vector2f.ZERO;
 		mCollisionObjects = new ArrayList<>();
 		AnimationNode mIdleAnimation = new AnimationNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)));
@@ -46,101 +46,56 @@ public class PlayerEntity extends GameEntity {
 
 	@Override
 	protected void updateCurrent(Time dt) {
-		processCollision();
 		super.updateCurrent(dt);
 	}
-
-	@Override
-	public void onCollision(SceneNode node) {
-		mCollidingNodes.add(node);
-	}
-	
-	
 
 	@Override
 	public void checkCollision(QuadTree collisionTree) {
 		mCollisionObjects.clear();
 		collisionTree.retrieve(mCollisionObjects, getBoundingRect());
-		for(SceneNode node : mCollisionObjects){
+
+		for (SceneNode node : this.getSceneGraph()) {
+			mCollisionObjects.remove(node);
+		}
+
+		mCollisionObjects.remove(this);
+		System.out.println("Retrieved Collision " + mCollisionObjects.size());
+		for (SceneNode node : mCollisionObjects) {
+			node.mColor = Color.BLUE;
 			processCollision(node);
 		}
 	}
-	
-	private void processCollision(SceneNode node){
-		if(Boolean.valueOf(node.getProperty("BlockVolume"))){
-			FloatRect intersection = node.getBoundingRect().intersection(getBoundingRect());
-			if (intersection == null) {
+
+	private void processCollision(SceneNode node) {
+		if (Boolean.valueOf(node.getProperty("BlockVolume"))) {
+			FloatRect intersection1 = node.getBoundingRect().intersection(getBoundingRect());
+			if (intersection1 == null) {
 				return;
 			}
 
-			float pixelDelta = 0f;
-			float vectorX = 0;
-			float vectorY = 0;
-			if (intersection.height > intersection.width) {
-				// Left or Right Collision
-				if (getBoundingRect().left > node.getBoundingRect().left) {
-					// Right
-					vectorX = intersection.width + pixelDelta;
+			// TODO rounded intersection needed?
+			FloatRect intersection = new FloatRect(intersection1.left, intersection1.top,
+					Math.round(intersection1.width), Math.round(intersection1.height));
+
+			node.mColor = Color.BLACK;
+
+			if (intersection1.width > intersection1.height) {
+				//Player inbound from Top or Bottom
+				if (getBoundingRect().top < intersection1.top) {
+					// Collision from top
+					setPosition(getWorldPosition().x, getWorldPosition().y - intersection1.height);
 				} else {
-					// Left
-					vectorX = -(intersection.width + pixelDelta);
+					// Collision from bottom
+					setPosition(getWorldPosition().x, getWorldPosition().y + intersection1.height);
 				}
-				setVelocity(0, getVelocity().y);
 			} else {
-				if (getBoundingRect().top < node.getBoundingRect().top) {
-					// Top
-					vectorY = -(intersection.height + pixelDelta);
+				if (getBoundingRect().left < intersection1.left) {
+					// Collision from the right
+					setPosition(getWorldPosition().x - intersection1.width, getWorldPosition().y);
 				} else {
-					// Bottom
-					vectorY = intersection.height + pixelDelta;
+					setPosition(getWorldPosition().x + intersection1.width, getWorldPosition().y);
 				}
-				setVelocity(getVelocity().x, 0);
 			}
-		}
-	}
-
-	private void processCollision() {
-		if(true)
-			return;
-		if (!mCollidingNodes.isEmpty()) {
-			for (SceneNode node : mCollidingNodes) {
-				FloatRect intersection = node.getBoundingRect().intersection(getBoundingRect());
-				if (intersection == null) {
-					continue;
-				}
-
-				float pixelDelta = 0f;
-				float vectorX = 0;
-				float vectorY = 0;
-				if (intersection.height > intersection.width) {
-					// Left or Right Collision
-					if (getBoundingRect().left > node.getBoundingRect().left) {
-						// Right
-						vectorX = intersection.width + pixelDelta;
-					} else {
-						// Left
-						vectorX = -(intersection.width + pixelDelta);
-					}
-					setVelocity(0, getVelocity().y);
-				} else {
-					if (getBoundingRect().top < node.getBoundingRect().top) {
-						// Top
-						vectorY = -(intersection.height + pixelDelta);
-					} else {
-						// Bottom
-						vectorY = intersection.height + pixelDelta;
-					}
-					setVelocity(getVelocity().x, 0);
-				}
-
-				//move(new Vector2f(vectorX, vectorY));
-				//moveChildren(mPrePosition);
-				//setPosition(mPrePosition.x, mPrePosition.y);
-			}
-			mCollidingNodes.clear();
-		} else {
-			mPrePosition = getPosition();
-			//setVelocity(mInitialVelocity);
 		}
 	}
 }
