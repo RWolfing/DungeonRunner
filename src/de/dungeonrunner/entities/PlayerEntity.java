@@ -11,6 +11,7 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.NodeType;
 import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder;
@@ -19,11 +20,12 @@ import de.dungeonrunner.util.QuadTree;
 
 public class PlayerEntity extends GameEntity {
 
-	private final Vector2f mInitialVelocity = new Vector2f(30f, 70f);
+	private final Vector2f mInitialVelocity = new Vector2f(0f, 70f);
 	private List<SceneNode> mCollisionObjects;
 
 	public PlayerEntity(TextureID textureID) {
 		mProperties.setProperty("BlockVolume", "true");
+		mNodeType = NodeType.PLAYER;
 		mCollisionObjects = new ArrayList<>();
 		AnimationNode mIdleAnimation = new AnimationNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)));
 		mIdleAnimation.setDuration(Time.getMilliseconds(900));

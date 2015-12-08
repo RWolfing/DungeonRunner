@@ -1,21 +1,23 @@
 package de.dungeonrunner.state;
 
 import org.jsfml.system.Time;
+import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.GameWorld;
-import de.dungeonrunner.entities.PlayerEntity;
+import de.dungeonrunner.PlayerController;
 import de.dungeonrunner.util.Context;
 
-public class GameState extends State{
-	
+public class GameState extends State {
+
 	private GameWorld mWorld;
-	private PlayerEntity mPlayer;
+	private PlayerController mPlayerController;
+	private boolean mIsPausing = false;
 
 	public GameState(StateStack stack, Context context) {
 		super(stack, context);
-		mPlayer = context.mPlayer;
-		mWorld = new GameWorld(context);
+		mPlayerController = context.mPlayer;
+		mWorld = new GameWorld(context.mRenderWindow);
 	}
 
 	@Override
@@ -25,21 +27,27 @@ public class GameState extends State{
 
 	@Override
 	public boolean update(Time dt) {
-		mWorld.update(dt);
-		//CommandQueue commands = mWolrd.getCommandQueue();
-		//mPlayer.handleRealtimeInput(commands);
+		if (!mIsPausing) {
+			mWorld.update(dt);
+			mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
+		}
 		return true;
 	}
 
 	@Override
 	public boolean handleEvent(Event event) {
-		//CommandQueue commands = mWorld.getCommandQueue();
-		//mPlayer.handleEvent(event, commands);
+		mPlayerController.handleEvent(event, mWorld.getCommandStack());
 		
-//		if(event.type == event.asKeyEvent().type.KEY_PRESSED && event.asKeyEvent().key == Key.ESCAPE){
-//			//requestStackPush(States.Pause);
-//		}
-		mWorld.handleEvent(event);
+		switch (event.type) {
+		case KEY_PRESSED:
+			if (event.asKeyEvent().key == Key.P) {
+				mIsPausing = !mIsPausing;
+			}
+			break;
+		default:
+			break;
+		}
+		
 		return true;
 	}
 

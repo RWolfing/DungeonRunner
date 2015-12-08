@@ -16,6 +16,8 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.Collidable;
+import de.dungeonrunner.NodeType;
+import de.dungeonrunner.SceneCommand;
 import de.dungeonrunner.singleton.FontHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;
 import de.dungeonrunner.util.Constants;
@@ -31,6 +33,7 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	public Vector<SceneNode> mChildren;
 	public Vector<SceneNode> mStaticChildren;
 	public Vector<SceneNode> mDynamicChildren;
+	protected NodeType mNodeType;
 
 	public Properties mProperties;
 
@@ -111,6 +114,16 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		target.draw(shape);
 	}
 	
+	public void onCommand(SceneCommand command){
+		if(command.mNodeType == getType()){
+			command.execute(this);
+		}
+		
+		for(SceneNode child : mChildren){
+			child.onCommand(command);
+		}
+	}
+	
 	public void checkCollisions(QuadTree collisionTree) {
 		this.checkCollision(collisionTree);
 		for (SceneNode child : mChildren) {
@@ -174,5 +187,9 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 			sceneGraph.addAll(node.getSceneGraph());
 		}
 		return sceneGraph;
+	}
+	
+	public NodeType getType(){
+		return mNodeType;
 	}
 }

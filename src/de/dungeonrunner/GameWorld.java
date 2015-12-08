@@ -9,15 +9,14 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
-import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
-import de.dungeonrunner.util.Context;
 import de.dungeonrunner.util.QuadTree;
 import de.dungeonrunner.util.TmxMapLoader;
 import tiled.core.Map;
@@ -31,7 +30,6 @@ public class GameWorld {
 	}
 
 	private RenderWindow mRenderWindow;
-	private View mWorldView;
 	private SceneNode mSceneGraph;
 	private QuadTree mCollisionTree;
 
@@ -39,16 +37,20 @@ public class GameWorld {
 
 	private Map mMap;
 	private Vector2f mSpawnPosition;
-	private PlayerEntity mPlayer;
 	private boolean mIsPausing = false;
 
-	public GameWorld(Context context) {
-		mRenderWindow = context.mRenderWindow;
-		mWorldView = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+	private PlayerEntity mPlayerEntity;
+	private View mCamera;
+
+	private CommandStack mCommandStack;
+
+	public GameWorld(RenderWindow window) {
+		mRenderWindow = window;
+		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
 				new Vector2f(mRenderWindow.getSize()));
-		mRenderWindow.setView(mWorldView);
+		mRenderWindow.setView(mCamera);
 		mSpawnPosition = new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2);
-		mPlayer = context.mPlayer;
+		mCommandStack = new CommandStack();
 		loadMap();
 		loadTextures();
 		buildScene();
@@ -71,7 +73,8 @@ public class GameWorld {
 	private void buildScene() {
 		mSceneGraph = new SceneNode();
 		mRenderLayers = new HashMap<>();
-		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(), (mMap.getHeight() * mMap.getTileHeight()) + 50));
+		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
+				(mMap.getHeight() * mMap.getTileHeight()) + 50));
 
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
@@ -119,36 +122,37 @@ public class GameWorld {
 			}
 		}
 
-		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayer);
-		mPlayer.setPosition(mSpawnPosition);
+		mPlayerEntity = new PlayerEntity(TextureID.ANIM_IDLE);
+		mPlayerEntity.setPosition(mSpawnPosition);
+		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayerEntity);
 	}
 
 	public void handleEvent(Event event) {
-		switch (event.type) {
-		case KEY_PRESSED:
-			if(event.asKeyEvent().key == Key.P){
-				mIsPausing = !mIsPausing;
-			}
-			break;
-		default:
-			break;
-		}
+
 	}
 
 	public void draw() {
-		View view = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize()));
-		view.setCenter(mPlayer.getPosition());
-		mRenderWindow.setView(view);
+		mRenderWindow.setView(mCamera);
 		mRenderWindow.draw(mSceneGraph);
 		mRenderWindow.draw(mCollisionTree);
 	}
 
 	public void update(Time dt) {
-		if(!mIsPausing)
+		if (!mIsPausing) {
+			while (!mCommandStack.isEmpty()) {
+				mSceneGraph.onCommand(mCommandStack.pop());
+			}
 			mSceneGraph.update(dt);
-		
-		
+			checkCollision();
+			adaptCameraPosition();
+		}
+	}
+
+	public CommandStack getCommandStack() {
+		return mCommandStack;
+	}
+
+	private void checkCollision() {
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {
 			if (node.getBoundingRect() != null) {
@@ -156,5 +160,11 @@ public class GameWorld {
 			}
 		}
 		mSceneGraph.checkCollisions(mCollisionTree);
+	}
+
+	private void adaptCameraPosition() {
+		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize()));
+		mCamera.setCenter(mPlayerEntity.getPosition());
 	}
 }

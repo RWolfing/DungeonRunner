@@ -6,7 +6,6 @@ import org.jsfml.system.Time;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
-import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.singleton.FontHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;
 import de.dungeonrunner.singleton.StateHolder;
@@ -25,7 +24,8 @@ public class Application {
 	private RenderWindow mRenderWindow;
 	private Clock mClock;
 	private StateStack mStateStack;
-	private PlayerEntity mPlayer;
+	private PlayerController mPlayer;
+	private boolean mIsPausing = false;
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
@@ -38,13 +38,12 @@ public class Application {
 		texHolder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
 		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
-		
+
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");
-		
-		
+
 		mStateStack = new StateStack();
-		mPlayer = new PlayerEntity(TextureID.ANIM_IDLE);
-		
+		mPlayer = new PlayerController();
+
 		registerStates();
 		mStateStack.pushState(States.Title);
 	}
@@ -58,29 +57,41 @@ public class Application {
 				long time = System.currentTimeMillis();
 				processEvents();
 				time = System.currentTimeMillis() - time;
-				//TODO remove
-				//System.out.println("Update: " + time);
+				// TODO remove
+				// System.out.println("Update: " + time);
 				update(FPS);
 			}
 			long time = System.currentTimeMillis();
 			render();
 			time = System.currentTimeMillis() - time;
-			//TODO remove
-			//System.out.println("Draw: " + time);
+			// TODO remove
+			// System.out.println("Draw: " + time);
 		}
 	}
 
 	private void processEvents() {
 		for (Event event : mRenderWindow.pollEvents()) {
 			mStateStack.handleEvent(event);
-			if (event.type == Event.Type.CLOSED) {
+			switch (event.type) {
+			case CLOSED:
 				mRenderWindow.close();
+				break;
+			case GAINED_FOCUS:
+				mIsPausing = false;
+				break;
+			case LOST_FOCUS:
+				mIsPausing = true;
+				break;
+			default:
+				break;
 			}
 		}
 	}
 
 	private void update(Time fPS2) {
-		mStateStack.update(fPS2);
+		if (!mIsPausing) {
+			mStateStack.update(fPS2);
+		}
 	}
 
 	private void render() {
@@ -90,8 +101,8 @@ public class Application {
 		mRenderWindow.display();
 
 	}
-	
-	private void registerStates(){
+
+	private void registerStates() {
 		Context ctx = new Context(mRenderWindow, mPlayer);
 		StateHolder holder = StateHolder.getInstance();
 		holder.registerState(States.Title, new TitleState(mStateStack, ctx));
