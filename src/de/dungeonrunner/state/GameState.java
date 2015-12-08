@@ -1,11 +1,9 @@
 package de.dungeonrunner.state;
 
 import org.jsfml.system.Time;
-import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.GameWorld;
-import de.dungeonrunner.StateStack;
 import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.util.Context;
 
@@ -41,6 +39,7 @@ public class GameState extends State{
 //		if(event.type == event.asKeyEvent().type.KEY_PRESSED && event.asKeyEvent().key == Key.ESCAPE){
 //			//requestStackPush(States.Pause);
 //		}
+		mWorld.handleEvent(event);
 		return true;
 	}
 

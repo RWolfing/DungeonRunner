@@ -1,21 +1,16 @@
 package de.dungeonrunner.util;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
-import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.nodes.SceneNode;
-import de.dungeonrunner.singleton.FontHolder;
-import de.dungeonrunner.singleton.FontHolder.FontID;
 
 public class QuadTree extends SceneNode {
 

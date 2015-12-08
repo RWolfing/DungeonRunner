@@ -3,7 +3,6 @@ package de.dungeonrunner.state;
 import org.jsfml.system.Time;
 import org.jsfml.window.event.Event;
 
-import de.dungeonrunner.StateStack;
 import de.dungeonrunner.util.Context;
 
 public abstract class State {

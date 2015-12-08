@@ -1,11 +1,7 @@
 package de.dungeonrunner;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderWindow;
@@ -13,15 +9,13 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
+import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.entities.PlayerEntity;
-import de.dungeonrunner.nodes.CollisionPair;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
-import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Context;
 import de.dungeonrunner.util.QuadTree;
@@ -39,7 +33,6 @@ public class GameWorld {
 	private RenderWindow mRenderWindow;
 	private View mWorldView;
 	private SceneNode mSceneGraph;
-	private SceneNode mCollisionGraph;
 	private QuadTree mCollisionTree;
 
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
@@ -47,6 +40,7 @@ public class GameWorld {
 	private Map mMap;
 	private Vector2f mSpawnPosition;
 	private PlayerEntity mPlayer;
+	private boolean mIsPausing = false;
 
 	public GameWorld(Context context) {
 		mRenderWindow = context.mRenderWindow;
@@ -131,6 +125,11 @@ public class GameWorld {
 
 	public void handleEvent(Event event) {
 		switch (event.type) {
+		case KEY_PRESSED:
+			if(event.asKeyEvent().key == Key.P){
+				mIsPausing = !mIsPausing;
+			}
+			break;
 		default:
 			break;
 		}
@@ -146,7 +145,10 @@ public class GameWorld {
 	}
 
 	public void update(Time dt) {
-		mSceneGraph.update(dt);
+		if(!mIsPausing)
+			mSceneGraph.update(dt);
+		
+		
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {
 			if (node.getBoundingRect() != null) {

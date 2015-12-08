@@ -1,11 +1,8 @@
 package de.dungeonrunner.entities;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -22,13 +19,11 @@ import de.dungeonrunner.util.QuadTree;
 
 public class PlayerEntity extends GameEntity {
 
-	private final Vector2f mInitialVelocity = new Vector2f(30f, 10f);
-	private Vector2f mPrePosition;
+	private final Vector2f mInitialVelocity = new Vector2f(30f, 70f);
 	private List<SceneNode> mCollisionObjects;
 
 	public PlayerEntity(TextureID textureID) {
 		mProperties.setProperty("BlockVolume", "true");
-		mPrePosition = Vector2f.ZERO;
 		mCollisionObjects = new ArrayList<>();
 		AnimationNode mIdleAnimation = new AnimationNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)));
 		mIdleAnimation.setDuration(Time.getMilliseconds(900));
@@ -49,6 +44,7 @@ public class PlayerEntity extends GameEntity {
 		super.updateCurrent(dt);
 	}
 
+	//TODO eventuell in Node auslagern. Ist es immer das gleiche?
 	@Override
 	public void checkCollision(QuadTree collisionTree) {
 		mCollisionObjects.clear();
@@ -59,9 +55,7 @@ public class PlayerEntity extends GameEntity {
 		}
 
 		mCollisionObjects.remove(this);
-		System.out.println("Retrieved Collision " + mCollisionObjects.size());
 		for (SceneNode node : mCollisionObjects) {
-			node.mColor = Color.BLUE;
 			processCollision(node);
 		}
 	}
@@ -73,14 +67,8 @@ public class PlayerEntity extends GameEntity {
 				return;
 			}
 
-			// TODO rounded intersection needed?
-			FloatRect intersection = new FloatRect(intersection1.left, intersection1.top,
-					Math.round(intersection1.width), Math.round(intersection1.height));
-
-			node.mColor = Color.BLACK;
-
 			if (intersection1.width > intersection1.height) {
-				//Player inbound from Top or Bottom
+				// Player inbound from Top or Bottom
 				if (getBoundingRect().top < intersection1.top) {
 					// Collision from top
 					setPosition(getWorldPosition().x, getWorldPosition().y - intersection1.height);

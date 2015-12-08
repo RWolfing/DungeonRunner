@@ -1,7 +1,5 @@
 package de.dungeonrunner.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -12,15 +10,23 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.graphics.Text;
 import org.jsfml.graphics.Transform;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
+import de.dungeonrunner.Collidable;
+import de.dungeonrunner.singleton.FontHolder;
+import de.dungeonrunner.singleton.FontHolder.FontID;
+import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.QuadTree;
 
-public class SceneNode extends BasicTransformable implements Drawable {
+public class SceneNode extends BasicTransformable implements Drawable, Collidable {
 
-	public Color mColor = Color.TRANSPARENT;
+	// Debugging purposes only
+	public String mDebugText = "";
+
+	public Color mColor = Color.GREEN;
 	public SceneNode mParentNode;
 	public Vector<SceneNode> mChildren;
 	public Vector<SceneNode> mStaticChildren;
@@ -41,8 +47,21 @@ public class SceneNode extends BasicTransformable implements Drawable {
 	}
 
 	protected void drawCurrent(RenderTarget target, RenderStates states) {
-		drawBoundingRect(target, states);
-		mColor = Color.TRANSPARENT;
+		drawDebugging(target, states);
+	}
+
+	protected void drawDebugging(RenderTarget target, RenderStates states) {
+		if (Constants.IS_DEBUGGING) {
+			if (getBoundingRect() != null) {
+				FloatRect rect = getBoundingRect();
+				drawBoundingRect(target, states, rect);
+				Text text = new Text(mDebugText, FontHolder.getInstance().getFont(FontID.DUNGEON_FONT));
+				text.setColor(mColor);
+				text.setPosition(new Vector2f(getBoundingRect().left + getBoundingRect().width / 2,
+						getBoundingRect().top + getBoundingRect().height / 2));
+				target.draw(text);
+			}
+		}
 	}
 
 	private void drawChildren(RenderTarget target, RenderStates states) {
@@ -82,57 +101,30 @@ public class SceneNode extends BasicTransformable implements Drawable {
 		}
 	}
 
-	public void checkSceneCollision(SceneNode sceneGraph, List<CollisionPair> collisionPairs) {
-		checkNodeCollision(sceneGraph, collisionPairs);
-		for (SceneNode childNode : sceneGraph.mChildren) {
-			if (childNode != null) {
-				checkSceneCollision(childNode, collisionPairs);
-			}
+	private void drawBoundingRect(RenderTarget target, RenderStates states, FloatRect rect) {
+		RectangleShape shape = new RectangleShape();
+		shape.setPosition(new Vector2f(rect.left, rect.top));
+		shape.setSize(new Vector2f(rect.width, rect.height));
+		shape.setFillColor(Color.TRANSPARENT);
+		shape.setOutlineColor(mColor);
+		shape.setOutlineThickness(1.0f);
+		target.draw(shape);
+	}
+	
+	public void checkCollisions(QuadTree collisionTree) {
+		this.checkCollision(collisionTree);
+		for (SceneNode child : mChildren) {
+			child.checkCollisions(collisionTree);
 		}
 	}
-
-	void checkNodeCollision(SceneNode node, List<CollisionPair> collisionPairs) {
-		if (this != node) {
-			FloatRect collisionRect = collides(this, node);
-			if (collisionRect != null) {
-				CollisionPair pair = new CollisionPair(this, node);
-				if (!collisionPairs.contains(pair)) {
-					collisionPairs.add(pair);
-					onCollision(node);
-				}
-			}
-		}
-		for (SceneNode childNode : mChildren) {
-			childNode.checkNodeCollision(node, collisionPairs);
-		}
-	}
-
-	private FloatRect collides(SceneNode node1, SceneNode node2) {
-		Boolean isNode1Blocking = Boolean.valueOf(node1.getProperty("BlockVolume"));
-		Boolean isNode2Blocking = Boolean.valueOf(node2.getProperty("BlockVolume"));
-		if (isNode1Blocking && isNode2Blocking) {
-			return node1.getBoundingRect().intersection(node2.getBoundingRect());
-		} else {
-			return null;
-		}
-	}
-
-	private void drawBoundingRect(RenderTarget target, RenderStates states) {
-		FloatRect rect = getBoundingRect();
-		if (rect != null) {
-			RectangleShape shape = new RectangleShape();
-			shape.setPosition(new Vector2f(rect.left, rect.top));
-			shape.setSize(new Vector2f(rect.width, rect.height));
-			shape.setFillColor(Color.TRANSPARENT);
-			shape.setOutlineColor(mColor);
-			shape.setOutlineThickness(1.0f);
-			target.draw(shape);
-		}
+	
+	@Override
+	public void checkCollision(QuadTree collisionTree) {
+		// TODO unused
 	}
 
 	public Transform getWorldTransform() {
 		Transform transform = Transform.IDENTITY;
-
 		for (SceneNode node = this; node != null; node = node.mParentNode) {
 			transform = Transform.combine(node.getTransform(), transform);
 		}
@@ -173,32 +165,6 @@ public class SceneNode extends BasicTransformable implements Drawable {
 
 	public SceneNode getParentNode() {
 		return mParentNode;
-	}
-
-	public List<SceneNode> getCollisionGraph() {
-		List<SceneNode> collisionNodes = new ArrayList();
-		if (Boolean.valueOf(getProperty("BlockVolume"))) {
-			collisionNodes.add(this);
-		}
-		for (SceneNode node : mChildren) {
-			collisionNodes.addAll(getCollisionGraph());
-		}
-		return collisionNodes;
-	}
-
-	public void onCollision(SceneNode node) {
-
-	}
-
-	public void checkCollision(QuadTree collisionTree) {
-
-	}
-
-	public void checkCollisions(QuadTree collisionTree) {
-		this.checkCollision(collisionTree);
-		for (SceneNode child : mChildren) {
-			child.checkCollisions(collisionTree);
-		}
 	}
 
 	public Vector<SceneNode> getSceneGraph() {

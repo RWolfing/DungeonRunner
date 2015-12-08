@@ -1,20 +1,19 @@
 package de.dungeonrunner;
 
 import org.jsfml.graphics.RenderWindow;
-import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
-import org.jsfml.system.Vector2f;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.singleton.FontHolder;
-import de.dungeonrunner.singleton.StateHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;
+import de.dungeonrunner.singleton.StateHolder;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
+import de.dungeonrunner.state.StateStack;
 import de.dungeonrunner.state.States;
 import de.dungeonrunner.state.TitleState;
 import de.dungeonrunner.util.Constants;
@@ -25,7 +24,6 @@ public class Application {
 	private final Time FPS = Time.getSeconds(1.0f / 60.0f);
 	private RenderWindow mRenderWindow;
 	private Clock mClock;
-	private GameWorld mGameWorld;
 	private StateStack mStateStack;
 	private PlayerEntity mPlayer;
 
@@ -60,12 +58,14 @@ public class Application {
 				long time = System.currentTimeMillis();
 				processEvents();
 				time = System.currentTimeMillis() - time;
+				//TODO remove
 				//System.out.println("Update: " + time);
 				update(FPS);
 			}
 			long time = System.currentTimeMillis();
 			render();
 			time = System.currentTimeMillis() - time;
+			//TODO remove
 			//System.out.println("Draw: " + time);
 		}
 	}

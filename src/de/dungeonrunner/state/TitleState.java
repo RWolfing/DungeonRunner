@@ -7,7 +7,6 @@ import org.jsfml.system.Time;
 import org.jsfml.window.event.Event;
 import org.jsfml.window.event.Event.Type;
 
-import de.dungeonrunner.StateStack;
 import de.dungeonrunner.singleton.FontHolder;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;

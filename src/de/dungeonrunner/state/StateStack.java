@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.state;
 
 import java.util.Stack;
 import java.util.Vector;
@@ -7,8 +7,6 @@ import org.jsfml.system.Time;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.singleton.StateHolder;
-import de.dungeonrunner.state.State;
-import de.dungeonrunner.state.States;
 
 import static de.dungeonrunner.util.ReverseList.reversed;
 
