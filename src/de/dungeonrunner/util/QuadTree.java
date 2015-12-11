@@ -14,7 +14,7 @@ import de.dungeonrunner.nodes.SceneNode;
 
 public class QuadTree extends SceneNode {
 
-	private int MAX_OBJECTS = 10;
+	private int MAX_OBJECTS = 100;
 	private int MAX_LEVELS = 5;
 
 	private int mLevel;
@@ -117,25 +117,35 @@ public class QuadTree extends SceneNode {
 	}
 
 	public List<SceneNode> retrieve(List<SceneNode> returnObjects, FloatRect rect) {
-		if((rect.left + rect.width) < mQuadTreeBounds.left || rect.left > (mQuadTreeBounds.left +  mQuadTreeBounds.width) || (rect.top + rect.height) < mQuadTreeBounds.top || rect.top > (mQuadTreeBounds.top + mQuadTreeBounds.height)){
-			System.err.println("Collision rectangle not in bounds of the quadtree!");
-			return returnObjects;
-		}
-		
-		int index = getIndex(rect);
-		if (index != -1 && mQuadTreeNodes[0] != null) {
-			mQuadTreeNodes[index].retrieve(returnObjects, rect);
-		} else {
-			//The rect did not fit in any quadtree, return all containing nodes as collisions
-			for (int i = 0; i < mQuadTreeNodes.length; i++) {
-				QuadTree node = mQuadTreeNodes[i];
-				if (node != null) {
-					returnObjects.addAll(node.mCollisionObjects);
-				}
+		if (rect != null) {
+			if ((rect.left + rect.width) < mQuadTreeBounds.left
+					|| rect.left > (mQuadTreeBounds.left + mQuadTreeBounds.width)
+					|| (rect.top + rect.height) < mQuadTreeBounds.top
+					|| rect.top > (mQuadTreeBounds.top + mQuadTreeBounds.height)) {
+				System.err.println("Collision rectangle not in bounds of the quadtree!");
+				return returnObjects;
+			}
+
+			int index = getIndex(rect);
+			if (index != -1 && mQuadTreeNodes[0] != null) {
+				mQuadTreeNodes[index].retrieve(returnObjects, rect);
+				returnObjects.addAll(mCollisionObjects);
+			} else {
+				retrieveAllLeaves(returnObjects);
 			}
 		}
-		returnObjects.addAll(mCollisionObjects);
 		return returnObjects;
+	}
+
+	public void retrieveAllLeaves(List<SceneNode> nodes) {
+		nodes.addAll(mCollisionObjects);
+		for (int i = 0; i < mQuadTreeNodes.length; i++) {
+			QuadTree node = mQuadTreeNodes[i];
+			if (node != null) {
+				node.retrieveAllLeaves(nodes);
+			}
+		}
+
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package de.dungeonrunner.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
@@ -11,9 +14,12 @@ public abstract class GameEntity extends SceneNode {
 
 	private Vector2f mVelocity;
 	private AnimationNode mActiveAnimation;
+	
+	protected List<SceneNode> mCollisionObjects;
 
 	public GameEntity() {
 		mVelocity = Vector2f.ZERO;
+		mCollisionObjects = new ArrayList<>();
 	}
 
 	@Override

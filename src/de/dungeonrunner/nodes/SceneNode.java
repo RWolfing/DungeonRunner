@@ -1,5 +1,7 @@
 package de.dungeonrunner.nodes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -34,12 +36,15 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	public Vector<SceneNode> mStaticChildren;
 	public Vector<SceneNode> mDynamicChildren;
 	protected NodeType mNodeType;
+	
+	private List<SceneNode> mCollisionObjects;
 
 	public Properties mProperties;
 
 	public SceneNode() {
 		mChildren = new Vector<>();
 		mProperties = new Properties();
+		mCollisionObjects = new ArrayList<>();
 	}
 
 	@Override
@@ -131,9 +136,22 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		}
 	}
 	
-	@Override
 	public void checkCollision(QuadTree collisionTree) {
-		// TODO unused
+		mCollisionObjects.clear();
+		collisionTree.retrieve(mCollisionObjects, getBoundingRect());
+
+		for (SceneNode node : this.getSceneGraph()) {
+			mCollisionObjects.remove(node);
+		}
+
+		mCollisionObjects.remove(this);
+		for (SceneNode node : mCollisionObjects) {
+			processCollision(node);
+		}
+	}
+	
+	protected void processCollision(SceneNode node){
+		//Unused
 	}
 
 	public Transform getWorldTransform() {
