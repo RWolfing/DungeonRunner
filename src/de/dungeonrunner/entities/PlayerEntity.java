@@ -9,24 +9,27 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
+
 import de.dungeonrunner.NodeType;
+import de.dungeonrunner.commands.FireBulletCommand;
 import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
 public class PlayerEntity extends GameEntity {
-	
-	
+
 	private RectangleShape mCollisionShape = new RectangleShape();
 
-	private final int mJumpTime = 3;
+	private final int mJumpTime = 800;
 	private float mLeftJumpTime = mJumpTime;
-	private float mJumpVelocity = -70;
+	private float mJumpVelocity = -180;
 	private boolean mIsJumpPossible = false;
 
-	private final Vector2f mInitialVelocity = new Vector2f(0f, 70f);
+	private final Vector2f mInitialVelocity = new Vector2f(0f, 100f);
 	private boolean mIsJumping = false;
+
+	private Vector2f mProjectileSpawn;
 
 	public PlayerEntity(TextureID textureID) {
 		super();
@@ -37,7 +40,8 @@ public class PlayerEntity extends GameEntity {
 		mIdleAnimation.setRepeat(true);
 		mIdleAnimation.setNumFrames(6);
 		mIdleAnimation.setFrameSize(new Vector2i(128, 128));
-		setAnimation(mIdleAnimation);
+		mProjectileSpawn = new Vector2f(127, 64);
+		setSprite(mIdleAnimation);
 		setVelocity(mInitialVelocity);
 	}
 
@@ -52,7 +56,7 @@ public class PlayerEntity extends GameEntity {
 		super.updateCurrent(dt);
 
 		if (mIsJumping) {
-			mLeftJumpTime = mLeftJumpTime - dt.asSeconds();
+			mLeftJumpTime = mLeftJumpTime - dt.asMilliseconds();
 			if (mLeftJumpTime < 0) {
 				mLeftJumpTime = 0;
 				mIsJumping = false;
@@ -73,13 +77,12 @@ public class PlayerEntity extends GameEntity {
 			if (intersection1 == null) {
 				return;
 			}
-
 			mCollisionShape.setPosition(new Vector2f(intersection1.left, intersection1.top));
 			mCollisionShape.setSize(new Vector2f(intersection1.width, intersection1.height));
 			mCollisionShape.setFillColor(Color.WHITE);
 			mCollisionShape.setOutlineColor(Color.BLACK);
 			mCollisionShape.setOutlineThickness(1.0f);
-			
+
 			if (intersection1.width > intersection1.height) {
 				// Player inbound from Top or Bottom
 				if (getBoundingRect().top < intersection1.top) {
@@ -106,5 +109,11 @@ public class PlayerEntity extends GameEntity {
 			mIsJumping = true;
 			mLeftJumpTime = mJumpTime;
 		}
+	}
+
+	public void shoot() {
+		FireBulletCommand command = new FireBulletCommand(this, NodeType.WORLD,
+				Vector2f.add(getPosition(), mProjectileSpawn));
+		addCommand(command);
 	}
 }

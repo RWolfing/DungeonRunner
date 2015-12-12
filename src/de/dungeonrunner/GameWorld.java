@@ -11,6 +11,7 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 
+import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.PlayerEntity;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
@@ -25,6 +26,8 @@ import tiled.core.TileLayer;
 
 public class GameWorld {
 
+	public static GameWorld WORLD;
+	
 	private enum RenderLayers {
 		Background, Middleground, Foreground
 	}
@@ -54,6 +57,7 @@ public class GameWorld {
 		loadMap();
 		loadTextures();
 		buildScene();
+		WORLD = this;
 	}
 
 	private void loadTextures() {
@@ -78,6 +82,13 @@ public class GameWorld {
 
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
+			switch(layer){
+			case Middleground:
+				node.setNodeType(NodeType.WORLD);
+				break;
+			default:
+				break;
+			}
 			mRenderLayers.put(layer, node);
 			mSceneGraph.attachChild(node);
 		}
@@ -139,11 +150,10 @@ public class GameWorld {
 
 	public void update(Time dt) {
 		if (!mIsPausing) {
-			while (!mCommandStack.isEmpty()) {
-				mSceneGraph.onCommand(mCommandStack.pop());
-			}
+			executeCommands();
 			mSceneGraph.update(dt);
 			checkCollision();
+			mSceneGraph.cleanDestroyedNodes();
 			adaptCameraPosition();
 		}
 	}
@@ -152,6 +162,21 @@ public class GameWorld {
 		return mCommandStack;
 	}
 
+	private void executeCommands(){
+		//Check if stack is empty
+		if(mCommandStack.isEmpty()){
+			return;
+		}
+		//First handle input commands
+		while (!mCommandStack.isEmpty()) {
+			mSceneGraph.onCommand(mCommandStack.pop());
+		}
+		//Collect entity commands
+		mSceneGraph.collectCommands(mCommandStack);
+		//Reexecute second pass
+		executeCommands();
+	}
+	
 	private void checkCollision() {
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {

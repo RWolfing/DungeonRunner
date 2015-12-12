@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.commands;
 
 import java.util.Stack;
 

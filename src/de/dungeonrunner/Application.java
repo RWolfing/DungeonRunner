@@ -37,6 +37,7 @@ public class Application {
 		TextureHolder texHolder = TextureHolder.getInstance();
 		texHolder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_idle_anim.png");
 		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
+		texHolder.loadTexture(TextureID.BULLET, Constants.TEX_DIR + "projectile.png");
 		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
 
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");

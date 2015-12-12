@@ -19,7 +19,8 @@ import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.Collidable;
 import de.dungeonrunner.NodeType;
-import de.dungeonrunner.SceneCommand;
+import de.dungeonrunner.commands.CommandStack;
+import de.dungeonrunner.commands.SceneCommand;
 import de.dungeonrunner.singleton.FontHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;
 import de.dungeonrunner.util.Constants;
@@ -146,12 +147,42 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 
 		mCollisionObjects.remove(this);
 		for (SceneNode node : mCollisionObjects) {
-			processCollision(node);
+		
+				processCollision(node);
 		}
 	}
 	
 	protected void processCollision(SceneNode node){
 		//Unused
+	}
+	
+	public void collectCommands(CommandStack commandStack){
+		collectCommand(commandStack);
+		for(SceneNode node : mChildren){
+			node.collectCommands(commandStack);
+		}
+	}
+	
+	protected void collectCommand(CommandStack commandStack){
+		//Unused
+	}
+	
+	public void cleanDestroyedNodes(){
+		List<SceneNode> destroyedNodes = new ArrayList<>();
+		if(isDestroyed()){
+			if(mParentNode != null){
+				mParentNode.detachChild(this);
+			}
+		} else {
+			for(SceneNode node : mChildren){
+				if(node.isDestroyed())
+				destroyedNodes.add(node);
+			}
+			mChildren.removeAll(destroyedNodes);
+			for(SceneNode node : mChildren){
+				node.cleanDestroyedNodes();
+			}
+		}
 	}
 
 	public Transform getWorldTransform() {
@@ -207,7 +238,19 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		return sceneGraph;
 	}
 	
+	public void setNodeType(NodeType nodeType){
+		mNodeType = nodeType;
+	}
+	
 	public NodeType getType(){
 		return mNodeType;
+	}
+	
+	protected boolean isDestroyed(){
+		return false;
+	}
+	
+	public void destroy(){
+		// Unused
 	}
 }

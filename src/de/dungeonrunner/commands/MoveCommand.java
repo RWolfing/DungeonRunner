@@ -1,5 +1,6 @@
-package de.dungeonrunner;
+package de.dungeonrunner.commands;
 
+import de.dungeonrunner.NodeType;
 import de.dungeonrunner.nodes.SceneNode;
 
 public class MoveCommand extends SceneCommand{
