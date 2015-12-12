@@ -2,6 +2,7 @@ package de.dungeonrunner;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderWindow;
@@ -12,22 +13,26 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
-import de.dungeonrunner.entities.PlayerEntity;
+import de.dungeonrunner.entities.EnemyUnit;
+import de.dungeonrunner.entities.PlayerUnit;
+import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.QuadTree;
+import de.dungeonrunner.util.TmxKeys;
 import de.dungeonrunner.util.TmxMapLoader;
 import tiled.core.Map;
+import tiled.core.MapLayer;
+import tiled.core.MapObject;
+import tiled.core.ObjectGroup;
 import tiled.core.Tile;
 import tiled.core.TileLayer;
 
 public class GameWorld {
 
-	public static GameWorld WORLD;
-	
 	private enum RenderLayers {
 		Background, Middleground, Foreground
 	}
@@ -42,7 +47,7 @@ public class GameWorld {
 	private Vector2f mSpawnPosition;
 	private boolean mIsPausing = false;
 
-	private PlayerEntity mPlayerEntity;
+	private PlayerUnit mPlayerEntity;
 	private View mCamera;
 
 	private CommandStack mCommandStack;
@@ -57,7 +62,6 @@ public class GameWorld {
 		loadMap();
 		loadTextures();
 		buildScene();
-		WORLD = this;
 	}
 
 	private void loadTextures() {
@@ -80,9 +84,69 @@ public class GameWorld {
 		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
 				(mMap.getHeight() * mMap.getTileHeight()) + 50));
 
+		createLevelScene();
+		createLevelEntities();
+	}
+
+	public void handleEvent(Event event) {
+
+	}
+
+	public void draw() {
+		mRenderWindow.setView(mCamera);
+		mRenderWindow.draw(mSceneGraph);
+		mRenderWindow.draw(mCollisionTree);
+	}
+
+	public void update(Time dt) {
+		if (!mIsPausing) {
+			executeCommands();
+			mSceneGraph.update(dt);
+			checkCollision();
+			mSceneGraph.cleanDestroyedNodes();
+			adaptCameraPosition();
+		}
+	}
+
+	public CommandStack getCommandStack() {
+		return mCommandStack;
+	}
+
+	private void executeCommands() {
+		// Check if stack is empty
+		if (mCommandStack.isEmpty()) {
+			return;
+		}
+		// First handle input commands
+		while (!mCommandStack.isEmpty()) {
+			mSceneGraph.onCommand(mCommandStack.pop());
+		}
+		// Collect entity commands
+		mSceneGraph.collectCommands(mCommandStack);
+		// Reexecute second pass
+		executeCommands();
+	}
+
+	private void checkCollision() {
+		mCollisionTree.clear();
+		for (SceneNode node : mSceneGraph.getSceneGraph()) {
+			if (node.getBoundingRect() != null) {
+				mCollisionTree.insert(node);
+			}
+		}
+		mSceneGraph.checkCollisions(mCollisionTree);
+	}
+
+	private void adaptCameraPosition() {
+		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize()));
+		mCamera.setCenter(mPlayerEntity.getPosition());
+	}
+
+	private void createLevelScene() {
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
-			switch(layer){
+			switch (layer) {
 			case Middleground:
 				node.setNodeType(NodeType.WORLD);
 				break;
@@ -132,64 +196,36 @@ public class GameWorld {
 				}
 			}
 		}
-
-		mPlayerEntity = new PlayerEntity(TextureID.ANIM_IDLE);
-		mPlayerEntity.setPosition(mSpawnPosition);
-		mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayerEntity);
 	}
 
-	public void handleEvent(Event event) {
+	private void createLevelEntities() {
+		if (mMap != null) {
+			for (MapLayer layer : mMap.getLayers()) {
+				if (layer instanceof ObjectGroup) {
+					ObjectGroup objGroup = (ObjectGroup) layer;
 
-	}
-
-	public void draw() {
-		mRenderWindow.setView(mCamera);
-		mRenderWindow.draw(mSceneGraph);
-		mRenderWindow.draw(mCollisionTree);
-	}
-
-	public void update(Time dt) {
-		if (!mIsPausing) {
-			executeCommands();
-			mSceneGraph.update(dt);
-			checkCollision();
-			mSceneGraph.cleanDestroyedNodes();
-			adaptCameraPosition();
-		}
-	}
-
-	public CommandStack getCommandStack() {
-		return mCommandStack;
-	}
-
-	private void executeCommands(){
-		//Check if stack is empty
-		if(mCommandStack.isEmpty()){
-			return;
-		}
-		//First handle input commands
-		while (!mCommandStack.isEmpty()) {
-			mSceneGraph.onCommand(mCommandStack.pop());
-		}
-		//Collect entity commands
-		mSceneGraph.collectCommands(mCommandStack);
-		//Reexecute second pass
-		executeCommands();
-	}
-	
-	private void checkCollision() {
-		mCollisionTree.clear();
-		for (SceneNode node : mSceneGraph.getSceneGraph()) {
-			if (node.getBoundingRect() != null) {
-				mCollisionTree.insert(node);
+					for (Iterator<MapObject> i = objGroup.getObjects(); i.hasNext();) {
+						MapObject object = i.next();
+						
+						//Player
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
+							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE);
+							mPlayerEntity.setPosition(new Vector2f((float) object.getX(), (float) object.getY()));
+							mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayerEntity);
+							continue;
+						}
+						
+						if(object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)){
+							Unit eunit = new EnemyUnit(TextureID.ENEMY);
+							float xSpawn = (float) (object.getX() + object.getBounds().x / 2);
+							float ySpawn = (float) (object.getY());
+							Vector2f spawnPosition = new Vector2f(xSpawn, ySpawn);
+							eunit.setPosition(spawnPosition);
+							mRenderLayers.get(RenderLayers.Middleground).attachChild(eunit);
+						}
+					}
+				}
 			}
 		}
-		mSceneGraph.checkCollisions(mCollisionTree);
-	}
-
-	private void adaptCameraPosition() {
-		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize()));
-		mCamera.setCenter(mPlayerEntity.getPosition());
 	}
 }

@@ -16,7 +16,7 @@ import tiled.core.TileSet;
 public class TextureHolder {
 
 	public enum TextureID {
-		ANIM_IDLE, PLAYER_TEXTURE, TITLE_BG_SCREEN, BULLET
+		ANIM_IDLE, PLAYER_TEXTURE, TITLE_BG_SCREEN, BULLET, ENEMY
 	}
 
 	private static TextureHolder mInstance;

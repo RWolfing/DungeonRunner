@@ -46,5 +46,4 @@ public class TitleState extends State {
 		}
 		return false;
 	}
-
 }

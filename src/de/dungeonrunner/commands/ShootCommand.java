@@ -1,7 +1,7 @@
 package de.dungeonrunner.commands;
 
 import de.dungeonrunner.NodeType;
-import de.dungeonrunner.entities.PlayerEntity;
+import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.nodes.SceneNode;
 
 public class ShootCommand extends SceneCommand{
@@ -12,7 +12,7 @@ public class ShootCommand extends SceneCommand{
 
 	@Override
 	public void execute(SceneNode sceneNode) {
-		((PlayerEntity) sceneNode).shoot();	
+		((PlayerUnit) sceneNode).shoot();	
 	}
 
 }

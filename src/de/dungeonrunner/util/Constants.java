@@ -2,6 +2,8 @@ package de.dungeonrunner.util;
 
 import java.io.File;
 
+import org.jsfml.system.Vector2f;
+
 public class Constants {
 
 	public static final String ROOT_DIR = System.getProperty("user.dir") + File.separator;
@@ -12,8 +14,12 @@ public class Constants {
 	public static final String ANIM_DIR = TEX_DIR + File.separator + "animations" + File.separator;
 	public static boolean IS_DEBUGGING = false;
 	
+	//Physics
+	public static final Vector2f GRAVITY = new Vector2f(0, 100);
+	public static final float GRAVITY_DOWN = 100;
 	
 	//Properties
 	public static final String BLOCK_VOLUME = "BlockVolume";
 	public static final String PROJECTILE = "Projectile";
+	public static final String UNIT_VOLUME = "UnitVolume";
 }

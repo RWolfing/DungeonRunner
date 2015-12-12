@@ -5,6 +5,9 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.singleton.TextureHolder;
+import de.dungeonrunner.singleton.TextureHolder.TextureID;
+
 public class AnimationNode extends SpriteNode {
 
 	private Vector2i mFrameSize;
@@ -83,5 +86,15 @@ public class AnimationNode extends SpriteNode {
 
 	public void setRepeat(boolean repeat) {
 		mRepeat = repeat;
+	}
+	
+	public static AnimationNode createAnimationNode(TextureID textureID, long duration, boolean repeat, int numFrames, Vector2i frameSize){
+		Sprite sprite = new Sprite(TextureHolder.getInstance().getTexture(textureID));
+		AnimationNode animationNode = new AnimationNode(sprite);
+		animationNode.setDuration(Time.getMilliseconds(duration));
+		animationNode.setRepeat(repeat);
+		animationNode.setNumFrames(numFrames);
+		animationNode.setFrameSize(frameSize);
+		return animationNode;
 	}
 }

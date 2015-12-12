@@ -1,5 +1,5 @@
 package de.dungeonrunner;
 
 public enum NodeType {
-	PLAYER, WORLD
+	PLAYER, WORLD, UNIT
 }

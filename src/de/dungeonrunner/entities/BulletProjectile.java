@@ -33,10 +33,14 @@ public class BulletProjectile extends GameEntity {
 
 	@Override
 	protected void processCollision(SceneNode node) {
-		if (Boolean.valueOf(node.getProperty(Constants.BLOCK_VOLUME))
+		if (Boolean.valueOf(node.getProperty(Constants.BLOCK_VOLUME)) || Boolean.valueOf(node.getProperty(Constants.UNIT_VOLUME))
 				&& !mShootingEntity.getSceneGraph().contains(node)) {
-			if (node.getBoundingRect().intersection(getBoundingRect()) != null)
+			if (node.getBoundingRect().intersection(getBoundingRect()) != null){
 				destroy();
+				if(node instanceof Unit){
+					((Unit) node).damage(50);
+				}
+			}
 		}
 	}
 }
