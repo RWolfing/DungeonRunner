@@ -122,7 +122,7 @@ public class QuadTree extends SceneNode {
 					|| rect.left > (mQuadTreeBounds.left + mQuadTreeBounds.width)
 					|| (rect.top + rect.height) < mQuadTreeBounds.top
 					|| rect.top > (mQuadTreeBounds.top + mQuadTreeBounds.height)) {
-				System.err.println("Collision rectangle not in bounds of the quadtree!");
+				// TODO System.err.println("Collision rectangle not in bounds of the quadtree!");
 				return returnObjects;
 			}
 

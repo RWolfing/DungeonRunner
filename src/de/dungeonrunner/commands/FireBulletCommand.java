@@ -27,5 +27,6 @@ public class FireBulletCommand extends SceneCommand{
 		projectile.setPosition(mSpawnPosition);
 		projectile.setVelocity(Vector2f.mul(projectile.getVelocity(), mXOrientation));
 		sceneNode.attachChild(projectile);
+		System.out.println("Attached now");
 	}
 }

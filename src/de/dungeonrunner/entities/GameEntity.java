@@ -53,6 +53,7 @@ public abstract class GameEntity extends SceneNode {
 	@Override
 	protected void collectCommand(CommandStack commandStack) {
 		for(SceneCommand command : mPendingCommands){
+			System.out.println("Pushed command: " + command);
 			commandStack.push(command);
 		}
 		mPendingCommands.clear();
@@ -101,6 +102,7 @@ public abstract class GameEntity extends SceneNode {
 	}
 	
 	public void addCommand(SceneCommand command){
+		System.out.println("Added Command: " + command);
 		mPendingCommands.add(command);
 	}
 	

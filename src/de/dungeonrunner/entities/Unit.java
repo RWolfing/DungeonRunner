@@ -3,9 +3,11 @@ package de.dungeonrunner.entities;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
+
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireBulletCommand;
 import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
@@ -13,14 +15,15 @@ import de.dungeonrunner.util.Constants;
 public class Unit extends GameEntity {
 
 	public enum ANIM_ID {
-		WALK, JUMP, IDLE
+		WALK, JUMP, IDLE, SHOOT
 	}
 
 	public enum STATE {
-		IDLE, WALKING, JUMPING
+		IDLE, WALKING, JUMPING, SHOOTING
 	}
 
 	private Vector2f mProjectileSpawn;
+	private boolean mIsShooting;
 
 	private final int mJumpTime = 800;
 	private float mLeftJumpTime = mJumpTime;
@@ -36,6 +39,7 @@ public class Unit extends GameEntity {
 	private AnimationNode mIdleAnimation;
 	private AnimationNode mWalkAnimation;
 	private AnimationNode mJumpAnimation;
+	private AnimationNode mShootAnimation;
 
 	public Unit(TextureID textureID) {
 		super();
@@ -44,6 +48,7 @@ public class Unit extends GameEntity {
 		mAnimState = STATE.IDLE;
 		mIsJumping = false;
 		mIsAirborne = false;
+		mIsShooting = false;
 		mHitPointsTotal = mHitPoints = 0;
 		setVelocity(0, Constants.GRAVITY.y);
 	}
@@ -64,6 +69,7 @@ public class Unit extends GameEntity {
 			}
 		}
 		computeAnimationState();
+		mActiveAnimation.setOrientation(getOrientation());
 
 		// Reset Variables
 		mIsAirborne = false;
@@ -103,7 +109,9 @@ public class Unit extends GameEntity {
 	}
 
 	private void computeAnimationState() {
-		if (!mIsAirborne) {
+		if (mIsShooting) {
+			requestState(STATE.SHOOTING);
+		} else if (!mIsAirborne) {
 			requestState(STATE.JUMPING);
 		} else if (getVelocity().x != 0) {
 			requestState(STATE.WALKING);
@@ -113,25 +121,48 @@ public class Unit extends GameEntity {
 	}
 
 	private void requestState(STATE animState) {
+		if (animState == mAnimState) {
+			return;
+		}
+		System.out.println("Requested State: " + animState);
 		switch (animState) {
 		case IDLE:
-			if (mAnimState == STATE.WALKING || mAnimState == STATE.JUMPING) {
-				mActiveAnimation = mIdleAnimation;
-				mAnimState = STATE.IDLE;
-			}
+			mActiveAnimation = mIdleAnimation;
+			mAnimState = STATE.IDLE;
 			break;
 		case WALKING:
-			if (mAnimState == STATE.IDLE || mAnimState == STATE.JUMPING) {
-				mActiveAnimation = mWalkAnimation;
-				mAnimState = STATE.WALKING;
-			}
+			mActiveAnimation = mWalkAnimation;
+			mAnimState = STATE.WALKING;
 			break;
 		case JUMPING:
-			if (mAnimState == STATE.IDLE || mAnimState == STATE.WALKING) {
-				mActiveAnimation = mJumpAnimation;
-				mAnimState = STATE.JUMPING;
-			}
+			mActiveAnimation = mJumpAnimation;
+			mAnimState = STATE.JUMPING;
 			break;
+		case SHOOTING:
+			mActiveAnimation = mShootAnimation;
+			//TODO in PlayerUnit auslagern
+			mShootAnimation.setAnimationListener(new AnimationNode.AnimationListener() {
+
+				private GameEntity mEntity;
+
+				@Override
+				public void onFrame(AnimationNode node, int frame) {
+					System.out.println(node.getNumFrames() + "/" + frame);
+					if (node.getNumFrames() - 1 == 5) {
+						System.out.println("Executing now");
+						FireBulletCommand command = new FireBulletCommand(mEntity, NodeType.WORLD,
+								Vector2f.add(getPosition(), mProjectileSpawn), getOrientation().getValue());
+						addCommand(command);
+						mIsShooting = false;
+					}
+				}
+
+				private AnimationListener init(GameEntity ctx) {
+					mEntity = ctx;
+					return this;
+				}
+			}.init(this));
+			mAnimState = STATE.SHOOTING;
 		default:
 			break;
 		}
@@ -158,9 +189,9 @@ public class Unit extends GameEntity {
 	}
 
 	public void shoot() {
-		FireBulletCommand command = new FireBulletCommand(this, NodeType.WORLD,
-				Vector2f.add(getPosition(), mProjectileSpawn), getOrientation().getValue());
-		addCommand(command);
+		if (!mIsShooting) {
+			mIsShooting = true;
+		}
 	}
 
 	public void damage(int damage) {
@@ -201,12 +232,14 @@ public class Unit extends GameEntity {
 		case JUMP:
 			mJumpAnimation = node;
 			break;
+		case SHOOT:
+			mShootAnimation = node;
 		default:
 			break;
 		}
 	}
-	
-	public void setProjectileSpawn(Vector2f spawn){
+
+	public void setProjectileSpawn(Vector2f spawn) {
 		mProjectileSpawn = spawn;
 	}
 }

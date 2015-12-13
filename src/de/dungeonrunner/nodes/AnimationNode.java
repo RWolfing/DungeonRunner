@@ -21,6 +21,7 @@ public class AnimationNode extends SpriteNode {
 	private boolean mIsRunning;
 
 	private ORIENTATION mOrientation;
+	private AnimationListener mAnimationListener;
 
 	public AnimationNode(Sprite sprite) {
 		super(sprite);
@@ -52,17 +53,25 @@ public class AnimationNode extends SpriteNode {
 				}
 
 				mElapsedTime = Time.sub(mElapsedTime, timePerFrame);
+				if (mAnimationListener != null) {
+					mAnimationListener.onFrame(this, mCurrentFrame);
+				}
+				mCurrentFrame++;
+
 				if (mRepeat) {
-					mCurrentFrame++;
 					if (mCurrentFrame > mNumFrames) {
 						mCurrentFrame = 0;
 						textureRect = new IntRect(0, 0, mFrameSize.x, mFrameSize.y);
 					}
 				}
+				if (mCurrentFrame == mNumFrames && !mRepeat) {
+					stop();
+					return;
+				}
 			}
-
 			mSprite.setTextureRect(
 					new IntRect(textureRect.left, textureRect.top, textureRect.width, textureRect.height));
+
 		}
 	}
 
@@ -78,7 +87,11 @@ public class AnimationNode extends SpriteNode {
 	}
 
 	public void start() {
-		mIsRunning = true;
+		if (!isRunning()) {
+			mIsRunning = true;
+			mCurrentFrame = 0;
+			mElapsedTime = Time.ZERO;
+		}
 	}
 
 	public void stop() {
@@ -123,6 +136,10 @@ public class AnimationNode extends SpriteNode {
 		mRepeat = repeat;
 	}
 
+	public void setAnimationListener(AnimationListener listener) {
+		mAnimationListener = listener;
+	}
+
 	public static AnimationNode createAnimationNode(TextureID textureID, long duration, boolean repeat, int numFrames,
 			Vector2i frameSize) {
 		Sprite sprite = new Sprite(TextureHolder.getInstance().getTexture(textureID));
@@ -132,5 +149,9 @@ public class AnimationNode extends SpriteNode {
 		animationNode.setNumFrames(numFrames);
 		animationNode.setFrameSize(frameSize);
 		return animationNode;
+	}
+
+	public interface AnimationListener {
+		void onFrame(AnimationNode node, int frame);
 	}
 }

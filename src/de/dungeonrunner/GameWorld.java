@@ -112,10 +112,6 @@ public class GameWorld {
 	}
 
 	private void executeCommands() {
-		// Check if stack is empty
-		if (mCommandStack.isEmpty()) {
-			return;
-		}
 		// First handle input commands
 		while (!mCommandStack.isEmpty()) {
 			mSceneGraph.onCommand(mCommandStack.pop());
@@ -123,7 +119,9 @@ public class GameWorld {
 		// Collect entity commands
 		mSceneGraph.collectCommands(mCommandStack);
 		// Reexecute second pass
-		executeCommands();
+		while (!mCommandStack.isEmpty()) {
+			mSceneGraph.onCommand(mCommandStack.pop());
+		}
 	}
 
 	private void checkCollision() {
@@ -139,8 +137,8 @@ public class GameWorld {
 	private void adaptCameraPosition() {
 		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
 				new Vector2f(mRenderWindow.getSize()));
-		if(mPlayerEntity != null)
-		mCamera.setCenter(mPlayerEntity.getPosition());
+		if (mPlayerEntity != null)
+			mCamera.setCenter(mPlayerEntity.getPosition());
 	}
 
 	private void createLevelScene() {
@@ -180,16 +178,17 @@ public class GameWorld {
 								node.setPosition(x * tileWidth, y * tileHeight);
 								node.setProperties(tile.getProperties());
 
-								if(tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)){
+								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
 									mRenderLayers.get(RenderLayers.Background).attachChild(node);
-								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)){
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)) {
 									mRenderLayers.get(RenderLayers.Levelbackground).attachChild(node);
-								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_MIDDLE)){
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_MIDDLE)) {
 									mRenderLayers.get(RenderLayers.Levelmiddleground).attachChild(node);
-								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_FRONT)){
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_FRONT)) {
 									mRenderLayers.get(RenderLayers.Levelforeground).attachChild(node);
 								} else {
-									System.err.println("GameWorld, Could not find the tilelayer " + tileLayer.getName());
+									System.err
+											.println("GameWorld, Could not find the tilelayer " + tileLayer.getName());
 								}
 							}
 						}
@@ -207,16 +206,16 @@ public class GameWorld {
 
 					for (Iterator<MapObject> i = objGroup.getObjects(); i.hasNext();) {
 						MapObject object = i.next();
-						
-						//Player
+
+						// Player
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
 							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE);
 							mPlayerEntity.setPosition(new Vector2f((float) object.getX(), (float) object.getY()));
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(mPlayerEntity);
 							continue;
 						}
-						
-						if(object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)){
+
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
 							Unit eunit = new EnemyUnit(TextureID.ENEMY);
 							float xSpawn = (float) (object.getX() + object.getBounds().x / 2);
 							float ySpawn = (float) (object.getY());

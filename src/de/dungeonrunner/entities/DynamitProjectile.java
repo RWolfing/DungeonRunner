@@ -35,7 +35,6 @@ public class DynamitProjectile extends GameEntity {
 
 	@Override
 	protected void processCollision(SceneNode node) {
-		System.out.println("Node " + node + " is a BlockVolume" + node.getProperty(Constants.BLOCK_VOLUME));
 		if (Boolean.valueOf(node.getProperty(Constants.BLOCK_VOLUME)) || Boolean.valueOf(node.getProperty(Constants.UNIT_VOLUME))
 				&& !mShootingEntity.getSceneGraph().contains(node)) {
 			if (node.getBoundingRect().intersection(getBoundingRect()) != null){
