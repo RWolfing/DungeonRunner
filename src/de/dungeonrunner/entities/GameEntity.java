@@ -18,6 +18,7 @@ public abstract class GameEntity extends SceneNode {
 	private SpriteNode mSprite;
 	private boolean mIsDestroyed;
 	private List<SceneCommand> mPendingCommands;
+	private FloatRect mCollisionRect;
 
 	protected List<SceneNode> mCollisionObjects;
 
@@ -25,6 +26,7 @@ public abstract class GameEntity extends SceneNode {
 		mVelocity = Vector2f.ZERO;
 		mCollisionObjects = new ArrayList<>();
 		mPendingCommands = new ArrayList<>();
+		mCollisionRect = FloatRect.EMPTY;
 	}
 
 	@Override
@@ -53,10 +55,9 @@ public abstract class GameEntity extends SceneNode {
 	@Override
 	public FloatRect getBoundingRect() {
 		if (mSprite != null) {
-			return mSprite.getBoundingRect();
-		} else {
-			return null;
-		}
+			return new FloatRect(mSprite.getBoundingRect().left + mCollisionRect.left, mSprite.getBoundingRect().top + mCollisionRect.top,mCollisionRect.width, mCollisionRect.height);
+		} 
+		return mCollisionRect;
 	}
 
 	public void setVelocity(Vector2f velocity) {
@@ -83,5 +84,9 @@ public abstract class GameEntity extends SceneNode {
 	
 	public void addCommand(SceneCommand command){
 		mPendingCommands.add(command);
+	}
+	
+	public void setCollisionRect(FloatRect collisionRect){
+		mCollisionRect = collisionRect;
 	}
 }

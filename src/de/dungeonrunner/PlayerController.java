@@ -47,12 +47,12 @@ public class PlayerController {
 		boolean isRightKeyPressed = Keyboard.isKeyPressed(Key.RIGHT);
 
 		if (isLeftPressed) {
-			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, -2, 0);
+			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, -100, 0);
 			commands.push(moveCommand);
 		}
 
 		if (isRightKeyPressed) {
-			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, 2, 0);
+			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, 100, 0);
 			commands.push(moveCommand);
 		}
 	}

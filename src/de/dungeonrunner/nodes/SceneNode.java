@@ -147,7 +147,6 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 
 		mCollisionObjects.remove(this);
 		for (SceneNode node : mCollisionObjects) {
-		
 				processCollision(node);
 		}
 	}

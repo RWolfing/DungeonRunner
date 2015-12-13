@@ -1,6 +1,7 @@
 package de.dungeonrunner;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -34,7 +35,7 @@ import tiled.core.TileLayer;
 public class GameWorld {
 
 	private enum RenderLayers {
-		Background, Middleground, Foreground
+		Background, Levelbackground, Levelmiddleground, Levelforeground
 	}
 
 	private RenderWindow mRenderWindow;
@@ -44,7 +45,6 @@ public class GameWorld {
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
 
 	private Map mMap;
-	private Vector2f mSpawnPosition;
 	private boolean mIsPausing = false;
 
 	private PlayerUnit mPlayerEntity;
@@ -57,7 +57,6 @@ public class GameWorld {
 		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
 				new Vector2f(mRenderWindow.getSize()));
 		mRenderWindow.setView(mCamera);
-		mSpawnPosition = new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2);
 		mCommandStack = new CommandStack();
 		loadMap();
 		loadTextures();
@@ -71,7 +70,7 @@ public class GameWorld {
 	}
 
 	private void loadMap() {
-		mMap = TmxMapLoader.loadMap(Constants.MAP_DIR + "CollisionTest.tmx");
+		mMap = TmxMapLoader.loadMap(Constants.MAP_DIR + "test" + File.separator + "minetest.tmx");
 
 		if (mMap != null) {
 			TextureHolder.getInstance().loadTiledTextures(mMap);
@@ -140,6 +139,7 @@ public class GameWorld {
 	private void adaptCameraPosition() {
 		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
 				new Vector2f(mRenderWindow.getSize()));
+		if(mPlayerEntity != null)
 		mCamera.setCenter(mPlayerEntity.getPosition());
 	}
 
@@ -147,7 +147,7 @@ public class GameWorld {
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode();
 			switch (layer) {
-			case Middleground:
+			case Levelforeground:
 				node.setNodeType(NodeType.WORLD);
 				break;
 			default:
@@ -180,15 +180,16 @@ public class GameWorld {
 								node.setPosition(x * tileWidth, y * tileHeight);
 								node.setProperties(tile.getProperties());
 
-								switch (i) {
-								case 0:
+								if(tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)){
 									mRenderLayers.get(RenderLayers.Background).attachChild(node);
-									break;
-								case 1:
-									mRenderLayers.get(RenderLayers.Middleground).attachChild(node);
-									break;
-								default:
-									mRenderLayers.get(RenderLayers.Foreground).attachChild(node);
+								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)){
+									mRenderLayers.get(RenderLayers.Levelbackground).attachChild(node);
+								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_MIDDLE)){
+									mRenderLayers.get(RenderLayers.Levelmiddleground).attachChild(node);
+								} else if(tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_FRONT)){
+									mRenderLayers.get(RenderLayers.Levelforeground).attachChild(node);
+								} else {
+									System.err.println("GameWorld, Could not find the tilelayer " + tileLayer.getName());
 								}
 							}
 						}
@@ -211,7 +212,7 @@ public class GameWorld {
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
 							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE);
 							mPlayerEntity.setPosition(new Vector2f((float) object.getX(), (float) object.getY()));
-							mRenderLayers.get(RenderLayers.Middleground).attachChild(mPlayerEntity);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(mPlayerEntity);
 							continue;
 						}
 						
@@ -221,7 +222,7 @@ public class GameWorld {
 							float ySpawn = (float) (object.getY());
 							Vector2f spawnPosition = new Vector2f(xSpawn, ySpawn);
 							eunit.setPosition(spawnPosition);
-							mRenderLayers.get(RenderLayers.Middleground).attachChild(eunit);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
 					}
 				}

@@ -29,7 +29,7 @@ public class EnemyUnit extends Unit {
 					// Player inbound from Top or Bottom
 					if (getBoundingRect().top < intersection1.top) {
 						// Collision from top
-						mIsJumpPossible = true;
+						mIsAirborne = true;
 						setPosition(getWorldPosition().x, getWorldPosition().y - intersection1.height);
 					} else {
 						// Collision from bottom

@@ -1,6 +1,7 @@
 package de.dungeonrunner.commands;
 
 import de.dungeonrunner.NodeType;
+import de.dungeonrunner.entities.GameEntity;
 import de.dungeonrunner.nodes.SceneNode;
 
 public class MoveCommand extends SceneCommand{
@@ -16,7 +17,10 @@ public class MoveCommand extends SceneCommand{
 	
 	@Override
 	public void execute(SceneNode node) {
-		node.move(mDeltaX, mDeltaY);
+		if(node instanceof GameEntity){
+			GameEntity entity = (GameEntity) node;
+			entity.setVelocity(entity.getVelocity().x + mDeltaX, entity.getVelocity().y + mDeltaY);
+		}
 	}
 
 }
