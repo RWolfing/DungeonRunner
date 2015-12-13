@@ -4,6 +4,7 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import de.dungeonrunner.NodeType;
@@ -24,6 +25,7 @@ public class PlayerUnit extends Unit {
 		setAnimation(mWalkAnimation, ANIM_ID.WALK);
 		setAnimation(mJumpAnimation, ANIM_ID.JUMP);
 		setCollisionRect(new FloatRect(27, 11, 62, 118));
+		setProjectileSpawn(new Vector2f(0, 0));
 	}
 
 	@Override

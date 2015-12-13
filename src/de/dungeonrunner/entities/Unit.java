@@ -1,24 +1,16 @@
 package de.dungeonrunner.entities;
 
 import org.jsfml.graphics.FloatRect;
-import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
-
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireBulletCommand;
 import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.SceneNode;
-import de.dungeonrunner.nodes.SpriteNode;
-import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
 
 public class Unit extends GameEntity {
-
-	public enum ORIENTATION {
-		LEFT, RIGHT
-	}
 
 	public enum ANIM_ID {
 		WALK, JUMP, IDLE
@@ -29,7 +21,6 @@ public class Unit extends GameEntity {
 	}
 
 	private Vector2f mProjectileSpawn;
-	private ORIENTATION mOrientation = ORIENTATION.RIGHT;
 
 	private final int mJumpTime = 800;
 	private float mLeftJumpTime = mJumpTime;
@@ -51,8 +42,6 @@ public class Unit extends GameEntity {
 		mProperties.setProperty(Constants.UNIT_VOLUME, "true");
 		mNodeType = NodeType.UNIT;
 		mAnimState = STATE.IDLE;
-		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(textureID))));
-		mProjectileSpawn = new Vector2f(127, 64);
 		mIsJumping = false;
 		mIsAirborne = false;
 		mHitPointsTotal = mHitPoints = 0;
@@ -147,7 +136,7 @@ public class Unit extends GameEntity {
 			break;
 		}
 		setSprite(mActiveAnimation);
-		mActiveAnimation.setOrientation(mOrientation);
+		mActiveAnimation.setOrientation(getOrientation());
 		mActiveAnimation.start();
 	}
 
@@ -170,36 +159,8 @@ public class Unit extends GameEntity {
 
 	public void shoot() {
 		FireBulletCommand command = new FireBulletCommand(this, NodeType.WORLD,
-				Vector2f.add(getPosition(), mProjectileSpawn));
+				Vector2f.add(getPosition(), mProjectileSpawn), getOrientation().getValue());
 		addCommand(command);
-	}
-
-	@Override
-	public void setVelocity(Vector2f velocity) {
-		super.setVelocity(velocity);
-		checkOrientationChange(velocity.x);
-	}
-
-	@Override
-	public void setVelocity(float vx, float vy) {
-		super.setVelocity(vx, vy);
-		checkOrientationChange(vx);
-	}
-
-	private void checkOrientationChange(float vx) {
-		if (vx < 0) {
-			if (mOrientation != ORIENTATION.LEFT) {
-				mOrientation = ORIENTATION.LEFT;
-			}
-		} else if (vx > 0) {
-			if (mOrientation != ORIENTATION.RIGHT) {
-				mOrientation = ORIENTATION.RIGHT;
-			}
-		}
-	}
-
-	public ORIENTATION getOrientation() {
-		return mOrientation;
 	}
 
 	public void damage(int damage) {
@@ -243,5 +204,9 @@ public class Unit extends GameEntity {
 		default:
 			break;
 		}
+	}
+	
+	public void setProjectileSpawn(Vector2f spawn){
+		mProjectileSpawn = spawn;
 	}
 }

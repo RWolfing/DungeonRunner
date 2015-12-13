@@ -42,6 +42,8 @@ public class Application {
 		texHolder.loadTexture(TextureID.ENEMY, Constants.TEX_DIR + "enemy.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_RUN, Constants.ANIM_DIR + "hero_miner_run.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_JUMP, Constants.ANIM_DIR + "hero_miner_jump.png");
+		texHolder.loadTexture(TextureID.PROJECTILE_DNYAMITE, Constants.ANIM_DIR + "projectile_dynamite.png");
+		texHolder.loadTexture(TextureID.DYNAMITE_SINGLE, Constants.TEX_DIR + "dynamite.png");
 
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");
 

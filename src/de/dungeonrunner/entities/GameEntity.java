@@ -14,6 +14,22 @@ import de.dungeonrunner.nodes.SpriteNode;
 
 public abstract class GameEntity extends SceneNode {
 
+	public enum ORIENTATION {
+		LEFT(-1), RIGHT(1);
+		
+		private int mValue;
+		
+		ORIENTATION(int value) {
+			mValue = value;
+		}
+		
+		public int getValue(){
+			return mValue;
+		}
+	}
+	
+	private ORIENTATION mOrientation = ORIENTATION.RIGHT;
+	
 	private Vector2f mVelocity;
 	private SpriteNode mSprite;
 	private boolean mIsDestroyed;
@@ -61,10 +77,12 @@ public abstract class GameEntity extends SceneNode {
 	}
 
 	public void setVelocity(Vector2f velocity) {
+		checkOrientationChange(velocity.x);
 		mVelocity = velocity;
 	}
 
 	public void setVelocity(float vx, float vy) {
+		checkOrientationChange(vx);
 		mVelocity = new Vector2f(vx, vy);
 	}
 
@@ -88,5 +106,25 @@ public abstract class GameEntity extends SceneNode {
 	
 	public void setCollisionRect(FloatRect collisionRect){
 		mCollisionRect = collisionRect;
+	}
+	
+	public ORIENTATION getOrientation() {
+		return mOrientation;
+	}
+	
+	public SpriteNode getSprite(){
+		return mSprite;
+	}
+	
+	private void checkOrientationChange(float vx) {
+		if (vx < 0) {
+			if (mOrientation != ORIENTATION.LEFT) {
+				mOrientation = ORIENTATION.LEFT;
+			}
+		} else if (vx > 0) {
+			if (mOrientation != ORIENTATION.RIGHT) {
+				mOrientation = ORIENTATION.RIGHT;
+			}
+		}
 	}
 }

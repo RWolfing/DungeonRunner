@@ -5,7 +5,7 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.entities.Unit.ORIENTATION;
+import de.dungeonrunner.entities.GameEntity.ORIENTATION;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
