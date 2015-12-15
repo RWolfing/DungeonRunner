@@ -1,18 +1,28 @@
 package de.dungeonrunner.entities;
 
 import org.jsfml.graphics.FloatRect;
+import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.NodeType;
+import de.dungeonrunner.commands.FireProjectileCommand;
+import de.dungeonrunner.entities.Projectile.ProjectileType;
+import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
-public class EnemyUnit extends Unit {
+public class StoneThrower extends Unit {
 
+	private static final int mShootFrameStart = 4;
+	
 	private float mJumpStartX = Float.MIN_VALUE;
 	
-	public EnemyUnit(TextureID textureID){
+	public StoneThrower(TextureID textureID){
 		super(textureID);
+		setupAnimations();
 		setVelocity(30f, getVelocity().y);
 		setTotalHP(200);
+		setCollisionRect(new FloatRect(9, 18, 96, 100));
 	}
 
 	@Override
@@ -58,7 +68,35 @@ public class EnemyUnit extends Unit {
 	@Override
 	public void damage(int damage) {
 		super.damage(damage);
-		jump();
+		shoot();
+	}
+	
+	private void setupAnimations(){
+		AnimationNode idleAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_IDLE, 1000, true, 4, new Vector2i(135, 120));
+		AnimationNode mShootAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_ATTACK, 1000, false, 7, new Vector2i(135, 120));
+		
+		mShootAnimation.setAnimationListener(new AnimationListener() {
+			private Unit mUnit;
+			
+			@Override
+			public void onFrame(AnimationNode node, int frame) {
+				if (frame == mShootFrameStart) {
+					FireProjectileCommand command = new FireProjectileCommand(mUnit, NodeType.WORLD, ProjectileType.Stone);
+					addCommand(command);
+				}
+				
+				if(node.getNumFrames() - 1 == frame){
+					mUnit.resetShoot();
+				}
+			}
+			
+			private AnimationListener init(Unit unit){
+				mUnit = unit;
+				return this;
+			}
+		}.init(this));
+		setAnimation(idleAnimation, ANIM_ID.IDLE);
+		setAnimation(mShootAnimation, ANIM_ID.SHOOT);
 	}
 	
 	

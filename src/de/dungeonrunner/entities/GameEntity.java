@@ -16,20 +16,20 @@ public abstract class GameEntity extends SceneNode {
 
 	public enum ORIENTATION {
 		LEFT(-1), RIGHT(1);
-		
+
 		private int mValue;
-		
+
 		ORIENTATION(int value) {
 			mValue = value;
 		}
-		
-		public int getValue(){
+
+		public int getValue() {
 			return mValue;
 		}
 	}
-	
+
 	private ORIENTATION mOrientation = ORIENTATION.RIGHT;
-	
+
 	private Vector2f mVelocity;
 	private SpriteNode mSprite;
 	private boolean mIsDestroyed;
@@ -52,8 +52,7 @@ public abstract class GameEntity extends SceneNode {
 
 	@Override
 	protected void collectCommand(CommandStack commandStack) {
-		for(SceneCommand command : mPendingCommands){
-			System.out.println("Pushed command: " + command);
+		for (SceneCommand command : mPendingCommands) {
 			commandStack.push(command);
 		}
 		mPendingCommands.clear();
@@ -72,8 +71,9 @@ public abstract class GameEntity extends SceneNode {
 	@Override
 	public FloatRect getBoundingRect() {
 		if (mSprite != null) {
-			return new FloatRect(mSprite.getBoundingRect().left + mCollisionRect.left, mSprite.getBoundingRect().top + mCollisionRect.top,mCollisionRect.width, mCollisionRect.height);
-		} 
+			return new FloatRect(mSprite.getBoundingRect().left + mCollisionRect.left,
+					mSprite.getBoundingRect().top + mCollisionRect.top, mCollisionRect.width, mCollisionRect.height);
+		}
 		return mCollisionRect;
 	}
 
@@ -100,24 +100,23 @@ public abstract class GameEntity extends SceneNode {
 	protected boolean isDestroyed() {
 		return mIsDestroyed;
 	}
-	
-	public void addCommand(SceneCommand command){
-		System.out.println("Added Command: " + command);
+
+	public void addCommand(SceneCommand command) {
 		mPendingCommands.add(command);
 	}
-	
-	public void setCollisionRect(FloatRect collisionRect){
+
+	public void setCollisionRect(FloatRect collisionRect) {
 		mCollisionRect = collisionRect;
 	}
-	
+
 	public ORIENTATION getOrientation() {
 		return mOrientation;
 	}
-	
-	public SpriteNode getSprite(){
+
+	public SpriteNode getSprite() {
 		return mSprite;
 	}
-	
+
 	private void checkOrientationChange(float vx) {
 		if (vx < 0) {
 			if (mOrientation != ORIENTATION.LEFT) {

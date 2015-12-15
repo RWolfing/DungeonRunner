@@ -14,7 +14,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
-import de.dungeonrunner.entities.EnemyUnit;
+import de.dungeonrunner.entities.StoneThrower;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
@@ -118,10 +118,18 @@ public class GameWorld {
 		}
 		// Collect entity commands
 		mSceneGraph.collectCommands(mCommandStack);
-		// Reexecute second pass
+		recursiveSceneOnCommad();
+	}
+
+	private void recursiveSceneOnCommad() {
+		if (mCommandStack.isEmpty())
+			return;
+
 		while (!mCommandStack.isEmpty()) {
 			mSceneGraph.onCommand(mCommandStack.pop());
 		}
+		mSceneGraph.collectCommands(mCommandStack);
+		recursiveSceneOnCommad();
 	}
 
 	private void checkCollision() {
@@ -216,11 +224,9 @@ public class GameWorld {
 						}
 
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
-							Unit eunit = new EnemyUnit(TextureID.ENEMY);
-							float xSpawn = (float) (object.getX() + object.getBounds().x / 2);
-							float ySpawn = (float) (object.getY());
-							Vector2f spawnPosition = new Vector2f(xSpawn, ySpawn);
-							eunit.setPosition(spawnPosition);
+							Unit eunit = new StoneThrower(TextureID.ENEMY);
+							eunit.setPosition(new Vector2f((float) (object.getX() + object.getWidth() / 2),
+									(float) object.getY()));
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
 					}

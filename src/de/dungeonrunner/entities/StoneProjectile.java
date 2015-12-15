@@ -7,15 +7,15 @@ import org.jsfml.system.Vector2f;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
-public class DynamitProjectile extends Projectile {
+public class StoneProjectile extends Projectile {
 
-	private final Vector2f mVelocity = new Vector2f(200f, 0f);
+	private final Vector2f mVelocity = new Vector2f(180f, 0f);
 
-	public DynamitProjectile(Unit shooter, TextureID textureID) {
+	public StoneProjectile(Unit shooter, TextureID textureID) {
 		super(shooter, textureID);
 		setVelocity(mVelocity);
-		setCollisionRect(new FloatRect(0, 0, 66, 76));
-		setDamage(50);
+		setCollisionRect(new FloatRect(0f, 0f, 48f, 50f));
+		setDamage(100);
 	}
 
 	@Override
@@ -33,4 +33,5 @@ public class DynamitProjectile extends Projectile {
 			}
 		}
 	}
+
 }
