@@ -1,5 +1,7 @@
 package de.dungeonrunner.entities;
 
+import java.util.Properties;
+
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Vector2i;
 
@@ -17,8 +19,8 @@ public class StoneThrower extends Unit {
 	
 	private float mJumpStartX = Float.MIN_VALUE;
 	
-	public StoneThrower(TextureID textureID){
-		super(textureID);
+	public StoneThrower(TextureID textureID, Properties props){
+		super(textureID, props);
 		setupAnimations();
 		setVelocity(30f, getVelocity().y);
 		setTotalHP(200);

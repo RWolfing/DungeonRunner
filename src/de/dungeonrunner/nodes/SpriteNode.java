@@ -1,5 +1,7 @@
 package de.dungeonrunner.nodes;
 
+import java.util.Properties;
+
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
@@ -10,7 +12,8 @@ public class SpriteNode extends SceneNode{
 
 	protected Sprite mSprite;
 	
-	public SpriteNode(Sprite sprite){
+	public SpriteNode(Sprite sprite, Properties props){
+		super(props);
 		mSprite = sprite;
 		mColor = Color.GREEN;
 	}

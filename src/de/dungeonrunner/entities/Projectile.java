@@ -20,11 +20,11 @@ public class Projectile extends GameEntity {
 	private int mDamage;
 
 	public Projectile(Unit shooter, TextureID textureID) {
-		super();
+		super(null);
 		mShootingUnit = shooter;
 		mProperties.setProperty(Constants.PROJECTILE, "true");
 		SpriteNode sprite = new SpriteNode(
-				new Sprite(TextureHolder.getInstance().getTexture(textureID)));
+				new Sprite(TextureHolder.getInstance().getTexture(textureID)), null);
 		sprite.setOrigin(sprite.getBoundingRect().width / 2, sprite.getBoundingRect().height / 2);	
 		setSprite(sprite);
 		setVelocity(Vector2f.ZERO);

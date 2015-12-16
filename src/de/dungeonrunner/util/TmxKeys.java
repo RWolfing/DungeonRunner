@@ -15,4 +15,6 @@ public class TmxKeys {
 	public static final String TITLE_LAYER_LEVEL_MIDDLE = "LevelMiddleground";
 	public static final String TITLE_LAYER_LEVEL_FRONT = "LevelFrontground";
 	
+	public static final String OBJECT_SPAWN_X = "spawnX";
+	public static final String OBJECT_SPAWN_Y = "spawnY";
 }

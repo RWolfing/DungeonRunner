@@ -1,5 +1,7 @@
 package de.dungeonrunner.entities;
 
+import java.util.Properties;
+
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
@@ -12,6 +14,7 @@ import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
+import de.dungeonrunner.util.TmxKeys;
 
 public class Unit extends GameEntity {
 
@@ -44,8 +47,8 @@ public class Unit extends GameEntity {
 	private AnimationNode mShootAnimation;
 	private AnimationNode mAttackAnimation;
 
-	public Unit(TextureID textureID) {
-		super();
+	public Unit(TextureID textureID, Properties props) {
+		super(props);
 		mProperties.setProperty(Constants.UNIT_VOLUME, "true");
 		mNodeType = NodeType.UNIT;
 		mIsJumping = false;
@@ -54,7 +57,10 @@ public class Unit extends GameEntity {
 		mIsAttacking = false;
 		mHitPointsTotal = mHitPoints = 0;
 		setVelocity(0, Constants.GRAVITY.y);
-		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(textureID))));
+		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)), null));
+		float spawnX = Float.valueOf(getProperty(TmxKeys.OBJECT_SPAWN_X, "0"));
+		float spawnY = Float.valueOf(getProperty(TmxKeys.OBJECT_SPAWN_Y, "0"));
+		setPosition(spawnX, spawnY);
 	}
 
 	@Override

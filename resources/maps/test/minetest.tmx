@@ -99,7 +99,17 @@
   </data>
  </layer>
  <objectgroup name="Entities">
-  <object id="1" name="Player" type="Player" x="24" y="249" width="126" height="126"/>
-  <object id="8" name="Enemy" type="Enemy" x="720" y="279" width="414" height="102"/>
+  <object id="1" name="Player" type="Player" x="24" y="249" width="135" height="135">
+   <properties>
+    <property name="spawnX" value="100"/>
+    <property name="spawnY" value="249"/>
+   </properties>
+  </object>
+  <object id="8" name="Enemy" type="Enemy" x="725" y="260" width="414" height="120">
+   <properties>
+    <property name="spawnX" value="1000"/>
+    <property name="spawnY" value="260"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

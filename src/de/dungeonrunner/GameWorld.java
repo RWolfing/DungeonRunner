@@ -78,7 +78,7 @@ public class GameWorld {
 	}
 
 	private void buildScene() {
-		mSceneGraph = new SceneNode();
+		mSceneGraph = new SceneNode(null);
 		mRenderLayers = new HashMap<>();
 		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
 				(mMap.getHeight() * mMap.getTileHeight()) + 50));
@@ -151,7 +151,7 @@ public class GameWorld {
 
 	private void createLevelScene() {
 		for (RenderLayers layer : RenderLayers.values()) {
-			SceneNode node = new SceneNode();
+			SceneNode node = new SceneNode(null);
 			switch (layer) {
 			case Levelforeground:
 				node.setNodeType(NodeType.WORLD);
@@ -182,9 +182,8 @@ public class GameWorld {
 								Sprite cachedTile = new Sprite();
 								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
 
-								SpriteNode node = new SpriteNode(cachedTile);
+								SpriteNode node = new SpriteNode(cachedTile, tile.getProperties());
 								node.setPosition(x * tileWidth, y * tileHeight);
-								node.setProperties(tile.getProperties());
 
 								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
 									mRenderLayers.get(RenderLayers.Background).attachChild(node);
@@ -217,16 +216,17 @@ public class GameWorld {
 
 						// Player
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
-							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE);
-							mPlayerEntity.setPosition(new Vector2f((float) object.getX(), (float) object.getY()));
+							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE, object.getProperties());
+							float spawnX = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_X, "0"));
+							float spawnY = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_Y, "0"));
+							mPlayerEntity.setPosition(spawnX, spawnY);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(mPlayerEntity);
 							continue;
 						}
 
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
-							Unit eunit = new StoneThrower(TextureID.ENEMY);
-							eunit.setPosition(new Vector2f((float) (object.getX() + object.getWidth() / 2),
-									(float) object.getY()));
+							Unit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
+							eunit.mergeProperties((object.getProperties()));
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
 					}

@@ -1,6 +1,7 @@
 package de.dungeonrunner.nodes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -37,15 +38,18 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	public Vector<SceneNode> mStaticChildren;
 	public Vector<SceneNode> mDynamicChildren;
 	protected NodeType mNodeType;
-	
+
 	private List<SceneNode> mCollisionObjects;
 
 	public Properties mProperties;
+	public HashMap<String, String> mPropertySet;
 
-	public SceneNode() {
+	public SceneNode(Properties props) {
 		mChildren = new Vector<>();
 		mProperties = new Properties();
 		mCollisionObjects = new ArrayList<>();
+		mPropertySet = new HashMap<>();
+		mergeProperties(props);
 	}
 
 	@Override
@@ -119,24 +123,24 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		shape.setOutlineThickness(1.0f);
 		target.draw(shape);
 	}
-	
-	public void onCommand(SceneCommand command){
-		if(command.mNodeType == getType()){
+
+	public void onCommand(SceneCommand command) {
+		if (command.mNodeType == getType()) {
 			command.execute(this);
 		}
-		
-		for(SceneNode child : mChildren){
+
+		for (SceneNode child : mChildren) {
 			child.onCommand(command);
 		}
 	}
-	
+
 	public void checkCollisions(QuadTree collisionTree) {
 		this.checkCollision(collisionTree);
 		for (SceneNode child : mChildren) {
 			child.checkCollisions(collisionTree);
 		}
 	}
-	
+
 	public void checkCollision(QuadTree collisionTree) {
 		mCollisionObjects.clear();
 		collisionTree.retrieve(mCollisionObjects, getBoundingRect());
@@ -147,38 +151,38 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 
 		mCollisionObjects.remove(this);
 		for (SceneNode node : mCollisionObjects) {
-				processCollision(node);
+			processCollision(node);
 		}
 	}
-	
-	protected void processCollision(SceneNode node){
-		//Unused
+
+	protected void processCollision(SceneNode node) {
+		// Unused
 	}
-	
-	public void collectCommands(CommandStack commandStack){
+
+	public void collectCommands(CommandStack commandStack) {
 		collectCommand(commandStack);
-		for(SceneNode node : mChildren){
+		for (SceneNode node : mChildren) {
 			node.collectCommands(commandStack);
 		}
 	}
-	
-	protected void collectCommand(CommandStack commandStack){
-		//Unused
+
+	protected void collectCommand(CommandStack commandStack) {
+		// Unused
 	}
-	
-	public void cleanDestroyedNodes(){
+
+	public void cleanDestroyedNodes() {
 		List<SceneNode> destroyedNodes = new ArrayList<>();
-		if(isDestroyed()){
-			if(mParentNode != null){
+		if (isDestroyed()) {
+			if (mParentNode != null) {
 				mParentNode.detachChild(this);
 			}
 		} else {
-			for(SceneNode node : mChildren){
-				if(node.isDestroyed())
-				destroyedNodes.add(node);
+			for (SceneNode node : mChildren) {
+				if (node.isDestroyed())
+					destroyedNodes.add(node);
 			}
 			mChildren.removeAll(destroyedNodes);
-			for(SceneNode node : mChildren){
+			for (SceneNode node : mChildren) {
 				node.cleanDestroyedNodes();
 			}
 		}
@@ -208,16 +212,33 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		mParentNode = node;
 	}
 
-	public void setProperties(Properties props) {
-		mProperties = props;
+	public void mergeProperties(Properties props) {
+		if(props == null){
+			return;
+		}
+		
+		for (Object keyObj : props.keySet()) {
+			String key = (String) keyObj;
+			addProperty(key, props.getProperty(key));
+		}
 	}
 
 	public void addProperty(String key, String value) {
-		mProperties.setProperty(key, value);
+		System.out.println("ADDING " + key + " - " + value);
+		mPropertySet.put(key, value);
 	}
 
 	public String getProperty(String key) {
-		return mProperties.getProperty(key);
+		return mPropertySet.get(key);
+	}
+
+	public String getProperty(String key, String defvalue) {
+		String value = mPropertySet.get(key);
+		if (value != null) {
+			return value;
+		} else {
+			return defvalue;
+		}
 	}
 
 	public String removeProperty(String key) {
@@ -236,20 +257,20 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		}
 		return sceneGraph;
 	}
-	
-	public void setNodeType(NodeType nodeType){
+
+	public void setNodeType(NodeType nodeType) {
 		mNodeType = nodeType;
 	}
-	
-	public NodeType getType(){
+
+	public NodeType getType() {
 		return mNodeType;
 	}
-	
-	protected boolean isDestroyed(){
+
+	protected boolean isDestroyed() {
 		return false;
 	}
-	
-	public void destroy(){
+
+	public void destroy() {
 		// Unused
 	}
 }

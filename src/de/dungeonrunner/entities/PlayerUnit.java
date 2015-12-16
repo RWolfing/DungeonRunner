@@ -1,5 +1,7 @@
 package de.dungeonrunner.entities;
 
+import java.util.Properties;
+
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
@@ -18,8 +20,8 @@ public class PlayerUnit extends Unit {
 	private RectangleShape mCollisionShape = new RectangleShape();
 	private static final int mShootFrameStart = 3;
 	
-	public PlayerUnit(TextureID textureID) {
-		super(textureID);
+	public PlayerUnit(TextureID textureID, Properties props) {
+		super(textureID, props);
 		mNodeType = NodeType.PLAYER;
 		setupAnimations();
 		

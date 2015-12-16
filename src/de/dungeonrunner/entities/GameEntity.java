@@ -2,6 +2,7 @@ package de.dungeonrunner.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
@@ -38,7 +39,8 @@ public abstract class GameEntity extends SceneNode {
 
 	protected List<SceneNode> mCollisionObjects;
 
-	public GameEntity() {
+	public GameEntity(Properties props) {
+		super(props);
 		mVelocity = Vector2f.ZERO;
 		mCollisionObjects = new ArrayList<>();
 		mPendingCommands = new ArrayList<>();

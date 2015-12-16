@@ -24,7 +24,7 @@ public class AnimationNode extends SpriteNode {
 	private AnimationListener mAnimationListener;
 
 	public AnimationNode(Sprite sprite) {
-		super(sprite);
+		super(sprite, null);
 		mElapsedTime = Time.ZERO;
 		mIsRunning = false;
 		mOrientation = ORIENTATION.RIGHT;

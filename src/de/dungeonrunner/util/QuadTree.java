@@ -23,6 +23,7 @@ public class QuadTree extends SceneNode {
 	private QuadTree[] mQuadTreeNodes;
 
 	public QuadTree(int pLevel, FloatRect pBounds) {
+		super(null);
 		mLevel = pLevel;
 		mCollisionObjects = new ArrayList<>();
 		mQuadTreeBounds = pBounds;
