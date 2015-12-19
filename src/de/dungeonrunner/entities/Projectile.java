@@ -12,25 +12,23 @@ import de.dungeonrunner.util.Constants;
 
 public class Projectile extends GameEntity {
 
-	public enum ProjectileType{
+	public enum ProjectileType {
 		Dynamite, Stone
 	}
-	
+
 	private Unit mShootingUnit;
 	private int mDamage;
 
 	public Projectile(Unit shooter, TextureID textureID) {
 		super(null);
 		mShootingUnit = shooter;
-		mProperties.setProperty(Constants.PROJECTILE, "true");
-		SpriteNode sprite = new SpriteNode(
-				new Sprite(TextureHolder.getInstance().getTexture(textureID)), null);
-		sprite.setOrigin(sprite.getBoundingRect().width / 2, sprite.getBoundingRect().height / 2);	
+		mPropertySet.put(Constants.PROJECTILE, "true");
+		SpriteNode sprite = new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)), null);
+		sprite.setOrigin(sprite.getBoundingRect().width / 2, sprite.getBoundingRect().height / 2);
 		setSprite(sprite);
 		setVelocity(Vector2f.ZERO);
 		setCollisionRect(FloatRect.EMPTY);
 	}
-
 
 	public Unit getShootingUnit() {
 		return mShootingUnit;
@@ -47,6 +45,7 @@ public class Projectile extends GameEntity {
 	public boolean checkIsBlocking(SceneNode node) {
 		return (Boolean.valueOf(node.getProperty(Constants.BLOCK_VOLUME))
 				|| Boolean.valueOf(node.getProperty(Constants.UNIT_VOLUME)))
-						&& !getShootingUnit().getSceneGraph().contains(node) && node.getBoundingRect().intersection(getBoundingRect()) != null;
+				&& !getShootingUnit().getSceneGraph().contains(node)
+				&& node.getBoundingRect().intersection(getBoundingRect()) != null;
 	}
 }

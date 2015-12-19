@@ -41,12 +41,10 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 
 	private List<SceneNode> mCollisionObjects;
 
-	public Properties mProperties;
 	public HashMap<String, String> mPropertySet;
 
 	public SceneNode(Properties props) {
 		mChildren = new Vector<>();
-		mProperties = new Properties();
 		mCollisionObjects = new ArrayList<>();
 		mPropertySet = new HashMap<>();
 		mergeProperties(props);
@@ -224,7 +222,6 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	}
 
 	public void addProperty(String key, String value) {
-		System.out.println("ADDING " + key + " - " + value);
 		mPropertySet.put(key, value);
 	}
 
@@ -242,7 +239,7 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	}
 
 	public String removeProperty(String key) {
-		return (String) mProperties.remove(key);
+		return mPropertySet.remove(key);
 	}
 
 	public SceneNode getParentNode() {

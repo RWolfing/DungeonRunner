@@ -48,6 +48,7 @@ public class Application {
 		texHolder.loadTexture(TextureID.ANIM_MINER_ATTACK, Constants.ANIM_DIR + "hero_miner_attack.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_IDLE, Constants.ANIM_DIR + "stone_thrower_idle.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_ATTACK, Constants.ANIM_DIR + "stone_thrower_attack.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL, Constants.TEX_DIR + "crystal_blue.png");
 		
 
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");

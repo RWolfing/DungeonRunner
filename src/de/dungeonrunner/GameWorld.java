@@ -15,6 +15,7 @@ import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.StoneThrower;
+import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
@@ -51,6 +52,7 @@ public class GameWorld {
 	private View mCamera;
 
 	private CommandStack mCommandStack;
+	private static GameWorld mWorldInstance;
 
 	public GameWorld(RenderWindow window) {
 		mRenderWindow = window;
@@ -58,6 +60,7 @@ public class GameWorld {
 				new Vector2f(mRenderWindow.getSize()));
 		mRenderWindow.setView(mCamera);
 		mCommandStack = new CommandStack();
+		mWorldInstance = this;
 		loadMap();
 		loadTextures();
 		buildScene();
@@ -109,6 +112,14 @@ public class GameWorld {
 
 	public CommandStack getCommandStack() {
 		return mCommandStack;
+	}
+	
+	public QuadTree getCollisionGraph(){
+		return mCollisionTree;
+	}
+	
+	public static GameWorld getGame(){
+		return mWorldInstance;
 	}
 
 	private void executeCommands() {
@@ -224,10 +235,17 @@ public class GameWorld {
 							continue;
 						}
 
+						//Enemy
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
 							Unit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
-							eunit.mergeProperties((object.getProperties()));
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
+						}
+						
+						//Item
+						if(object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)){
+							Item item = new Item(TextureID.ITEM_CRYSTAL, object.getProperties());
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
+							item.setPosition((float) object.getX(), (float) object.getY()); 
 						}
 					}
 				}

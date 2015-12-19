@@ -1,5 +1,7 @@
 package de.dungeonrunner.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.jsfml.graphics.FloatRect;
@@ -8,11 +10,13 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
 import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
+import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
 public class PlayerUnit extends Unit {
@@ -34,6 +38,22 @@ public class PlayerUnit extends Unit {
 		target.draw(mCollisionShape);
 	}
 	
+	
+	//TODO Refactor
+	@Override
+	public void attack() {
+		super.attack();
+		List<SceneNode> collisions = new ArrayList<>();
+		GameWorld.getGame().getCollisionGraph().retrieve(collisions, getBoundingRect());
+		for(SceneNode node : collisions){
+			if(node instanceof Item){
+				if(node.getBoundingRect().intersection(getBoundingRect()) != null){
+					node.destroy();
+				}
+			}
+		}
+	}
+
 	private void setupAnimations(){
 		//Create all animations
 		AnimationNode mIdleAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_IDLE, 1000, true, 4, new Vector2i(135, 135));

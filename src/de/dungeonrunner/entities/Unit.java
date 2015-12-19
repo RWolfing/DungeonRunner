@@ -49,7 +49,7 @@ public class Unit extends GameEntity {
 
 	public Unit(TextureID textureID, Properties props) {
 		super(props);
-		mProperties.setProperty(Constants.UNIT_VOLUME, "true");
+		mPropertySet.put(Constants.UNIT_VOLUME, "true");
 		mNodeType = NodeType.UNIT;
 		mIsJumping = false;
 		mIsAirborne = false;
