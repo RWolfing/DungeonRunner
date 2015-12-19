@@ -156,18 +156,18 @@ public class QuadTree extends SceneNode {
 
 	@Override
 	public void draw(RenderTarget target, RenderStates states) {
-		RectangleShape shape = new RectangleShape();
-		shape.setPosition(new Vector2f(mQuadTreeBounds.left, mQuadTreeBounds.top));
-		shape.setSize(new Vector2f(mQuadTreeBounds.width, mQuadTreeBounds.height));
-		shape.setFillColor(Color.TRANSPARENT);
-		shape.setOutlineColor(Color.RED);
-		shape.setOutlineThickness(1.0f);
-		target.draw(shape);
-
-		for (int i = 0; i < mQuadTreeNodes.length; i++) {
-			if (mQuadTreeNodes[i] != null) {
-				mQuadTreeNodes[i].draw(target, states);
-			}
-		}
+//		RectangleShape shape = new RectangleShape();
+//		shape.setPosition(new Vector2f(mQuadTreeBounds.left, mQuadTreeBounds.top));
+//		shape.setSize(new Vector2f(mQuadTreeBounds.width, mQuadTreeBounds.height));
+//		shape.setFillColor(Color.TRANSPARENT);
+//		shape.setOutlineColor(Color.RED);
+//		shape.setOutlineThickness(1.0f);
+//		target.draw(shape);
+//
+//		for (int i = 0; i < mQuadTreeNodes.length; i++) {
+//			if (mQuadTreeNodes[i] != null) {
+//				mQuadTreeNodes[i].draw(target, states);
+//			}
+//		}
 	}
 }
