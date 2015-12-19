@@ -15,6 +15,7 @@ import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.StoneThrower;
+import de.dungeonrunner.entities.CrystalItem;
 import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Unit;
@@ -243,7 +244,7 @@ public class GameWorld {
 						
 						//Item
 						if(object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)){
-							Item item = new Item(TextureID.ITEM_CRYSTAL, object.getProperties());
+							Item item = new CrystalItem(TextureID.ITEM_CRYSTAL, object.getProperties());
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
 							item.setPosition((float) object.getX(), (float) object.getY()); 
 						}

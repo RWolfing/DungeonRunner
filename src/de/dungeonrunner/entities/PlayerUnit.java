@@ -46,9 +46,9 @@ public class PlayerUnit extends Unit {
 		List<SceneNode> collisions = new ArrayList<>();
 		GameWorld.getGame().getCollisionGraph().retrieve(collisions, getBoundingRect());
 		for(SceneNode node : collisions){
-			if(node instanceof Item){
+			if(node instanceof CrystalItem){
 				if(node.getBoundingRect().intersection(getBoundingRect()) != null){
-					node.destroy();
+					((CrystalItem) node).mine();
 				}
 			}
 		}
