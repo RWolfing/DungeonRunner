@@ -5,7 +5,6 @@ import java.util.Properties;
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2f;
 
-import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.TmxKeys;
 import de.dungeonrunner.view.LifeBar;
@@ -41,6 +40,7 @@ public class CrystalItem extends Item{
 		mLifeBar.setMaximum(mTotalMinepoints);
 		mLifeBar.setDimension(new Vector2f(getBoundingRect().width, 5f));
 		mLifeBar.setColor(Color.GREEN);
+		mLifeBar.setPosition(0, -10);
 		attachChild(mLifeBar);
 		
 	}

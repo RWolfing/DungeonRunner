@@ -1,7 +1,6 @@
 package de.dungeonrunner.view;
 
 import org.jsfml.graphics.Color;
-import org.jsfml.graphics.Drawable;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -28,6 +27,7 @@ public class LifeBar extends SceneNode{
 	
 	@Override
 	public void draw(RenderTarget target, RenderStates states) {
+		mLifeBarShape.setPosition(getPosition());
 		mLifeBarShape.setScale(mCurrent / mMaximum, 1);
 		mLifeBarShape.draw(target, states);
 	}
