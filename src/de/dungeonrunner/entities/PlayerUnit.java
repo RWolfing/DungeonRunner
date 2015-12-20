@@ -22,14 +22,19 @@ import de.dungeonrunner.singleton.TextureHolder.TextureID;
 public class PlayerUnit extends Unit {
 
 	private RectangleShape mCollisionShape = new RectangleShape();
+	
+	private FloatRect mDefaultCollisionRect;
+	private FloatRect mAttackCollisionRect;
+	
 	private static final int mShootFrameStart = 3;
 	
 	public PlayerUnit(TextureID textureID, Properties props) {
 		super(textureID, props);
 		mNodeType = NodeType.PLAYER;
 		setupAnimations();
-		
-		setCollisionRect(new FloatRect(27, 11, 62, 118));
+		mDefaultCollisionRect = new FloatRect(27, 11, 62, 118);
+		mAttackCollisionRect = new FloatRect(15, 15, 105, 118);
+		setCollisionRect(mDefaultCollisionRect);
 	}
 
 	@Override
@@ -44,6 +49,7 @@ public class PlayerUnit extends Unit {
 	public void attack() {
 		super.attack();
 		List<SceneNode> collisions = new ArrayList<>();
+		setCollisionRect(mAttackCollisionRect);
 		GameWorld.getGame().getCollisionGraph().retrieve(collisions, getBoundingRect());
 		for(SceneNode node : collisions){
 			if(node instanceof CrystalItem){
@@ -52,6 +58,7 @@ public class PlayerUnit extends Unit {
 				}
 			}
 		}
+		setCollisionRect(mDefaultCollisionRect);
 	}
 
 	private void setupAnimations(){
