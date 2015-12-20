@@ -111,6 +111,11 @@ public class GameWorld {
 		}
 	}
 
+	public void resizeWindow(){
+		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize()));
+	}
+	
 	public CommandStack getCommandStack() {
 		return mCommandStack;
 	}
@@ -154,11 +159,41 @@ public class GameWorld {
 		mSceneGraph.checkCollisions(mCollisionTree);
 	}
 
+	/**
+	 * Adapt the camera position, to only see the level with the player centered
+	 * if possible
+	 */
 	private void adaptCameraPosition() {
-		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize()));
-		if (mPlayerEntity != null)
-			mCamera.setCenter(mPlayerEntity.getPosition());
+		//player must not be null
+		if (mPlayerEntity != null){
+			//Precalculate the position of the camera if we move with the player
+			Vector2f preCalculatedPosition = mPlayerEntity.getPosition();
+			//Bounds of the level in the world
+			float leftBorder = 0;
+			float rightBorder = mMap.getBounds().width *  mMap.getTileWidth();
+			float topBorder = 0;
+			float bottomBorder = mMap.getBounds().height * mMap.getTileHeight();
+			
+			boolean isXPossible = true;
+			boolean isYPossible = true;
+			//Check if we can move the camera in x/y direction and still stay in the level bounds
+			if((preCalculatedPosition.x - mCamera.getSize().x / 2 < leftBorder) || (preCalculatedPosition.x + mCamera.getSize().x / 2 > rightBorder)){
+				isXPossible = false;
+			}
+			
+			if((preCalculatedPosition.y - mCamera.getSize().y / 2 < topBorder) || (preCalculatedPosition.y + mCamera.getSize().y / 2) > bottomBorder){
+				isYPossible = false;
+			}
+			
+			//Only move the camera as long as it stays in the level bounds
+			if(isXPossible && isYPossible){
+				mCamera.setCenter(preCalculatedPosition);
+			} else if(isXPossible){
+				mCamera.setCenter(preCalculatedPosition.x, mCamera.getCenter().y);
+			} else if(isYPossible){
+				mCamera.setCenter(mCamera.getCenter().x,preCalculatedPosition.y);
+			}
+		}
 	}
 
 	private void createLevelScene() {

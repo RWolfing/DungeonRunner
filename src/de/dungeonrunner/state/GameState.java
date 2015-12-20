@@ -44,6 +44,9 @@ public class GameState extends State {
 				mIsPausing = !mIsPausing;
 			}
 			break;
+		case RESIZED:
+			mWorld.resizeWindow();
+			break;
 		default:
 			break;
 		}
