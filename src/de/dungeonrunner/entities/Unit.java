@@ -1,5 +1,7 @@
 package de.dungeonrunner.entities;
 
+import java.lang.Thread.State;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.jsfml.graphics.FloatRect;
@@ -9,6 +11,7 @@ import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
@@ -19,11 +22,11 @@ import de.dungeonrunner.util.TmxKeys;
 public class Unit extends GameEntity {
 
 	public enum ANIM_ID {
-		WALK, JUMP, IDLE, SHOOT, ATTACK
+		WALK, JUMP, IDLE, SHOOT, ATTACK, DEATH
 	}
 
 	public enum STATE {
-		IDLE, WALKING, JUMPING, SHOOTING, ATTACKING
+		IDLE, WALKING, JUMPING, SHOOTING, ATTACKING, DYING
 	}
 
 	private boolean mIsShooting;
@@ -32,20 +35,18 @@ public class Unit extends GameEntity {
 
 	private final int mJumpTime = 800;
 	private float mLeftJumpTime = mJumpTime;
-	private float mJumpVelocity = -180;
+	private float mJumpVelocity = -300;
 	private boolean mIsJumping;
 	protected boolean mIsAirborne;
 	private int mHitPointsTotal;
 	private int mHitPoints;
 
+	private boolean mIsDead;
+
 	// Animations
 	private STATE mAnimState;
+	private HashMap<ANIM_ID, AnimationNode> mAnimations;
 	private AnimationNode mActiveAnimation;
-	private AnimationNode mIdleAnimation;
-	private AnimationNode mWalkAnimation;
-	private AnimationNode mJumpAnimation;
-	private AnimationNode mShootAnimation;
-	private AnimationNode mAttackAnimation;
 
 	public Unit(TextureID textureID, Properties props) {
 		super(props);
@@ -56,6 +57,8 @@ public class Unit extends GameEntity {
 		mIsShooting = false;
 		mIsAttacking = false;
 		mHitPointsTotal = mHitPoints = 0;
+		mIsDead = false;
+		mAnimations = new HashMap<>();
 		setVelocity(0, Constants.GRAVITY.y);
 		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(textureID)), null));
 		float spawnX = Float.valueOf(getProperty(TmxKeys.OBJECT_SPAWN_X, "0"));
@@ -65,26 +68,35 @@ public class Unit extends GameEntity {
 
 	@Override
 	protected void updateCurrent(Time dt) {
-		super.updateCurrent(dt);
 
-		if (mIsJumping) {
-			mLeftJumpTime = mLeftJumpTime - dt.asMilliseconds();
-			if (mLeftJumpTime < 0) {
-				mLeftJumpTime = 0;
-				mIsJumping = false;
-				setVelocity(getVelocity().x, Constants.GRAVITY.y);
-			} else {
-				float velY = (mLeftJumpTime / mJumpTime) * mJumpVelocity;
-				setVelocity(getVelocity().x, velY);
+		if (!mIsDead) {
+			super.updateCurrent(dt);
+			if (mIsJumping) {
+				mLeftJumpTime = mLeftJumpTime - dt.asMilliseconds();
+				if (mLeftJumpTime < 0) {
+					mLeftJumpTime = 0;
+					mIsJumping = false;
+					setVelocity(getVelocity().x, Constants.GRAVITY.y);
+				} else {
+					float velY = (mLeftJumpTime / mJumpTime) * mJumpVelocity;
+					setVelocity(getVelocity().x, velY);
+				}
 			}
+
+			if (mHitPoints < 0) {
+				mIsDead = true;
+			}
+
+			computeAnimationState();
+			if (mActiveAnimation != null && !mIsDead) {
+				mActiveAnimation.setOrientation(getOrientation());
+			}
+			// Reset Variables
+			mIsAirborne = false;
+		} else {
+			setVelocity(Constants.GRAVITY);
+			super.updateCurrent(dt);
 		}
-		computeAnimationState();
-		if (mActiveAnimation != null) {
-			mActiveAnimation.setOrientation(getOrientation());
-		}
-		// Reset Variables
-		mIsAirborne = false;
-		setVelocity(0, getVelocity().y);
 	}
 
 	@Override
@@ -120,7 +132,9 @@ public class Unit extends GameEntity {
 	}
 
 	private void computeAnimationState() {
-		if (mIsShooting) {
+		if (mIsDead) {
+			requestState(STATE.DYING);
+		} else if (mIsShooting) {
 			requestState(STATE.SHOOTING);
 		} else if (mIsAttacking) {
 			requestState(STATE.ATTACKING);
@@ -134,39 +148,57 @@ public class Unit extends GameEntity {
 	}
 
 	private void requestState(STATE animState) {
-		if (animState == mAnimState) {
+		if (animState == mAnimState || mAnimState == STATE.DYING) {
 			return;
 		}
+
 		switch (animState) {
 		case IDLE:
-			if (mIdleAnimation == null)
+			if (mAnimations.get(ANIM_ID.IDLE) == null)
 				return;
-			mActiveAnimation = mIdleAnimation;
+			mActiveAnimation = mAnimations.get(ANIM_ID.IDLE);
 			mAnimState = STATE.IDLE;
 			break;
 		case WALKING:
-			if (mWalkAnimation == null)
+			if (mAnimations.get(ANIM_ID.WALK) == null)
 				return;
-			mActiveAnimation = mWalkAnimation;
+			mActiveAnimation = mAnimations.get(ANIM_ID.WALK);
 			mAnimState = STATE.WALKING;
 			break;
 		case JUMPING:
-			if (mJumpAnimation == null)
+			if (mAnimations.get(ANIM_ID.JUMP) == null)
 				return;
-			mActiveAnimation = mJumpAnimation;
+			mActiveAnimation = mAnimations.get(ANIM_ID.JUMP);
 			mAnimState = STATE.JUMPING;
 			break;
 		case SHOOTING:
-			if (mShootAnimation == null)
+			if (mAnimations.get(ANIM_ID.SHOOT) == null)
 				return;
-			mActiveAnimation = mShootAnimation;
+			mActiveAnimation = mAnimations.get(ANIM_ID.SHOOT);
 			mAnimState = STATE.SHOOTING;
 			break;
 		case ATTACKING:
-			if (mAttackAnimation == null)
+			if (mAnimations.get(ANIM_ID.ATTACK) == null)
 				return;
-			mActiveAnimation = mAttackAnimation;
+			mActiveAnimation = mAnimations.get(ANIM_ID.ATTACK);
 			mAnimState = STATE.ATTACKING;
+			break;
+		case DYING:
+			if (mAnimations.get(ANIM_ID.DEATH) == null) {
+				destroy();
+				return;
+			}
+			mActiveAnimation = mAnimations.get(ANIM_ID.DEATH);
+			mActiveAnimation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onFrame(AnimationNode node, int frame) {
+					if (node.getNumFrames() - 1 == frame) {
+						// destroy();
+					}
+				}
+			});
+			mAnimState = STATE.DYING;
 			break;
 		default:
 			break;
@@ -201,9 +233,12 @@ public class Unit extends GameEntity {
 		mIsShooting = false;
 	}
 
-	public void attack() {
+	public boolean attack() {
 		if (!mIsAttacking) {
 			mIsAttacking = true;
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -213,9 +248,6 @@ public class Unit extends GameEntity {
 
 	public void damage(int damage) {
 		mHitPoints -= damage;
-		if (mHitPoints < 0) {
-			destroy();
-		}
 	}
 
 	public void setTotalHP(int hp) {
@@ -239,25 +271,7 @@ public class Unit extends GameEntity {
 	}
 
 	public void setAnimation(AnimationNode node, ANIM_ID animID) {
-		switch (animID) {
-		case IDLE:
-			mIdleAnimation = node;
-			break;
-		case WALK:
-			mWalkAnimation = node;
-			break;
-		case JUMP:
-			mJumpAnimation = node;
-			break;
-		case SHOOT:
-			mShootAnimation = node;
-			break;
-		case ATTACK:
-			mAttackAnimation = node;
-			break;
-		default:
-			break;
-		}
+		mAnimations.put(animID, node);
 	}
 
 	public Vector2f getProjectileSpawn() {

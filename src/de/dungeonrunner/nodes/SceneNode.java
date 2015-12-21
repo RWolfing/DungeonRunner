@@ -58,20 +58,20 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	}
 
 	protected void drawCurrent(RenderTarget target, RenderStates states) {
-		drawDebugging(target, states);
+		if (Constants.IS_DEBUGGING) {
+			drawDebugging(target, states);
+		}
 	}
 
 	protected void drawDebugging(RenderTarget target, RenderStates states) {
-		if (Constants.IS_DEBUGGING) {
-			if (getBoundingRect() != null) {
-				FloatRect rect = getBoundingRect();
-				drawBoundingRect(target, states, rect);
-				Text text = new Text(mDebugText, FontHolder.getInstance().getFont(FontID.DUNGEON_FONT));
-				text.setColor(mColor);
-				text.setPosition(new Vector2f(getBoundingRect().left + getBoundingRect().width / 2,
-						getBoundingRect().top + getBoundingRect().height / 2));
-				target.draw(text);
-			}
+		if (getBoundingRect() != null) {
+			FloatRect rect = getBoundingRect();
+			drawBoundingRect(target, states, rect);
+			Text text = new Text(mDebugText, FontHolder.getInstance().getFont(FontID.DUNGEON_FONT));
+			text.setColor(mColor);
+			text.setPosition(new Vector2f(getBoundingRect().left + getBoundingRect().width / 2,
+					getBoundingRect().top + getBoundingRect().height / 2));
+			target.draw(text);
 		}
 	}
 
@@ -211,10 +211,10 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 	}
 
 	public void mergeProperties(Properties props) {
-		if(props == null){
+		if (props == null) {
 			return;
 		}
-		
+
 		for (Object keyObj : props.keySet()) {
 			String key = (String) keyObj;
 			addProperty(key, props.getProperty(key));

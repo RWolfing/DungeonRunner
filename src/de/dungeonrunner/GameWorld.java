@@ -17,6 +17,7 @@ import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.StoneThrower;
 import de.dungeonrunner.entities.CrystalItem;
 import de.dungeonrunner.entities.Item;
+import de.dungeonrunner.entities.LeashedUnit;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
@@ -273,7 +274,8 @@ public class GameWorld {
 
 						//Enemy
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
-							Unit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
+							LeashedUnit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
+							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y, (float) object.getBounds().width, (float) object.getBounds().height);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
 						

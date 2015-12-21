@@ -1,10 +1,19 @@
 package de.dungeonrunner.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
+import org.jsfml.graphics.RectangleShape;
+import org.jsfml.graphics.RenderStates;
+import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Time;
+import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
@@ -13,18 +22,30 @@ import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
-public class StoneThrower extends Unit {
+public class StoneThrower extends LeashedUnit {
 
 	private static final int mShootFrameStart = 4;
+	private final float mXVelocity = 30f;
 	
 	private float mJumpStartX = Float.MIN_VALUE;
-	
-	public StoneThrower(TextureID textureID, Properties props){
+	private FloatRect mProxRect;
+	private float mMinShootDistance = 700;
+
+	public StoneThrower(TextureID textureID, Properties props) {
 		super(textureID, props);
 		setupAnimations();
-		setVelocity(30f, getVelocity().y);
+		setVelocity(mXVelocity, getVelocity().y);
 		setTotalHP(200);
 		setCollisionRect(new FloatRect(9, 18, 96, 100));
+		mProxRect = new FloatRect(0, 0, mMinShootDistance, 10);
+	}
+
+	@Override
+	protected void updateCurrent(Time dt) {
+		super.updateCurrent(dt);
+		if(inShootRange()){
+			shoot();
+		}
 	}
 
 	@Override
@@ -35,7 +56,7 @@ public class StoneThrower extends Unit {
 				return;
 			}
 
-			//Round the collision TODO why is this necessary
+			// Round the collision TODO why is this necessary
 			if (intersection1.width > 3 || intersection1.height > 3) {
 				if (intersection1.width > intersection1.height) {
 					// Player inbound from Top or Bottom
@@ -54,12 +75,12 @@ public class StoneThrower extends Unit {
 					} else {
 						setPosition(getWorldPosition().x + intersection1.width, getWorldPosition().y);
 					}
-					
-					//AI of the enemy
-					if(canJump() && mJumpStartX != getPosition().x){
+
+					// AI of the enemy
+					if (canJump() && mJumpStartX != getPosition().x) {
 						mJumpStartX = getPosition().x;
 						jump();
-					} else if(!isJumping()){
+					} else if (!isJumping()) {
 						setVelocity(-getVelocity().x, getVelocity().y);
 					}
 				}
@@ -70,36 +91,91 @@ public class StoneThrower extends Unit {
 	@Override
 	public void damage(int damage) {
 		super.damage(damage);
-		shoot();
+		jump();
 	}
-	
-	private void setupAnimations(){
-		AnimationNode idleAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_IDLE, 1000, true, 4, new Vector2i(135, 120));
-		AnimationNode mShootAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_ATTACK, 1000, false, 7, new Vector2i(135, 120));
+
+	private void setupAnimations() {
+		AnimationNode idleAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_IDLE, 1000, true,
+				4, new Vector2i(135, 120));
+		AnimationNode mShootAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_ATTACK, 1000,
+				false, 7, new Vector2i(135, 120));
+		AnimationNode mWalkAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_WALK, 1000, true,
+				11, new Vector2i(135, 120));
+		AnimationNode mDeathAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_DEATH, 1000, false, 5, new Vector2i(135, 120));
 		
 		mShootAnimation.setAnimationListener(new AnimationListener() {
 			private Unit mUnit;
-			
+
 			@Override
 			public void onFrame(AnimationNode node, int frame) {
 				if (frame == mShootFrameStart) {
-					FireProjectileCommand command = new FireProjectileCommand(mUnit, NodeType.WORLD, ProjectileType.Stone);
+					FireProjectileCommand command = new FireProjectileCommand(mUnit, NodeType.WORLD,
+							ProjectileType.Stone);
 					addCommand(command);
 				}
-				
-				if(node.getNumFrames() - 1 == frame){
+
+				if (node.getNumFrames() - 1 == frame) {
 					mUnit.resetShoot();
 				}
 			}
-			
-			private AnimationListener init(Unit unit){
+
+			private AnimationListener init(Unit unit) {
 				mUnit = unit;
 				return this;
 			}
 		}.init(this));
 		setAnimation(idleAnimation, ANIM_ID.IDLE);
 		setAnimation(mShootAnimation, ANIM_ID.SHOOT);
+		setAnimation(mWalkAnimation, ANIM_ID.WALK);
+		setAnimation(mDeathAnimation, ANIM_ID.DEATH);
+	}
+
+
+	@Override
+	public void shoot() {
+		super.shoot();
+		setVelocity(0, getVelocity().y);
+	}
+
+	@Override
+	protected void resetShoot() {
+		super.resetShoot();
+		setVelocity(mXVelocity, getVelocity().y);
+	}
+
+	@Override
+	protected void drawDebugging(RenderTarget target, RenderStates states) {
+		super.drawDebugging(target, states);
+		RectangleShape shape = new RectangleShape(new Vector2f(mProxRect.width, mProxRect.height));
+		shape.setPosition(mProxRect.left - getPosition().x, 0);
+		shape.setOutlineColor(Color.RED);
+		shape.setOutlineThickness(1);
+		shape.setFillColor(Color.TRANSPARENT);
+		shape.draw(target, states);
 	}
 	
-	
+	private boolean inShootRange() {
+		switch (getOrientation()) {
+		case LEFT:
+			mProxRect = new FloatRect(getPosition().x - mMinShootDistance, getPosition().y, mProxRect.width,
+					mProxRect.height);
+			break;
+		case RIGHT:
+			mProxRect = new FloatRect(getPosition().x, getPosition().y, mProxRect.width, mProxRect.height);
+			break;
+		default:
+			System.err.println(this.getClass().getName() + ": Unkown orientation");
+			break;
+		}
+
+		List<SceneNode> nodes = new ArrayList<>();
+		GameWorld.getGame().getCollisionGraph().retrieve(nodes, mProxRect);
+		for (SceneNode node : nodes) {
+			if (node instanceof PlayerUnit && node.getBoundingRect().intersection(mProxRect) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
