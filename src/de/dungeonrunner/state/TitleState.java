@@ -42,7 +42,7 @@ public class TitleState extends State {
 	public boolean handleEvent(Event event) {
 		if (event.type == Type.KEY_PRESSED) {
 			requestStackPop();
-			requestStackPush(States.Game);
+			requestStackPush(States.Menu);
 		}
 		return false;
 	}

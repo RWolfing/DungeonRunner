@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="15" tilewidth="64" tileheight="64" nextobjectid="10">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="64" tileheight="64" nextobjectid="10">
  <tileset firstgid="1" name="sprites" tilewidth="64" tileheight="64" spacing="1" tilecount="121">
   <image source="../../../../../Design_Konzept/SpriteBundle/SpriteBundle_Platform_Mines/SpriteBundle_Platform_Mines/tmx/sprites.png" width="715" height="715"/>
   <tile id="6">
@@ -78,24 +78,24 @@
    </properties>
   </tile>
  </tileset>
- <layer name="LevelFrontground" width="30" height="15">
+ <layer name="LevelFrontground" width="35" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMAqGDmCFYkrVwAAAC7gAFQ==
+   eJxjYBgFo2AUjALKATsWPApGwSggDVCSj1ihmFI1+AAAqtwAWw==
   </data>
  </layer>
- <layer name="LevelMiddleground" width="30" height="15">
+ <layer name="LevelMiddleground" width="35" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2D4gDIsOBuHWk4S1Q8GgO5mWpo/mMOBHOAFxCYDYKcsEAsBMTsZ+u2JwOjmwuzMBGJRIOYiw147ArgUiIOR1GtA7cyF8kXR5EEAV34jJT2j+8cDiLWB2AyPvcQAAJK+FS0=
+   eJxjYBgFo2AUUArKsOBsHGo5SVQ/WAG6P+ht51ALL2oBLyA2GWhHMEDcIQvEQkDMTiUz7YnA6HbB3JEJxKJAzEUlt9gRwKVAHIykXgPqjlwoXxRNHgRw5X1K8xG6vz2AWBuIzfC4hVwAAG96FS0=
   </data>
  </layer>
- <layer name="LevelBackground" width="30" height="15">
+ <layer name="LevelBackground" width="35" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGLgAABwgAAQ==
+   eJxjYBgFo2AUjIJRMApGwSggDAAINAAB
   </data>
  </layer>
- <layer name="Hintergrund" width="30" height="15">
+ <layer name="Hintergrund" width="35" height="15">
   <data encoding="base64" compression="zlib">
-   eJxTYGBgUBhBuGKA8CgYBaNgFIwEoEChXnyYVvYCAF+kFtE=
+   eJxTYGBgUBgAjA0MhDtwuaVigPAoGAWjYBSMgqENFGhgHj5MT7cAAETpFtE=
   </data>
  </layer>
  <objectgroup name="Entities">
@@ -105,13 +105,13 @@
     <property name="spawnY" value="249"/>
    </properties>
   </object>
-  <object id="8" name="Enemy" type="Enemy" x="725" y="260" width="414" height="120">
+  <object id="8" name="Enemy" type="Enemy" x="725" y="198" width="414" height="207">
    <properties>
     <property name="spawnX" value="1000"/>
     <property name="spawnY" value="260"/>
    </properties>
   </object>
-  <object id="9" name="Crystal" type="Crystal" x="254" y="303" width="94" height="79">
+  <object id="9" name="Crystal" type="Crystal" x="254" y="306" width="94" height="79">
    <properties>
     <property name="crystal_type" value=""/>
    </properties>

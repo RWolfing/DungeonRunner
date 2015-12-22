@@ -1,45 +1,30 @@
 package de.dungeonrunner.view;
 
-import org.jsfml.graphics.RenderStates;
-import org.jsfml.graphics.RenderTarget;
-import org.jsfml.graphics.Sprite;
-import org.jsfml.graphics.Transform;
 import org.jsfml.window.event.Event;
 
-import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
-public class Button extends Component {
+public class Button extends Label {
 
 	private TextureID mSelectedTexture;
 	private TextureID mDefaultTexture;
 	private TextureID mActivatedTexture;
-	private Sprite mBackgroundSprite;
-	private Label mTextLabel;
 
 	private boolean mIsToggle;
 
 	private OnButtonClick mOnClickListener;
 
 	public Button(String text, TextureID inactiveTex) {
-		mTextLabel = new Label(text);
-		mBackgroundSprite = new Sprite(TextureHolder.getInstance().getTexture(inactiveTex));
-		mTextLabel.setPosition(mBackgroundSprite.getTexture().getSize().x / 2,
-				mBackgroundSprite.getTexture().getSize().y / 2);
+		super(text);
 		mIsToggle = false;
+		mDefaultTexture = inactiveTex;
+		setBackground(mDefaultTexture);
 	}
 
 	@Override
 	public void handleEvent(Event event) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void draw(RenderTarget target, RenderStates states) {
-		states = new RenderStates(states, Transform.combine(states.transform, getTransform()));
-		target.draw(mBackgroundSprite, states);
-		target.draw(mTextLabel, states);
 	}
 
 	@Override
@@ -50,20 +35,20 @@ public class Button extends Component {
 	@Override
 	public void select() {
 		super.select();
-		mBackgroundSprite.setTexture(TextureHolder.getInstance().getTexture(mSelectedTexture));
+		setBackground(mSelectedTexture);
 	}
 
 	@Override
 	public void deselect() {
 		super.deselect();
-		mBackgroundSprite.setTexture(TextureHolder.getInstance().getTexture(mDefaultTexture));
+		setBackground(mDefaultTexture);
 	}
 
 	@Override
 	public void activate() {
 		super.activate();
 		if (mIsToggle) {
-			mBackgroundSprite.setTexture(TextureHolder.getInstance().getTexture(mActivatedTexture));
+			setBackground(mActivatedTexture);
 		} else {
 			deactivate();
 		}
@@ -78,15 +63,11 @@ public class Button extends Component {
 
 		if (mIsToggle) {
 			if (isSelected()) {
-				mBackgroundSprite.setTexture(TextureHolder.getInstance().getTexture(mSelectedTexture));
+				setBackground(mSelectedTexture);
 			} else {
-				mBackgroundSprite.setTexture(TextureHolder.getInstance().getTexture(mDefaultTexture));
+				setBackground(mDefaultTexture);
 			}
 		}
-	}
-
-	public void setText(String text) {
-		mTextLabel.setText(text);
 	}
 
 	public void setSelectedTexture(TextureID texID) {

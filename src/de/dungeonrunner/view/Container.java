@@ -34,7 +34,7 @@ public class Container extends BasicTransformable implements Drawable {
 	public void handleEvent(Event event) {
 		if (hasSelection() && mChildren.get(mSelectedChild).isActive()) {
 			mChildren.get(mSelectedChild).handleEvent(event);
-		} else if (event.type == Type.KEY_RELEASED) {
+		} else if (event.type == Type.KEY_PRESSED) {
 			if (event.asKeyEvent().key == Keyboard.Key.W) {
 				selectPrevious();
 			} else if (event.asKeyEvent().key == Key.S) {
@@ -91,7 +91,7 @@ public class Container extends BasicTransformable implements Drawable {
 	}
 
 	private boolean hasSelection() {
-		if (mSelectedChild > 0 && mSelectedChild < mChildren.size()) {
+		if (mSelectedChild >= 0 && mSelectedChild < mChildren.size()) {
 			return true;
 		}
 		return false;

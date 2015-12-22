@@ -14,12 +14,11 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
-import de.dungeonrunner.entities.StoneThrower;
 import de.dungeonrunner.entities.CrystalItem;
 import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.LeashedUnit;
 import de.dungeonrunner.entities.PlayerUnit;
-import de.dungeonrunner.entities.Unit;
+import de.dungeonrunner.entities.StoneThrower;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
