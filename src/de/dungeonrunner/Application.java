@@ -86,8 +86,6 @@ public class Application {
 
 	private void processEvents() {
 		for (Event event : mRenderWindow.pollEvents()) {
-			if (event.asKeyEvent() != null)
-				System.out.println("1; " + event.asKeyEvent().toString());
 			mStateStack.handleEvent(event);
 			switch (event.type) {
 			case CLOSED:
