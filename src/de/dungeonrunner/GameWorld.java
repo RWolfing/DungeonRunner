@@ -18,6 +18,7 @@ import de.dungeonrunner.entities.CrystalItem;
 import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.LeashedUnit;
 import de.dungeonrunner.entities.PlayerUnit;
+import de.dungeonrunner.entities.Spikes;
 import de.dungeonrunner.entities.StoneThrower;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
@@ -96,6 +97,7 @@ public class GameWorld {
 	}
 
 	public void draw() {
+		mRenderWindow.setView(mCamera);
 		mRenderWindow.draw(mSceneGraph);
 		mRenderWindow.draw(mCollisionTree);
 	}
@@ -109,16 +111,16 @@ public class GameWorld {
 			adaptCameraPosition();
 		}
 	}
-	
+
 	public CommandStack getCommandStack() {
 		return mCommandStack;
 	}
-	
-	public QuadTree getCollisionGraph(){
+
+	public QuadTree getCollisionGraph() {
 		return mCollisionTree;
 	}
-	
-	public static GameWorld getGame(){
+
+	public static GameWorld getGame() {
 		return mWorldInstance;
 	}
 
@@ -158,34 +160,38 @@ public class GameWorld {
 	 * if possible
 	 */
 	private void adaptCameraPosition() {
-		//player must not be null
-		if (mPlayerEntity != null){
-			//Precalculate the position of the camera if we move with the player
+		// player must not be null
+		if (mPlayerEntity != null) {
+			// Precalculate the position of the camera if we move with the
+			// player
 			Vector2f preCalculatedPosition = mPlayerEntity.getPosition();
-			//Bounds of the level in the world
+			// Bounds of the level in the world
 			float leftBorder = 0;
-			float rightBorder = mMap.getBounds().width *  mMap.getTileWidth();
+			float rightBorder = mMap.getBounds().width * mMap.getTileWidth();
 			float topBorder = 0;
 			float bottomBorder = mMap.getBounds().height * mMap.getTileHeight();
-			
+
 			boolean isXPossible = true;
 			boolean isYPossible = true;
-			//Check if we can move the camera in x/y direction and still stay in the level bounds
-			if((preCalculatedPosition.x - mCamera.getSize().x / 2 < leftBorder) || (preCalculatedPosition.x + mCamera.getSize().x / 2 > rightBorder)){
+			// Check if we can move the camera in x/y direction and still stay
+			// in the level bounds
+			if ((preCalculatedPosition.x - mCamera.getSize().x / 2 < leftBorder)
+					|| (preCalculatedPosition.x + mCamera.getSize().x / 2 > rightBorder)) {
 				isXPossible = false;
 			}
-			
-			if((preCalculatedPosition.y - mCamera.getSize().y / 2 < topBorder) || (preCalculatedPosition.y + mCamera.getSize().y / 2) > bottomBorder){
+
+			if ((preCalculatedPosition.y - mCamera.getSize().y / 2 < topBorder)
+					|| (preCalculatedPosition.y + mCamera.getSize().y / 2) > bottomBorder) {
 				isYPossible = false;
 			}
-			
-			//Only move the camera as long as it stays in the level bounds
-			if(isXPossible && isYPossible){
+
+			// Only move the camera as long as it stays in the level bounds
+			if (isXPossible && isYPossible) {
 				mCamera.setCenter(preCalculatedPosition);
-			} else if(isXPossible){
+			} else if (isXPossible) {
 				mCamera.setCenter(preCalculatedPosition.x, mCamera.getCenter().y);
-			} else if(isYPossible){
-				mCamera.setCenter(mCamera.getCenter().x,preCalculatedPosition.y);
+			} else if (isYPossible) {
+				mCamera.setCenter(mCamera.getCenter().x, preCalculatedPosition.y);
 			}
 		}
 	}
@@ -223,7 +229,15 @@ public class GameWorld {
 								Sprite cachedTile = new Sprite();
 								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
 
-								SpriteNode node = new SpriteNode(cachedTile, tile.getProperties());
+								SpriteNode node;
+								switch (tile.getId()) {
+								case 4:
+									node = new Spikes(cachedTile, tile.getProperties());
+									break;
+								default:
+									node = new SpriteNode(cachedTile, tile.getProperties());
+
+								}
 								node.setPosition(x * tileWidth, y * tileHeight);
 
 								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
@@ -265,18 +279,19 @@ public class GameWorld {
 							continue;
 						}
 
-						//Enemy
+						// Enemy
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
 							LeashedUnit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
-							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y, (float) object.getBounds().width, (float) object.getBounds().height);
+							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y,
+									(float) object.getBounds().width, (float) object.getBounds().height);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
-						
-						//Item
-						if(object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)){
+
+						// Item
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
 							Item item = new CrystalItem(TextureID.ITEM_CRYSTAL, object.getProperties());
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
-							item.setPosition((float) object.getX(), (float) object.getY()); 
+							item.setPosition((float) object.getX(), (float) object.getY());
 						}
 					}
 				}

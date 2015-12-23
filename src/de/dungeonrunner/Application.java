@@ -33,8 +33,8 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
-		//mRenderWindow.create(VideoMode.getFullscreenModes()[0], "DungeonRunner", RenderWindow.FULLSCREEN);
-		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+		mRenderWindow.create(VideoMode.getFullscreenModes()[0], "DungeonRunner", RenderWindow.FULLSCREEN);
+		//mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
 		mRenderWindow.setFramerateLimit(30);
 
 		mClock = new Clock();
@@ -121,6 +121,7 @@ public class Application {
 
 	private void render() {
 		mRenderWindow.clear();
+		mRenderWindow.setView(mRenderWindow.getDefaultView());
 		mStateStack.draw();
 		mRenderWindow.display();
 

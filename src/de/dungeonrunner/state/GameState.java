@@ -12,7 +12,6 @@ public class GameState extends State {
 
 	private GameWorld mWorld;
 	private PlayerController mPlayerController;
-	private boolean mIsPausing = false;
 
 	public GameState(StateStack stack, Context context) {
 		super(stack, context);
@@ -27,28 +26,24 @@ public class GameState extends State {
 
 	@Override
 	public boolean update(Time dt) {
-		if (!mIsPausing) {
-			mWorld.update(dt);
-			mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
-		}
+		mWorld.update(dt);
+		mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
 		return true;
 	}
 
 	@Override
 	public boolean handleEvent(Event event) {
 		mPlayerController.handleEvent(event, mWorld.getCommandStack());
-		
+
 		switch (event.type) {
 		case KEY_RELEASED:
-			if (event.asKeyEvent().key == Key.P) {
-				//mIsPausing = true;
+			if (event.asKeyEvent().key == Key.P || event.asKeyEvent().key == Key.ESCAPE) {
 				requestStackPush(States.Pause);
 			}
 			break;
 		default:
 			break;
 		}
-		
 		return true;
 	}
 

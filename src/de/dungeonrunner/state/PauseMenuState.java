@@ -79,6 +79,7 @@ public class PauseMenuState extends State {
 	public void draw() {
 		super.draw();
 		RenderWindow mRenderWindow = getContext().mRenderWindow;
+		mRenderWindow.setView(mRenderWindow.getDefaultView());
 		mRenderWindow.draw(mBackgroundOverlay);
 		mRenderWindow.draw(mGUIContainer);
 	}
