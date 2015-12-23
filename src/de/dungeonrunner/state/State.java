@@ -1,6 +1,7 @@
 package de.dungeonrunner.state;
 
 import org.jsfml.system.Time;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.util.Context;
@@ -24,6 +25,14 @@ public abstract class State {
 	}
 	
 	public boolean handleEvent(Event event){
+		switch(event.type){
+		case RESIZED:
+			if(event.asSizeEvent() != null){
+				onWindowResized(event.asSizeEvent().size);
+			}
+		default:
+			break;
+		}
 		return true;
 	}
 	
@@ -41,5 +50,9 @@ public abstract class State {
 	
 	protected Context getContext(){
 		return mContext;
+	}
+	
+	protected void onWindowResized(Vector2i newSize){
+		//Unused
 	}
 }

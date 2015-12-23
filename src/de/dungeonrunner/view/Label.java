@@ -84,6 +84,10 @@ public class Label extends Component {
 	public void offsetText(float x, float y) {
 		mOffsetText = new Vector2f(x, y);
 	}
+	
+	public void offsetText(Vector2f offset){
+		mOffsetText = offset;
+	}
 
 	private void computeOrigin() {
 		if (mIsCentered) {

@@ -60,7 +60,7 @@ public class StateStack {
 	}
 
 	public boolean isEmpty() {
-		return mStack.isEmpty();
+		return mStack.isEmpty() && mPendingList.isEmpty();
 	}
 
 	private State createState(States stateID) {

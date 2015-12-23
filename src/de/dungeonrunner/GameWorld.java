@@ -96,7 +96,6 @@ public class GameWorld {
 	}
 
 	public void draw() {
-		mRenderWindow.setView(mCamera);
 		mRenderWindow.draw(mSceneGraph);
 		mRenderWindow.draw(mCollisionTree);
 	}
@@ -109,11 +108,6 @@ public class GameWorld {
 			mSceneGraph.cleanDestroyedNodes();
 			adaptCameraPosition();
 		}
-	}
-
-	public void resizeWindow(){
-		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize()));
 	}
 	
 	public CommandStack getCommandStack() {

@@ -13,13 +13,18 @@ public class Constants {
 	public static final String TEX_DIR = RES_DIR + "textures" + File.separator;
 	public static final String ANIM_DIR = TEX_DIR + File.separator + "animations" + File.separator;
 	public static boolean IS_DEBUGGING = false;
-	
-	//Physics
+
+	// Physics
 	public static final Vector2f GRAVITY = new Vector2f(0, 170);
 	public static final float GRAVITY_DOWN = 170;
-	
-	//Properties
+
+	// Properties
 	public static final String BLOCK_VOLUME = "BlockVolume";
 	public static final String PROJECTILE = "Projectile";
 	public static final String UNIT_VOLUME = "UnitVolume";
+
+	public static final float MENU_ITEM_HEIGHT = 100;
+	public static final float MENU_ITEM_WIDTH = 200;
+	public static final Vector2f MENU_ITEM_TEXT_OFFSET = new Vector2f(0, -10);
+	public static final float MENU_ITEM_SPACING = 25;
 }

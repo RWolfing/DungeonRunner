@@ -1,8 +1,10 @@
 package de.dungeonrunner;
 
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
+import org.jsfml.system.Vector2f;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
@@ -13,6 +15,7 @@ import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
 import de.dungeonrunner.state.MainMenuState;
+import de.dungeonrunner.state.PauseMenuState;
 import de.dungeonrunner.state.StateStack;
 import de.dungeonrunner.state.States;
 import de.dungeonrunner.state.TitleState;
@@ -41,7 +44,7 @@ public class Application {
 		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		texHolder.loadTexture(TextureID.BULLET, Constants.TEX_DIR + "projectile.png");
 		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
-		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
+		
 		texHolder.loadTexture(TextureID.ENEMY, Constants.TEX_DIR + "enemy.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_RUN, Constants.ANIM_DIR + "hero_miner_run.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_JUMP, Constants.ANIM_DIR + "hero_miner_jump.png");
@@ -57,6 +60,7 @@ public class Application {
 		texHolder.loadTexture(TextureID.ITEM_CRYSTAL, Constants.TEX_DIR + "crystal_blue.png");
 		
 		//Menu
+		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
 		texHolder.loadTexture(TextureID.BUTTON_DEFAULT, Constants.IMG_DIR + "button_normal.png");
 		texHolder.loadTexture(TextureID.BUTTON_SELECTED, Constants.IMG_DIR + "button_selected.png");
 		texHolder.loadTexture(TextureID.BUTTON_ACTIVATED, Constants.IMG_DIR + "button_activated.png");
@@ -97,6 +101,9 @@ public class Application {
 			case LOST_FOCUS:
 				mIsPausing = true;
 				break;
+			case RESIZED:
+				mRenderWindow.setView(new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+				new Vector2f(mRenderWindow.getSize())));
 			default:
 				break;
 			}
@@ -105,16 +112,15 @@ public class Application {
 
 	private void update(Time fPS2) {
 		if (!mIsPausing) {
+			mStateStack.update(fPS2);
 			if(mStateStack.isEmpty()){
 				mRenderWindow.close();
 			}
-			mStateStack.update(fPS2);
 		}
 	}
 
 	private void render() {
 		mRenderWindow.clear();
-		mRenderWindow.setView(mRenderWindow.getDefaultView());
 		mStateStack.draw();
 		mRenderWindow.display();
 
@@ -126,6 +132,7 @@ public class Application {
 		holder.registerState(States.Title, new TitleState(mStateStack, ctx));
 		holder.registerState(States.Game, new GameState(mStateStack, ctx));
 		holder.registerState(States.Menu, new MainMenuState(mStateStack, ctx));
+		holder.registerState(States.Pause, new PauseMenuState(mStateStack, ctx));
 	}
 
 	public static void main(String[] args) {

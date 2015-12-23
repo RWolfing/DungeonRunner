@@ -3,21 +3,26 @@ package de.dungeonrunner.state;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Context;
+import de.dungeonrunner.util.Helper;
 import de.dungeonrunner.view.Button;
 import de.dungeonrunner.view.Button.OnButtonClick;
 import de.dungeonrunner.view.Container;
 
 public class MainMenuState extends State {
 
+	private final int MENU_X_OFFSET = 4; //in % off window width ( 100/MENU_X_OFFSET)
 	private Sprite mBackgroundTexture;
 	private Container mGUIContainer;
 
 	private Button mPlayButton;
+	private Button mCreditsButton;
 	private Button mExitButton;
 
 	public MainMenuState(StateStack stack, Context context) {
@@ -29,11 +34,10 @@ public class MainMenuState extends State {
 		mPlayButton = new Button("PLAY", TextureID.BUTTON_DEFAULT);
 		mPlayButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
 		mPlayButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
-		mPlayButton.setPosition(200, 200);
-		mPlayButton.setWidth(200);
-		mPlayButton.setHeight(100);
+		mPlayButton.setWidth(Constants.MENU_ITEM_WIDTH);
+		mPlayButton.setHeight(Constants.MENU_ITEM_HEIGHT);
 		mPlayButton.setCentered(true);
-		mPlayButton.offsetText(0, -10);
+		mPlayButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
 		mPlayButton.setOnClickListener(new OnButtonClick() {
 
 			@Override
@@ -43,14 +47,21 @@ public class MainMenuState extends State {
 			}
 		});
 
+		mCreditsButton = new Button("CREDITS", TextureID.BUTTON_DEFAULT);
+		mCreditsButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
+		mCreditsButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
+		mCreditsButton.setWidth(Constants.MENU_ITEM_WIDTH);
+		mCreditsButton.setHeight(Constants.MENU_ITEM_HEIGHT);
+		mCreditsButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
+		mCreditsButton.setCentered(true);
+
 		mExitButton = new Button("EXIT", TextureID.BUTTON_DEFAULT);
 		mExitButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
 		mExitButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
-		mExitButton.setPosition(200, 325);
-		mExitButton.setWidth(200);
-		mExitButton.setHeight(100);
+		mExitButton.setWidth(Constants.MENU_ITEM_WIDTH);
+		mExitButton.setHeight(Constants.MENU_ITEM_HEIGHT);
 		mExitButton.setCentered(true);
-		mExitButton.offsetText(0, -10);
+		mExitButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
 
 		mExitButton.setOnClickListener(new OnButtonClick() {
 			@Override
@@ -60,13 +71,15 @@ public class MainMenuState extends State {
 		});
 
 		mGUIContainer.pack(mPlayButton);
+		mGUIContainer.pack(mCreditsButton);
 		mGUIContainer.pack(mExitButton);
+
+		layout(context.mRenderWindow.getSize());
 	}
 
 	@Override
 	public void draw() {
 		RenderWindow window = getContext().mRenderWindow;
-		window.setView(window.getDefaultView());
 		window.draw(mBackgroundTexture);
 		window.draw(mGUIContainer);
 	}
@@ -78,8 +91,22 @@ public class MainMenuState extends State {
 
 	@Override
 	public boolean handleEvent(Event event) {
+		super.handleEvent(event);
 		mGUIContainer.handleEvent(event);
 		return true;
+	}
+
+	@Override
+	protected void onWindowResized(Vector2i newSize) {
+		layout(newSize);
+	}
+
+	private void layout(Vector2i newSize) {
+		Helper.layoutVertically(newSize, Constants.MENU_ITEM_SPACING, true, newSize.x / MENU_X_OFFSET, Constants.MENU_ITEM_HEIGHT / 2, mPlayButton,
+				mCreditsButton, mExitButton);
+		mBackgroundTexture.setScale(newSize.x / mBackgroundTexture.getLocalBounds().width,
+				newSize.y / mBackgroundTexture.getLocalBounds().height);
+
 	}
 
 }

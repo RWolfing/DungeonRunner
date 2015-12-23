@@ -35,9 +35,9 @@ public class Container extends BasicTransformable implements Drawable {
 		if (hasSelection() && mChildren.get(mSelectedChild).isActive()) {
 			mChildren.get(mSelectedChild).handleEvent(event);
 		} else if (event.type == Type.KEY_PRESSED) {
-			if (event.asKeyEvent().key == Keyboard.Key.W) {
+			if (event.asKeyEvent().key == Keyboard.Key.W || event.asKeyEvent().key == Key.UP) {
 				selectPrevious();
-			} else if (event.asKeyEvent().key == Key.S) {
+			} else if (event.asKeyEvent().key == Key.S || event.asKeyEvent().key == Key.DOWN) {
 				selectNext();
 			} else if (event.asKeyEvent().key == Key.RETURN && hasSelection()) {
 				mChildren.get(mSelectedChild).activate();
@@ -95,5 +95,9 @@ public class Container extends BasicTransformable implements Drawable {
 			return true;
 		}
 		return false;
+	}
+	
+	public Vector<Component> getComponents(){
+		return mChildren;
 	}
 }

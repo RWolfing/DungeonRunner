@@ -39,13 +39,11 @@ public class GameState extends State {
 		mPlayerController.handleEvent(event, mWorld.getCommandStack());
 		
 		switch (event.type) {
-		case KEY_PRESSED:
+		case KEY_RELEASED:
 			if (event.asKeyEvent().key == Key.P) {
-				mIsPausing = !mIsPausing;
+				//mIsPausing = true;
+				requestStackPush(States.Pause);
 			}
-			break;
-		case RESIZED:
-			mWorld.resizeWindow();
 			break;
 		default:
 			break;
