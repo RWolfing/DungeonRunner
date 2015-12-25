@@ -189,7 +189,7 @@ public class Unit extends GameEntity {
 				return;
 			}
 			mActiveAnimation = mAnimations.get(ANIM_ID.DEATH);
-			mActiveAnimation.setAnimationListener(new AnimationListener() {
+			mActiveAnimation.addAnimationListener(new AnimationListener() {
 
 				@Override
 				public void onFrame(AnimationNode node, int frame) {

@@ -36,6 +36,7 @@ public class PlayerUnit extends Unit {
 		mDefaultCollisionRect = new FloatRect(27, 11, 62, 118);
 		mAttackCollisionRect = new FloatRect(15, 15, 105, 118);
 		setCollisionRect(mDefaultCollisionRect);
+		setTotalHP(100);
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class PlayerUnit extends Unit {
 		AnimationNode mDeathAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_MINER_DEATH, 1000, false, 5,
 				new Vector2i(135, 135));
 		// Attach necessary listeners to the animations
-		mShootAnimation.setAnimationListener(new AnimationNode.AnimationListener() {
+		mShootAnimation.addAnimationListener(new AnimationNode.AnimationListener() {
 			private Unit mEntity;
 
 			@Override
@@ -102,7 +103,6 @@ public class PlayerUnit extends Unit {
 
 				if (node.getNumFrames() - 1 == frame) {
 					mEntity.resetShoot();
-					;
 				}
 			}
 
@@ -112,7 +112,7 @@ public class PlayerUnit extends Unit {
 			}
 		}.init(this));
 
-		mAttackAnimation.setAnimationListener(new AnimationListener() {
+		mAttackAnimation.addAnimationListener(new AnimationListener() {
 			private Unit mUnit;
 
 			@Override

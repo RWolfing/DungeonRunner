@@ -7,7 +7,6 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
-import org.jsfml.window.event.Event.Type;
 
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
@@ -65,32 +64,27 @@ public class PauseMenuState extends State {
 		});
 
 		mBackgroundOverlay = new RectangleShape();
-		mBackgroundOverlay.setSize(new Vector2f(context.mRenderWindow.getSize()));
+		mBackgroundOverlay.setSize(new Vector2f(context.getRenderWindow().getSize()));
 		mBackgroundOverlay.setFillColor(new Color(0, 0, 0, 150));
 
 		mGUIContainer = new Container();
 		mGUIContainer.pack(mPauseLabel);
 		mGUIContainer.pack(mContinueButton);
 		mGUIContainer.pack(mExitButton);
-		layout(context.mRenderWindow.getSize());
 	}
 
 	@Override
 	public void draw() {
 		super.draw();
-		RenderWindow mRenderWindow = getContext().mRenderWindow;
-		mRenderWindow.setView(mRenderWindow.getDefaultView());
+		RenderWindow mRenderWindow = getContext().getRenderWindow();
 		mRenderWindow.draw(mBackgroundOverlay);
 		mRenderWindow.draw(mGUIContainer);
 	}
 
 	@Override
 	public boolean handleEvent(Event event) {
-		if (event.type == Type.RESIZED) {
-
-		}
 		mGUIContainer.handleEvent(event);
-		return false;
+		return super.handleEvent(event);
 	}
 
 	@Override
@@ -99,13 +93,10 @@ public class PauseMenuState extends State {
 	}
 
 	@Override
-	protected void onWindowResized(Vector2i newSize) {
-		super.onWindowResized(newSize);
-		layout(newSize);
-	}
-
-	private void layout(Vector2i newSize) {
-		mBackgroundOverlay.setSize(new Vector2f(newSize));
-		Helper.layoutVertically(newSize, 25, true, 0, 50, mPauseLabel, mContinueButton, mExitButton);
+	public void layout() {
+		super.layout();
+		Vector2i windowSize = getContext().getRenderWindow().getSize();
+		mBackgroundOverlay.setSize(new Vector2f(windowSize));
+		Helper.layoutVertically(windowSize, 25, true, 0, 0, mPauseLabel, mContinueButton, mExitButton);
 	}
 }

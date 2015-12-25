@@ -30,13 +30,16 @@ public class StoneThrower extends LeashedUnit {
 	private float mJumpStartX = Float.MIN_VALUE;
 	private FloatRect mProxRect;
 	private float mMinShootDistance = 700;
+	
+	private FloatRect mDefaultCollisionRect = new FloatRect(15, 18, 90, 100);
+	private FloatRect mDeadCollisionRect = new FloatRect(0, 10, 105, 107);
 
 	public StoneThrower(TextureID textureID, Properties props) {
 		super(textureID, props);
 		setupAnimations();
 		setVelocity(mXVelocity, getVelocity().y);
 		setTotalHP(200);
-		setCollisionRect(new FloatRect(9, 18, 96, 100));
+		setCollisionRect(mDefaultCollisionRect);
 		mProxRect = new FloatRect(0, 0, mMinShootDistance, 10);
 	}
 
@@ -103,7 +106,7 @@ public class StoneThrower extends LeashedUnit {
 				11, new Vector2i(135, 120));
 		AnimationNode mDeathAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_DEATH, 1000, false, 5, new Vector2i(135, 120));
 		
-		mShootAnimation.setAnimationListener(new AnimationListener() {
+		mShootAnimation.addAnimationListener(new AnimationListener() {
 			private Unit mUnit;
 
 			@Override
@@ -124,6 +127,17 @@ public class StoneThrower extends LeashedUnit {
 				return this;
 			}
 		}.init(this));
+		
+		mDeathAnimation.addAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onFrame(AnimationNode node, int frame) {
+				if(node.getNumFrames() - 1 == frame){
+					setCollisionRect(mDeadCollisionRect);
+				}
+				
+			}
+		});
 		setAnimation(idleAnimation, ANIM_ID.IDLE);
 		setAnimation(mShootAnimation, ANIM_ID.SHOOT);
 		setAnimation(mWalkAnimation, ANIM_ID.WALK);

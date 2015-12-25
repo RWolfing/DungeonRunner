@@ -25,7 +25,7 @@ import de.dungeonrunner.util.Context;
 public class Application {
 
 	private final Time FPS = Time.getSeconds(1.0f / 60.0f);
-	private RenderWindow mRenderWindow;
+	private static RenderWindow mRenderWindow;
 	private Clock mClock;
 	private StateStack mStateStack;
 	private PlayerController mPlayer;
@@ -33,8 +33,9 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
-		mRenderWindow.create(VideoMode.getFullscreenModes()[0], "DungeonRunner", RenderWindow.FULLSCREEN);
-		//mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+		// mRenderWindow.create(VideoMode.getFullscreenModes()[0],
+		// "DungeonRunner", RenderWindow.FULLSCREEN);
+		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
 		mRenderWindow.setFramerateLimit(30);
 
 		mClock = new Clock();
@@ -44,11 +45,12 @@ public class Application {
 		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
 		texHolder.loadTexture(TextureID.BULLET, Constants.TEX_DIR + "projectile.png");
 		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
-		
+
 		texHolder.loadTexture(TextureID.ENEMY, Constants.TEX_DIR + "enemy.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_RUN, Constants.ANIM_DIR + "hero_miner_run.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_JUMP, Constants.ANIM_DIR + "hero_miner_jump.png");
 		texHolder.loadTexture(TextureID.DYNAMITE_SINGLE, Constants.TEX_DIR + "dynamite.png");
+		texHolder.loadTexture(TextureID.ANIM_EXPLOSION, Constants.ANIM_DIR + "anim_explosion.png");
 		texHolder.loadTexture(TextureID.STONE, Constants.TEX_DIR + "stone.png");
 		texHolder.loadTexture(TextureID.ANIM_MINER_THROW, Constants.ANIM_DIR + "hero_miner_throw.png");
 		texHolder.loadTexture(TextureID.ANIM_MINER_ATTACK, Constants.ANIM_DIR + "hero_miner_attack.png");
@@ -58,13 +60,16 @@ public class Application {
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_WALK, Constants.ANIM_DIR + "stone_thrower_walk.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_DEATH, Constants.ANIM_DIR + "stone_thrower_death.png");
 		texHolder.loadTexture(TextureID.ITEM_CRYSTAL, Constants.TEX_DIR + "crystal_blue.png");
-		
-		//Menu
+
+		// Menu
 		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
 		texHolder.loadTexture(TextureID.BUTTON_DEFAULT, Constants.IMG_DIR + "button_normal.png");
 		texHolder.loadTexture(TextureID.BUTTON_SELECTED, Constants.IMG_DIR + "button_selected.png");
 		texHolder.loadTexture(TextureID.BUTTON_ACTIVATED, Constants.IMG_DIR + "button_activated.png");
 		
+		//UI
+		texHolder.loadTexture(TextureID.UI_LIFEBAR_BG, Constants.IMG_DIR + "ui_lifebar.png");
+		texHolder.loadTexture(TextureID.UI_LIFEBAR, Constants.IMG_DIR + "lifebar.png");
 
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");
 
@@ -88,9 +93,12 @@ public class Application {
 		}
 	}
 
+	public static RenderWindow getRenderWindow() {
+		return mRenderWindow;
+	}
+
 	private void processEvents() {
 		for (Event event : mRenderWindow.pollEvents()) {
-			mStateStack.handleEvent(event);
 			switch (event.type) {
 			case CLOSED:
 				mRenderWindow.close();
@@ -102,18 +110,20 @@ public class Application {
 				mIsPausing = true;
 				break;
 			case RESIZED:
-				mRenderWindow.setView(new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize())));
+				mRenderWindow
+						.setView(new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
+								new Vector2f(mRenderWindow.getSize())));
 			default:
 				break;
 			}
+			mStateStack.handleEvent(event);
 		}
 	}
 
 	private void update(Time fPS2) {
 		if (!mIsPausing) {
 			mStateStack.update(fPS2);
-			if(mStateStack.isEmpty()){
+			if (mStateStack.isEmpty()) {
 				mRenderWindow.close();
 			}
 		}

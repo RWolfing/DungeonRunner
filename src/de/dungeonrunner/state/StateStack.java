@@ -71,10 +71,14 @@ public class StateStack {
 		for (PendingChange change : mPendingList) {
 			switch (change.mAction) {
 			case Push:
-				mStack.push(createState(change.mStateID));
+				State state = createState(change.mStateID);
+				state.onStatePushed();
+				mStack.push(state);
 				break;
 			case Pop:
 				mStack.pop();
+				if (!mStack.isEmpty())
+					mStack.peek().resumeState();
 				break;
 			case Clear:
 				mStack.clear();

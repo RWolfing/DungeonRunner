@@ -41,7 +41,6 @@ public class GameWorld {
 		Background, Levelbackground, Levelmiddleground, Levelforeground
 	}
 
-	private RenderWindow mRenderWindow;
 	private SceneNode mSceneGraph;
 	private QuadTree mCollisionTree;
 
@@ -56,16 +55,13 @@ public class GameWorld {
 	private CommandStack mCommandStack;
 	private static GameWorld mWorldInstance;
 
-	public GameWorld(RenderWindow window) {
-		mRenderWindow = window;
-		mCamera = new View(new Vector2f(mRenderWindow.getSize().x / 2, mRenderWindow.getSize().y / 2),
-				new Vector2f(mRenderWindow.getSize()));
-		mRenderWindow.setView(mCamera);
+	public GameWorld() {
 		mCommandStack = new CommandStack();
 		mWorldInstance = this;
 		loadMap();
 		loadTextures();
 		buildScene();
+		resizeWorld(new Vector2f(Application.getRenderWindow().getSize()));
 	}
 
 	private void loadTextures() {
@@ -97,9 +93,10 @@ public class GameWorld {
 	}
 
 	public void draw() {
-		mRenderWindow.setView(mCamera);
-		mRenderWindow.draw(mSceneGraph);
-		mRenderWindow.draw(mCollisionTree);
+		RenderWindow window = Application.getRenderWindow();
+		window.setView(mCamera);
+		window.draw(mSceneGraph);
+		window.draw(mCollisionTree);
 	}
 
 	public void update(Time dt) {
@@ -194,6 +191,10 @@ public class GameWorld {
 				mCamera.setCenter(mCamera.getCenter().x, preCalculatedPosition.y);
 			}
 		}
+	}
+
+	public void resizeWorld(Vector2f size) {
+		mCamera = new View(new Vector2f(size.x / 2, size.y / 2), size);
 	}
 
 	private void createLevelScene() {

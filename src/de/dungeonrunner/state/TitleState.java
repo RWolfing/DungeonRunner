@@ -9,6 +9,7 @@ import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
 import org.jsfml.window.event.Event.Type;
 
+import de.dungeonrunner.Application;
 import de.dungeonrunner.singleton.FontHolder;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.FontHolder.FontID;
@@ -25,13 +26,12 @@ public class TitleState extends State {
 
 		mBackgroundSprite = new Sprite(TextureHolder.getInstance().getTexture(TextureID.MAIN_MENU_SCREEN));
 		mTitleText = new Text("Press any key to start", FontHolder.getInstance().getFont(FontID.DUNGEON_FONT));
-		mTitleText.setPosition(context.mRenderWindow.getView().getCenter());
-		layout(context.mRenderWindow.getSize());
 	}
 
 	@Override
 	public void draw() {
-		RenderWindow renderWindow = getContext().mRenderWindow;
+		super.draw();
+		RenderWindow renderWindow = Application.getRenderWindow();
 		renderWindow.draw(mBackgroundSprite);
 		renderWindow.draw(mTitleText);
 	}
@@ -43,25 +43,22 @@ public class TitleState extends State {
 
 	@Override
 	public boolean handleEvent(Event event) {
-		super.handleEvent(event);
 		if (event.type == Type.KEY_PRESSED) {
 			requestStackPop();
 			requestStackPush(States.Menu);
 		}
-		return false;
+		return super.handleEvent(event);
 	}
 
 	@Override
-	protected void onWindowResized(Vector2i newSize) {
-		layout(newSize);
-	}
-	
-	private void layout(Vector2i windowSize){
+	public void layout() {
+		super.layout();
+		Vector2i windowSize = getContext().getRenderWindow().getSize();
 		FloatRect bounds = mBackgroundSprite.getLocalBounds();
-		System.out.println("Bounds: " + bounds);
 		mBackgroundSprite.setScale((float) windowSize.x / bounds.width, (float) windowSize.y / bounds.height);
-		
+
 		bounds = mTitleText.getLocalBounds();
-		mTitleText.setPosition(windowSize.x - bounds.width - windowSize.x / 10, windowSize.y - bounds.height - windowSize.y / 5);
+		mTitleText.setPosition(windowSize.x - bounds.width - windowSize.x / 10,
+				windowSize.y - bounds.height - windowSize.y / 5);
 	}
 }

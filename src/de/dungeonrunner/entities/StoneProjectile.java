@@ -15,7 +15,7 @@ public class StoneProjectile extends Projectile {
 		super(shooter, textureID);
 		setVelocity(mVelocity);
 		setCollisionRect(new FloatRect(0f, 0f, 48f, 50f));
-		setDamage(100);
+		setDamage(10);
 	}
 
 	@Override

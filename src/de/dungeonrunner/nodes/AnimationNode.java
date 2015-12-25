@@ -1,5 +1,8 @@
 package de.dungeonrunner.nodes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
@@ -21,13 +24,14 @@ public class AnimationNode extends SpriteNode {
 	private boolean mIsRunning;
 
 	private ORIENTATION mOrientation;
-	private AnimationListener mAnimationListener;
+	private List<AnimationListener> mAnimationListener;
 
 	public AnimationNode(Sprite sprite) {
 		super(sprite, null);
 		mElapsedTime = Time.ZERO;
 		mIsRunning = false;
 		mOrientation = ORIENTATION.RIGHT;
+		mAnimationListener = new ArrayList<>();
 	}
 
 	@Override
@@ -53,9 +57,7 @@ public class AnimationNode extends SpriteNode {
 				}
 
 				mElapsedTime = Time.sub(mElapsedTime, timePerFrame);
-				if (mAnimationListener != null) {
-					mAnimationListener.onFrame(this, mCurrentFrame);
-				}
+				notifyListener(mCurrentFrame);
 				mCurrentFrame++;
 
 				if (mRepeat) {
@@ -136,8 +138,8 @@ public class AnimationNode extends SpriteNode {
 		mRepeat = repeat;
 	}
 
-	public void setAnimationListener(AnimationListener listener) {
-		mAnimationListener = listener;
+	public void addAnimationListener(AnimationListener listener) {
+		mAnimationListener.add(listener);
 	}
 
 	public static AnimationNode createAnimationNode(TextureID textureID, long duration, boolean repeat, int numFrames,
@@ -149,6 +151,12 @@ public class AnimationNode extends SpriteNode {
 		animationNode.setNumFrames(numFrames);
 		animationNode.setFrameSize(frameSize);
 		return animationNode;
+	}
+
+	private void notifyListener(int frame) {
+		for (AnimationListener listener : mAnimationListener) {
+			listener.onFrame(this, frame);
+		}
 	}
 
 	public interface AnimationListener {

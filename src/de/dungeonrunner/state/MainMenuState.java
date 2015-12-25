@@ -73,13 +73,12 @@ public class MainMenuState extends State {
 		mGUIContainer.pack(mPlayButton);
 		mGUIContainer.pack(mCreditsButton);
 		mGUIContainer.pack(mExitButton);
-
-		layout(context.mRenderWindow.getSize());
 	}
 
 	@Override
 	public void draw() {
-		RenderWindow window = getContext().mRenderWindow;
+		super.draw();
+		RenderWindow window = getContext().getRenderWindow();
 		window.draw(mBackgroundTexture);
 		window.draw(mGUIContainer);
 	}
@@ -91,22 +90,17 @@ public class MainMenuState extends State {
 
 	@Override
 	public boolean handleEvent(Event event) {
-		super.handleEvent(event);
 		mGUIContainer.handleEvent(event);
-		return true;
+		return super.handleEvent(event);
 	}
 
 	@Override
-	protected void onWindowResized(Vector2i newSize) {
-		layout(newSize);
-	}
-
-	private void layout(Vector2i newSize) {
-		Helper.layoutVertically(newSize, Constants.MENU_ITEM_SPACING, true, newSize.x / MENU_X_OFFSET, Constants.MENU_ITEM_HEIGHT / 2, mPlayButton,
+	public void layout() {
+		super.layout();
+		Vector2i windowSize = getContext().getRenderWindow().getSize();
+		Helper.layoutVertically(windowSize, Constants.MENU_ITEM_SPACING, true, windowSize.x / MENU_X_OFFSET, Constants.MENU_ITEM_HEIGHT / 2, mPlayButton,
 				mCreditsButton, mExitButton);
-		mBackgroundTexture.setScale(newSize.x / mBackgroundTexture.getLocalBounds().width,
-				newSize.y / mBackgroundTexture.getLocalBounds().height);
-
+		mBackgroundTexture.setScale(windowSize.x / mBackgroundTexture.getLocalBounds().width,
+				windowSize.y / mBackgroundTexture.getLocalBounds().height);
 	}
-
 }
