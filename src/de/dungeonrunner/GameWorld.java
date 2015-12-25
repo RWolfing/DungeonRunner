@@ -53,11 +53,9 @@ public class GameWorld {
 	private View mCamera;
 
 	private CommandStack mCommandStack;
-	private static GameWorld mWorldInstance;
 
 	public GameWorld() {
 		mCommandStack = new CommandStack();
-		mWorldInstance = this;
 		loadMap();
 		loadTextures();
 		buildScene();
@@ -115,10 +113,6 @@ public class GameWorld {
 
 	public QuadTree getCollisionGraph() {
 		return mCollisionTree;
-	}
-
-	public static GameWorld getGame() {
-		return mWorldInstance;
 	}
 
 	private void executeCommands() {

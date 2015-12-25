@@ -8,18 +8,17 @@ import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
+import de.dungeonrunner.Application;
 import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.PlayerController;
-import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Context;
-import de.dungeonrunner.view.Container;
-import de.dungeonrunner.view.UILifebar;
+import de.dungeonrunner.view.GameUI;
 
 public class GameState extends State {
 
-	private GameWorld mWorld;
+	private static GameWorld mWorld;
 	private PlayerController mPlayerController;
-	private Container mUIContainer;
+	private static GameUI mUIContainer;
 
 	public GameState(StateStack stack, Context context) {
 		super(stack, context);
@@ -69,11 +68,15 @@ public class GameState extends State {
 		mWorld.resizeWorld(new Vector2f(newSize));
 	}
 	
+	public static GameWorld getWorld(){
+		return mWorld;
+	}
+	
+	public static GameUI getGameUI(){
+		return mUIContainer;
+	}
+	
 	private void setupUI(){
-		mUIContainer = new Container();
-		UILifebar mUiLifebar = new UILifebar(TextureID.UI_LIFEBAR_BG, TextureID.UI_LIFEBAR);
-		mUiLifebar.setPosition(0, 0);
-		
-		mUIContainer.pack(mUiLifebar);
+		mUIContainer =new GameUI(Application.getRenderWindow().getSize());
 	}
 }

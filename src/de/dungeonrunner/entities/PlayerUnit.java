@@ -11,7 +11,6 @@ import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
@@ -19,6 +18,7 @@ import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.state.GameState;
 
 public class PlayerUnit extends Unit {
 
@@ -58,7 +58,7 @@ public class PlayerUnit extends Unit {
 		if (super.attack()) {
 			List<SceneNode> collisions = new ArrayList<>();
 			setCollisionRect(mAttackCollisionRect);
-			GameWorld.getGame().getCollisionGraph().retrieve(collisions, getBoundingRect());
+			GameState.getWorld().getCollisionGraph().retrieve(collisions, getBoundingRect());
 			for (SceneNode node : collisions) {
 				if (node instanceof CrystalItem) {
 					if (node.getBoundingRect().intersection(getBoundingRect()) != null) {
@@ -135,5 +135,11 @@ public class PlayerUnit extends Unit {
 		setAnimation(mShootAnimation, ANIM_ID.SHOOT);
 		setAnimation(mAttackAnimation, ANIM_ID.ATTACK);
 		setAnimation(mDeathAnimation, ANIM_ID.DEATH);
+	}
+
+	@Override
+	public void damage(int damage) {
+		super.damage(damage);
+		GameState.getGameUI().getLifeComponent().setHealthBar((float) getHitpoints() / (float) getTotalHP());
 	}
 }
