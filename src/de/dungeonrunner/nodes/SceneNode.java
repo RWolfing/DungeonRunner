@@ -29,6 +29,10 @@ import de.dungeonrunner.util.QuadTree;
 
 public class SceneNode extends BasicTransformable implements Drawable, Collidable {
 
+	public enum CollisionType {
+		TOP, BOTTOM, LEFT, RIGHT, NONE
+	}
+	
 	// Debugging purposes only
 	public String mDebugText = "";
 
@@ -153,8 +157,8 @@ public class SceneNode extends BasicTransformable implements Drawable, Collidabl
 		}
 	}
 
-	protected void processCollision(SceneNode node) {
-		// Unused
+	protected CollisionType processCollision(SceneNode node) {
+		return CollisionType.NONE;
 	}
 
 	public void collectCommands(CommandStack commandStack) {

@@ -12,7 +12,7 @@ import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
 public class UILifebar extends Component {
 
-	private final Vector2f mLifeBarPositionOffset = new Vector2f(93, 77);
+	private final Vector2f mLifeBarPositionOffset = new Vector2f(76, 61);
 	private Sprite mLifeBarBackground;
 	private Sprite mLifeBar;
 	private float mCurrLifeBar;

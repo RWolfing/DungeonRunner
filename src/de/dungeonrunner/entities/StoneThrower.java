@@ -9,11 +9,11 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
@@ -21,18 +21,21 @@ import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.state.GameState;
 
 public class StoneThrower extends LeashedUnit {
 
 	private static final int mShootFrameStart = 4;
 	private final float mXVelocity = 30f;
-	
+	private final float mReloadDuration = 2000;
+
 	private float mJumpStartX = Float.MIN_VALUE;
 	private FloatRect mProxRect;
 	private float mMinShootDistance = 700;
-	
+
 	private FloatRect mDefaultCollisionRect = new FloatRect(15, 18, 90, 100);
 	private FloatRect mDeadCollisionRect = new FloatRect(0, 10, 105, 107);
+	private Clock mShootTimer;
 
 	public StoneThrower(TextureID textureID, Properties props) {
 		super(textureID, props);
@@ -41,54 +44,30 @@ public class StoneThrower extends LeashedUnit {
 		setTotalHP(200);
 		setCollisionRect(mDefaultCollisionRect);
 		mProxRect = new FloatRect(0, 0, mMinShootDistance, 10);
+		mShootTimer = new Clock();
 	}
 
 	@Override
 	protected void updateCurrent(Time dt) {
 		super.updateCurrent(dt);
-		if(inShootRange()){
+		if (inShootRange()) {
 			shoot();
 		}
 	}
 
 	@Override
-	protected void processCollision(SceneNode node) {
-		if (Boolean.valueOf(node.getProperty("BlockVolume"))) {
-			FloatRect intersection1 = node.getBoundingRect().intersection(getBoundingRect());
-			if (intersection1 == null) {
-				return;
-			}
-
-			// Round the collision TODO why is this necessary
-			if (intersection1.width > 3 || intersection1.height > 3) {
-				if (intersection1.width > intersection1.height) {
-					// Player inbound from Top or Bottom
-					if (getBoundingRect().top < intersection1.top) {
-						// Collision from top
-						mIsAirborne = true;
-						setPosition(getWorldPosition().x, getWorldPosition().y - intersection1.height);
-					} else {
-						// Collision from bottom
-						setPosition(getWorldPosition().x, getWorldPosition().y + intersection1.height);
-					}
-				} else {
-					if (getBoundingRect().left < intersection1.left) {
-						// Collision from the right
-						setPosition(getWorldPosition().x - intersection1.width, getWorldPosition().y);
-					} else {
-						setPosition(getWorldPosition().x + intersection1.width, getWorldPosition().y);
-					}
-
-					// AI of the enemy
-					if (canJump() && mJumpStartX != getPosition().x) {
-						mJumpStartX = getPosition().x;
-						jump();
-					} else if (!isJumping()) {
-						setVelocity(-getVelocity().x, getVelocity().y);
-					}
-				}
+	protected CollisionType processCollision(SceneNode node) {
+		CollisionType type = super.processCollision(node);
+		if (type == CollisionType.RIGHT || type == CollisionType.LEFT) {
+			// AI of the enemy
+			if (canJump() && mJumpStartX != getPosition().x) {
+				mJumpStartX = getPosition().x;
+				jump();
+			} else if (!isJumping()) {
+				setVelocity(-getVelocity().x, getVelocity().y);
 			}
 		}
+		return type;
 	}
 
 	@Override
@@ -104,8 +83,9 @@ public class StoneThrower extends LeashedUnit {
 				false, 7, new Vector2i(135, 120));
 		AnimationNode mWalkAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_WALK, 1000, true,
 				11, new Vector2i(135, 120));
-		AnimationNode mDeathAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_DEATH, 1000, false, 5, new Vector2i(135, 120));
-		
+		AnimationNode mDeathAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_STONE_THROWER_DEATH, 1000,
+				false, 5, new Vector2i(135, 120));
+
 		mShootAnimation.addAnimationListener(new AnimationListener() {
 			private Unit mUnit;
 
@@ -127,15 +107,15 @@ public class StoneThrower extends LeashedUnit {
 				return this;
 			}
 		}.init(this));
-		
+
 		mDeathAnimation.addAnimationListener(new AnimationListener() {
-			
+
 			@Override
 			public void onFrame(AnimationNode node, int frame) {
-				if(node.getNumFrames() - 1 == frame){
+				if (node.getNumFrames() - 1 == frame) {
 					setCollisionRect(mDeadCollisionRect);
 				}
-				
+
 			}
 		});
 		setAnimation(idleAnimation, ANIM_ID.IDLE);
@@ -144,11 +124,19 @@ public class StoneThrower extends LeashedUnit {
 		setAnimation(mDeathAnimation, ANIM_ID.DEATH);
 	}
 
+	@Override
+	public boolean shoot() {
+		if (super.shoot()) {
+			setVelocity(0, getVelocity().y);
+			mShootTimer.restart();
+			return true;
+		}
+		return false;
+	}
 
 	@Override
-	public void shoot() {
-		super.shoot();
-		setVelocity(0, getVelocity().y);
+	public boolean canShoot() {
+		return super.canShoot() && mShootTimer.getElapsedTime().asMilliseconds() > mReloadDuration;
 	}
 
 	@Override
@@ -167,7 +155,7 @@ public class StoneThrower extends LeashedUnit {
 		shape.setFillColor(Color.TRANSPARENT);
 		shape.draw(target, states);
 	}
-	
+
 	private boolean inShootRange() {
 		switch (getOrientation()) {
 		case LEFT:
@@ -183,7 +171,7 @@ public class StoneThrower extends LeashedUnit {
 		}
 
 		List<SceneNode> nodes = new ArrayList<>();
-		GameWorld.getGame().getCollisionGraph().retrieve(nodes, mProxRect);
+		GameState.getWorld().getCollisionGraph().retrieve(nodes, mProxRect);
 		for (SceneNode node : nodes) {
 			if (node instanceof PlayerUnit && node.getBoundingRect().intersection(mProxRect) != null) {
 				return true;

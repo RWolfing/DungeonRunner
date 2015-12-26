@@ -21,11 +21,11 @@ public class Spikes extends SpriteNode {
 	}
 
 	@Override
-	protected void processCollision(SceneNode node) {
-		super.processCollision(node);
+	protected CollisionType processCollision(SceneNode node) {
 		if (node.getBoundingRect().intersection(getBoundingRect()) != null && node instanceof Unit) {
 			((Unit) node).damage(DAMAGE);
 		}
+		return CollisionType.NONE;
 	}
 
 	@Override

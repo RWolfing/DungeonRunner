@@ -27,6 +27,8 @@ public class PlayerUnit extends Unit {
 	private FloatRect mDefaultCollisionRect;
 	private FloatRect mAttackCollisionRect;
 
+	private int mCurrentDynamiteAmmo;
+
 	private static final int mShootFrameStart = 3;
 
 	public PlayerUnit(TextureID textureID, Properties props) {
@@ -37,6 +39,7 @@ public class PlayerUnit extends Unit {
 		mAttackCollisionRect = new FloatRect(15, 15, 105, 118);
 		setCollisionRect(mDefaultCollisionRect);
 		setTotalHP(100);
+		mCurrentDynamiteAmmo = 3;
 	}
 
 	@Override
@@ -50,6 +53,8 @@ public class PlayerUnit extends Unit {
 		super.updateCurrent(dt);
 		// We move the player through commands so reset the velocity
 		setVelocity(0, getVelocity().y);
+		GameState.getGameUI().getAmmoComponent().setCurrentAmmo(mCurrentDynamiteAmmo);
+		GameState.getGameUI().getLifeComponent().setHealthBar((float) getHitpoints() / (float) getTotalHP());
 	}
 
 	// TODO Refactor
@@ -138,8 +143,18 @@ public class PlayerUnit extends Unit {
 	}
 
 	@Override
-	public void damage(int damage) {
-		super.damage(damage);
-		GameState.getGameUI().getLifeComponent().setHealthBar((float) getHitpoints() / (float) getTotalHP());
+	public boolean shoot() {
+		if(super.shoot()){
+			mCurrentDynamiteAmmo--;
+			return true;
+		}
+		return false;
 	}
+
+	@Override
+	public boolean canShoot() {
+		return super.canShoot() && mCurrentDynamiteAmmo > 0;
+	}
+	
+	
 }

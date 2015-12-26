@@ -1,6 +1,5 @@
 package de.dungeonrunner.entities;
 
-import java.lang.Thread.State;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -35,7 +34,7 @@ public class Unit extends GameEntity {
 
 	private final int mJumpTime = 800;
 	private float mLeftJumpTime = mJumpTime;
-	private float mJumpVelocity = -300;
+	private float mJumpVelocity = -600;
 	private boolean mIsJumping;
 	protected boolean mIsAirborne;
 	private int mHitPointsTotal;
@@ -76,7 +75,7 @@ public class Unit extends GameEntity {
 				if (mLeftJumpTime < 0) {
 					mLeftJumpTime = 0;
 					mIsJumping = false;
-					setVelocity(getVelocity().x, Constants.GRAVITY.y);
+					setVelocity(getVelocity().x, 0);
 				} else {
 					float velY = (mLeftJumpTime / mJumpTime) * mJumpVelocity;
 					setVelocity(getVelocity().x, velY);
@@ -100,35 +99,13 @@ public class Unit extends GameEntity {
 	}
 
 	@Override
-	protected void processCollision(SceneNode node) {
-		if (Boolean.valueOf(node.getProperty("BlockVolume"))) {
-			FloatRect intersection1 = node.getBoundingRect().intersection(getBoundingRect());
-			if (intersection1 == null) {
-				return;
-			}
+	protected CollisionType processCollision(SceneNode node) {
+		CollisionType type = super.processCollision(node);
 
-			// Round the collision TODO why is this necessary
-			if (intersection1.width > 3 || intersection1.height > 3) {
-				if (intersection1.width > intersection1.height) {
-					// Player inbound from Top or Bottom
-					if (getBoundingRect().top < intersection1.top) {
-						// Collision from top
-						mIsAirborne = true;
-						setPosition(getWorldPosition().x, getWorldPosition().y - intersection1.height);
-					} else {
-						// Collision from bottom
-						setPosition(getWorldPosition().x, getWorldPosition().y + intersection1.height);
-					}
-				} else {
-					if (getBoundingRect().left < intersection1.left) {
-						// Collision from the right
-						setPosition(getWorldPosition().x - intersection1.width, getWorldPosition().y);
-					} else {
-						setPosition(getWorldPosition().x + intersection1.width, getWorldPosition().y);
-					}
-				}
-			}
+		if (type == CollisionType.TOP) {
+			mIsAirborne = true;
 		}
+		return type;
 	}
 
 	private void computeAnimationState() {
@@ -225,8 +202,16 @@ public class Unit extends GameEntity {
 		return mIsJumping;
 	}
 
-	public void shoot() {
-		mIsShooting = true;
+	public boolean canShoot() {
+		return !mIsShooting;
+	}
+
+	public boolean shoot() {
+		if (canShoot()) {
+			mIsShooting = true;
+			return true;
+		}
+		return false;
 	}
 
 	protected void resetShoot() {

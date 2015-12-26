@@ -9,10 +9,11 @@ import de.dungeonrunner.nodes.AnimationNode;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.util.Constants;
 
 public class DynamitProjectile extends Projectile {
 
-	private final Vector2f mVelocity = new Vector2f(200f, 0f);
+	private final Vector2f mVelocity = new Vector2f(200f, -Constants.GRAVITY_DOWN);
 	private boolean mIsExploding;
 
 	public DynamitProjectile(Unit shooter, TextureID textureID) {
@@ -32,17 +33,18 @@ public class DynamitProjectile extends Projectile {
 	}
 
 	@Override
-	protected void processCollision(SceneNode node) {
+	protected CollisionType processCollision(SceneNode node) {
 		if (checkIsBlocking(node) && !explode()) {
 			if (node instanceof Unit) {
 				((Unit) node).damage(getDamage());
 			}
 		}
+		return CollisionType.NONE;
 	}
 
 	public boolean explode() {
 		if (!mIsExploding) {
-			setVelocity(0, 0);
+			setVelocity(0, -Constants.GRAVITY_DOWN);
 			AnimationNode mExplosion = AnimationNode.createAnimationNode(TextureID.ANIM_EXPLOSION, 1000, false, 11,
 					new Vector2i(266, 210));
 			mExplosion.addAnimationListener(new AnimationListener() {

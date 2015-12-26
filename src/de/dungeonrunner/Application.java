@@ -60,7 +60,8 @@ public class Application {
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_WALK, Constants.ANIM_DIR + "stone_thrower_walk.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_DEATH, Constants.ANIM_DIR + "stone_thrower_death.png");
 		texHolder.loadTexture(TextureID.ITEM_CRYSTAL, Constants.TEX_DIR + "crystal_blue.png");
-
+		texHolder.loadTexture(TextureID.DIAMOND, Constants.IMG_DIR + "diamond.png");
+		
 		// Menu
 		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
 		texHolder.loadTexture(TextureID.BUTTON_DEFAULT, Constants.IMG_DIR + "button_normal.png");
@@ -70,6 +71,9 @@ public class Application {
 		//UI
 		texHolder.loadTexture(TextureID.UI_LIFEBAR_BG, Constants.IMG_DIR + "ui_lifebar.png");
 		texHolder.loadTexture(TextureID.UI_LIFEBAR, Constants.IMG_DIR + "lifebar.png");
+		texHolder.loadTexture(TextureID.UI_AMMO, Constants.IMG_DIR + "ui_ammo.png");
+		texHolder.loadTexture(TextureID.UI_AMMO_INDICATOR, Constants.IMG_DIR + "ui_ammo_indicator.png");
+		texHolder.loadTexture(TextureID.UI_DIAMOND, Constants.IMG_DIR + "ui_diamond.png");
 
 		FontHolder.getInstance().loadFont(FontID.DUNGEON_FONT, Constants.RES_DIR + "dungeon_font.ttf");
 

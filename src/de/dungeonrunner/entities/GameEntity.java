@@ -12,6 +12,8 @@ import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.commands.SceneCommand;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
+import de.dungeonrunner.util.Constants;
+import de.dungeonrunner.util.Helper;
 
 public abstract class GameEntity extends SceneNode {
 
@@ -49,7 +51,8 @@ public abstract class GameEntity extends SceneNode {
 
 	@Override
 	protected void updateCurrent(Time dt) {
-		move(Vector2f.mul(mVelocity, dt.asSeconds()));
+		Vector2f movement = Vector2f.add(mVelocity, Constants.GRAVITY);
+		move(Vector2f.mul(movement, dt.asSeconds()));
 	}
 
 	@Override
@@ -58,6 +61,15 @@ public abstract class GameEntity extends SceneNode {
 			commandStack.push(command);
 		}
 		mPendingCommands.clear();
+	}
+
+	@Override
+	protected CollisionType processCollision(SceneNode node) {
+		super.processCollision(node);
+		if (Boolean.valueOf(node.getProperty(Constants.BLOCK_VOLUME))) {
+			return Helper.resetEntityByCollision(this, getBoundingRect().intersection(node.getBoundingRect()));
+		}
+		return CollisionType.NONE;
 	}
 
 	public void setSprite(SpriteNode activeAnimation) {
