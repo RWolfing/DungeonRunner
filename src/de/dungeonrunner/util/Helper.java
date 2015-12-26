@@ -10,8 +10,6 @@ import de.dungeonrunner.view.Component;
 
 public class Helper {
 
-	
-
 	public static void layoutVertically(Vector2i windowSize, float itemSpacing, boolean center, float offSetX,
 			float offsetY, Component... components) {
 		int totalLayoutHeight = 0;
@@ -51,13 +49,13 @@ public class Helper {
 			if (intersection.width > intersection.height) {
 				// Player inbound from Top or Bottom
 				if (entity.getBoundingRect().top < intersection.top) {
-					// Collision from top
-					entity.setPosition(entity.getWorldPosition().x, entity.getWorldPosition().y - intersection.height);
-					type = CollisionType.TOP;
-				} else {
 					// Collision from bottom
-					entity.setPosition(entity.getWorldPosition().x, entity.getWorldPosition().y + intersection.height);
+					entity.setPosition(entity.getWorldPosition().x, entity.getWorldPosition().y - intersection.height);
 					type = CollisionType.BOTTOM;
+				} else {
+					// Collision from top
+					entity.setPosition(entity.getWorldPosition().x, entity.getWorldPosition().y + intersection.height);
+					type = CollisionType.TOP;
 				}
 			} else {
 				if (entity.getBoundingRect().left < intersection.left) {
@@ -71,6 +69,14 @@ public class Helper {
 			}
 		}
 		return type;
+	}
+
+	public static int getRandomSigned() {
+		if (Math.random() > 0.5) {
+			return -1;
+		} else {
+			return 1;
+		}
 	}
 
 }

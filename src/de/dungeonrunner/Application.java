@@ -33,9 +33,9 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
-		// mRenderWindow.create(VideoMode.getFullscreenModes()[0],
-		// "DungeonRunner", RenderWindow.FULLSCREEN);
-		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+		 mRenderWindow.create(VideoMode.getFullscreenModes()[0],
+		 "A Miners Day", RenderWindow.FULLSCREEN);
+		//mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
 		mRenderWindow.setFramerateLimit(30);
 
 		mClock = new Clock();
@@ -59,7 +59,11 @@ public class Application {
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_ATTACK, Constants.ANIM_DIR + "stone_thrower_attack.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_WALK, Constants.ANIM_DIR + "stone_thrower_walk.png");
 		texHolder.loadTexture(TextureID.ANIM_STONE_THROWER_DEATH, Constants.ANIM_DIR + "stone_thrower_death.png");
-		texHolder.loadTexture(TextureID.ITEM_CRYSTAL, Constants.TEX_DIR + "crystal_blue.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_BIG, Constants.TEX_DIR + "crystal_big.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_NORMAL, Constants.TEX_DIR + "crystal_normal.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_SMALL, Constants.TEX_DIR + "crystal_small.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_MINED_SMALL, Constants.TEX_DIR + "crystal_mined.png");
+		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_MINED, Constants.TEX_DIR + "crystal_mined_standard.png");
 		texHolder.loadTexture(TextureID.DIAMOND, Constants.IMG_DIR + "diamond.png");
 		
 		// Menu

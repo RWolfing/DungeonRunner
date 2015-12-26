@@ -3,7 +3,6 @@ package de.dungeonrunner.entities;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
@@ -102,7 +101,7 @@ public class Unit extends GameEntity {
 	protected CollisionType processCollision(SceneNode node) {
 		CollisionType type = super.processCollision(node);
 
-		if (type == CollisionType.TOP) {
+		if (type == CollisionType.BOTTOM) {
 			mIsAirborne = true;
 		}
 		return type;

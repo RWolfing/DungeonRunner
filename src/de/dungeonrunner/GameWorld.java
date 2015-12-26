@@ -284,9 +284,9 @@ public class GameWorld {
 
 						// Item
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
-							Item item = new CrystalItem(TextureID.ITEM_CRYSTAL, object.getProperties());
+							Item item = CrystalItem.getCrystalItem(object);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
-							item.setPosition((float) object.getX(), (float) object.getY());
+							
 						}
 					}
 				}
