@@ -12,7 +12,7 @@ public class Constants {
 	public static final String IMG_DIR = RES_DIR + "images" + File.separator;
 	public static final String TEX_DIR = RES_DIR + "textures" + File.separator;
 	public static final String ANIM_DIR = TEX_DIR + File.separator + "animations" + File.separator;
-	public static boolean IS_DEBUGGING = false;
+	public static boolean IS_DEBUGGING = true;
 
 	// Physics
 	public static final Vector2f GRAVITY = new Vector2f(0, 170);

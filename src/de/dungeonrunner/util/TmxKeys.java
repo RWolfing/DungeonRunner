@@ -7,6 +7,8 @@ public class TmxKeys {
 
 	public static final String OBJECT_NAME_PLAYER = "Player";
 	public static final String OBJECT_TAG_PLAYER = "Player";
+	
+	public static final String OBJECT_NAME_LEVELEXIT = "LevelExit";
 
 	public static final String OBJECT_LAYER_ENTITIES = "Entities";
 

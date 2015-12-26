@@ -11,12 +11,12 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
-import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.CrystalItem;
 import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.LeashedUnit;
+import de.dungeonrunner.entities.LevelExit;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Spikes;
 import de.dungeonrunner.entities.StoneThrower;
@@ -24,6 +24,7 @@ import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.state.GameState;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.QuadTree;
 import de.dungeonrunner.util.TmxKeys;
@@ -50,9 +51,13 @@ public class GameWorld {
 	private boolean mIsPausing = false;
 
 	private PlayerUnit mPlayerEntity;
+	private LevelExit mLevelExit;
+
 	private View mCamera;
 
 	private CommandStack mCommandStack;
+
+	private boolean mLevelExitUsed;
 
 	public GameWorld() {
 		mCommandStack = new CommandStack();
@@ -86,10 +91,6 @@ public class GameWorld {
 		createLevelEntities();
 	}
 
-	public void handleEvent(Event event) {
-
-	}
-
 	public void draw() {
 		RenderWindow window = Application.getRenderWindow();
 		window.setView(mCamera);
@@ -104,6 +105,13 @@ public class GameWorld {
 			checkCollision();
 			mSceneGraph.cleanDestroyedNodes();
 			adaptCameraPosition();
+
+			if(checkDiamondsCollected()){
+				mLevelExit.open();
+				if(levelSuccess()){
+					mLevelExitUsed = true;
+				}
+			}
 		}
 	}
 
@@ -191,6 +199,18 @@ public class GameWorld {
 		mCamera = new View(new Vector2f(size.x / 2, size.y / 2), size);
 	}
 
+	public boolean checkGameFinished() {
+		return mPlayerEntity.getHitpoints() <= 0 || mLevelExitUsed;
+	}
+
+	public boolean levelSuccess() {
+		return mLevelExit.didPlayerEnter();
+	}
+
+	private boolean checkDiamondsCollected() {
+		return GameState.getGameUI().getDiamondsComponent().collectedAll();
+	}
+	
 	private void createLevelScene() {
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode(null);
@@ -286,7 +306,12 @@ public class GameWorld {
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
 							Item item = CrystalItem.getCrystalItem(object);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
-							
+						}
+						
+						if(object.getType().equals(TmxKeys.OBJECT_NAME_LEVELEXIT)) {
+							mLevelExit = new LevelExit(TextureID.LEVEL_EXIT_OPEN, TextureID.LEVEL_EXIT_CLOSED, object.getProperties());
+							mLevelExit.setPosition((float) object.getBounds().x, (float) object.getBounds().y);
+							mRenderLayers.get(RenderLayers.Levelbackground).attachChild(mLevelExit);
 						}
 					}
 				}

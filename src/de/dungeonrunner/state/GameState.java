@@ -38,6 +38,13 @@ public class GameState extends State {
 	public boolean update(Time dt) {
 		mWorld.update(dt);
 		mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
+		if(mWorld.checkGameFinished()){
+			if(mWorld.levelSuccess()){
+				System.out.println("Level successfully finished");
+			} else {
+				System.out.println("Player failed!");
+			}
+		}
 		return true;
 	}
 

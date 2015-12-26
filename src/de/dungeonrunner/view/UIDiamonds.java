@@ -60,4 +60,8 @@ public class UIDiamonds extends Component{
 		mText.setString(mCurrentDiamonds + "/" + mTotalDiamonds);
 		return true;
 	}
+	
+	public boolean collectedAll(){
+		return mCurrentDiamonds >= mTotalDiamonds;
+	}
 }

@@ -33,9 +33,9 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
-		 mRenderWindow.create(VideoMode.getFullscreenModes()[0],
-		 "A Miners Day", RenderWindow.FULLSCREEN);
-		//mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+//		 mRenderWindow.create(VideoMode.getFullscreenModes()[0],
+//		 "A Miners Day", RenderWindow.FULLSCREEN);
+		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
 		mRenderWindow.setFramerateLimit(30);
 
 		mClock = new Clock();
@@ -65,6 +65,8 @@ public class Application {
 		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_MINED_SMALL, Constants.TEX_DIR + "crystal_mined.png");
 		texHolder.loadTexture(TextureID.ITEM_CRYSTAL_MINED, Constants.TEX_DIR + "crystal_mined_standard.png");
 		texHolder.loadTexture(TextureID.DIAMOND, Constants.IMG_DIR + "diamond.png");
+		texHolder.loadTexture(TextureID.LEVEL_EXIT_OPEN, Constants.IMG_DIR + "door_open.png");
+		texHolder.loadTexture(TextureID.LEVEL_EXIT_CLOSED, Constants.IMG_DIR + "door_closed.png");
 		
 		// Menu
 		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
