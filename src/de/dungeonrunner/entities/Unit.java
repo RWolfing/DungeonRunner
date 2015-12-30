@@ -9,7 +9,6 @@ import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.NodeType;
 import de.dungeonrunner.nodes.AnimationNode;
-import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
@@ -123,6 +122,7 @@ public class Unit extends GameEntity {
 		}
 	}
 
+	//TODO request state is called to often
 	private void requestState(STATE animState) {
 		if (animState == mAnimState || mAnimState == STATE.DYING) {
 			return;
@@ -165,15 +165,6 @@ public class Unit extends GameEntity {
 				return;
 			}
 			mActiveAnimation = mAnimations.get(ANIM_ID.DEATH);
-			mActiveAnimation.addAnimationListener(new AnimationListener() {
-
-				@Override
-				public void onFrame(AnimationNode node, int frame) {
-					if (node.getNumFrames() - 1 == frame) {
-						// destroy();
-					}
-				}
-			});
 			mAnimState = STATE.DYING;
 			break;
 		default:

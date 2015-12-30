@@ -1,6 +1,5 @@
 package de.dungeonrunner.state;
 
-
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
@@ -20,6 +19,8 @@ public class GameState extends State {
 	private PlayerController mPlayerController;
 	private static GameUI mUIContainer;
 
+	private boolean mStatePushed;
+
 	public GameState(StateStack stack, Context context) {
 		super(stack, context);
 		mPlayerController = context.mPlayer;
@@ -38,11 +39,16 @@ public class GameState extends State {
 	public boolean update(Time dt) {
 		mWorld.update(dt);
 		mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
-		if(mWorld.checkGameFinished()){
-			if(mWorld.levelSuccess()){
-				System.out.println("Level successfully finished");
+		if (mWorld.checkGameFinished()) {
+			States requestState;
+			if (mWorld.levelSuccess()) {
+				requestState = States.LevelSuccess;
 			} else {
-				System.out.println("Player failed!");
+				requestState = States.GameOver;
+			}
+			if (!mStatePushed) {
+				requestStackPush(requestState);
+				mStatePushed = true;
 			}
 		}
 		return true;
@@ -66,7 +72,14 @@ public class GameState extends State {
 	@Override
 	protected void onStateSetup() {
 		mWorld = new GameWorld();
+		mStatePushed = false;
 		setupUI();
+	}
+
+	@Override
+	public void onStateResumed() {
+		super.onStateResumed();
+		mStatePushed = false;
 	}
 
 	@Override
@@ -74,16 +87,16 @@ public class GameState extends State {
 		super.onWindowResized(newSize);
 		mWorld.resizeWorld(new Vector2f(newSize));
 	}
-	
-	public static GameWorld getWorld(){
+
+	public static GameWorld getWorld() {
 		return mWorld;
 	}
-	
-	public static GameUI getGameUI(){
+
+	public static GameUI getGameUI() {
 		return mUIContainer;
 	}
-	
-	private void setupUI(){
-		mUIContainer =new GameUI(Application.getRenderWindow().getSize());
+
+	private void setupUI() {
+		mUIContainer = new GameUI(Application.getRenderWindow().getSize());
 	}
 }

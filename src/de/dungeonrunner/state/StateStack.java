@@ -27,8 +27,9 @@ public class StateStack {
 	public void update(Time dt) {
 		for (State state : reversed(mStack)) {
 			if (state != null) {
-				if (!state.update(dt))
+				if (!state.update(dt)){
 					break;
+				}
 			}
 		}
 	}

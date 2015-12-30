@@ -118,6 +118,10 @@ public class GameWorld {
 	public CommandStack getCommandStack() {
 		return mCommandStack;
 	}
+	
+	public View getWorldCamera(){
+		return mCamera;
+	}
 
 	public QuadTree getCollisionGraph() {
 		return mCollisionTree;

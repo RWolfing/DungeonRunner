@@ -13,7 +13,9 @@ import de.dungeonrunner.singleton.FontHolder.FontID;
 import de.dungeonrunner.singleton.StateHolder;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.state.GameOverState;
 import de.dungeonrunner.state.GameState;
+import de.dungeonrunner.state.LevelCompletedState;
 import de.dungeonrunner.state.MainMenuState;
 import de.dungeonrunner.state.PauseMenuState;
 import de.dungeonrunner.state.StateStack;
@@ -73,6 +75,9 @@ public class Application {
 		texHolder.loadTexture(TextureID.BUTTON_DEFAULT, Constants.IMG_DIR + "button_normal.png");
 		texHolder.loadTexture(TextureID.BUTTON_SELECTED, Constants.IMG_DIR + "button_selected.png");
 		texHolder.loadTexture(TextureID.BUTTON_ACTIVATED, Constants.IMG_DIR + "button_activated.png");
+		texHolder.loadTexture(TextureID.ICON_FAILURE, Constants.IMG_DIR + "failure_icon.png");
+		texHolder.loadTexture(TextureID.ICON_SUCCESS, Constants.IMG_DIR + "success_icon.png");
+		//texHolder.loadTexture(Texture, Constants.IMG_DIR + "button_activated.png");
 		
 		//UI
 		texHolder.loadTexture(TextureID.UI_LIFEBAR_BG, Constants.IMG_DIR + "ui_lifebar.png");
@@ -154,6 +159,8 @@ public class Application {
 		holder.registerState(States.Game, new GameState(mStateStack, ctx));
 		holder.registerState(States.Menu, new MainMenuState(mStateStack, ctx));
 		holder.registerState(States.Pause, new PauseMenuState(mStateStack, ctx));
+		holder.registerState(States.GameOver, new GameOverState(mStateStack, ctx));
+		holder.registerState(States.LevelSuccess, new LevelCompletedState(mStateStack, ctx));
 	}
 
 	public static void main(String[] args) {

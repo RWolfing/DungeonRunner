@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
+import de.dungeonrunner.Application;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
@@ -18,6 +20,14 @@ public class Diamond extends Item {
 	private boolean mIsPickedUp;
 	private long mPassedTime;
 	private boolean mIsCollidable;
+	
+	/*
+	 * We add a little overshoot when moving the diamond to the ui component, to prevent him
+	 * to get stuck due to getBoundingRect().contains(...)...
+	 * TODO Check for a better solution. Must the target direction be rounded? Seems to 
+	 * get stuck right in front of the component...
+	 */
+	private final Vector2f mDiamondOvershoot = new Vector2f(0, 5);
 
 	public Diamond(TextureID texID, Properties props) {
 		super(texID, props);
@@ -55,9 +65,12 @@ public class Diamond extends Item {
 
 			UIDiamonds ui_comp = GameState.getGameUI().getDiamondsComponent();
 			Vector2f targetPosition = Vector2f.add(ui_comp.getPosition(),
-					new Vector2f(ui_comp.getWidth() / 2, ui_comp.getHeight() - getBoundingRect().height / 2));
+					new Vector2f(ui_comp.getWidth() / 2, ui_comp.getHeight() / 2));
+			targetPosition = Application.getRenderWindow().mapPixelToCoords(new Vector2i(targetPosition), GameState.getWorld().getWorldCamera());
+			
 			if (!getBoundingRect().contains(targetPosition)) {
-				Vector2f targetDirection = Helper.unitVector(Vector2f.sub(targetPosition, getWorldPosition()));
+				targetPosition = Vector2f.sub(targetPosition, mDiamondOvershoot);
+				Vector2f targetDirection = Helper.unitVector(Vector2f.sub(targetPosition, getPosition()));
 
 				Vector2f newVelocity = Helper.unitVector(
 						Vector2f.add(Vector2f.mul(targetDirection, approachRate * dt.asSeconds()), Vector2f.ZERO));
