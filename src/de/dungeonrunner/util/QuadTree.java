@@ -12,6 +12,11 @@ import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.nodes.SceneNode;
 
+/**
+ * Quadtree implementation to check for collisions.
+ * 
+ * @author Robert Wolfinger
+ */
 public class QuadTree extends SceneNode {
 
 	private int MAX_OBJECTS = 100;
@@ -22,6 +27,13 @@ public class QuadTree extends SceneNode {
 	private FloatRect mQuadTreeBounds;
 	private QuadTree[] mQuadTreeNodes;
 
+	/**
+	 * Default constructor, creates a new QuadTree with the given
+	 * parameters.
+	 * 
+	 * @param pLevel the maximum levels of the quadtree
+	 * @param pBounds the bounds of the quadtree
+	 */
 	public QuadTree(int pLevel, FloatRect pBounds) {
 		super(null);
 		mLevel = pLevel;
@@ -30,6 +42,9 @@ public class QuadTree extends SceneNode {
 		mQuadTreeNodes = new QuadTree[4];
 	}
 
+	/**
+	 * Clears the quadtree.
+	 */
 	public void clear() {
 		mCollisionObjects.clear();
 		for (int i = 0; i < mQuadTreeNodes.length; i++) {
@@ -40,6 +55,9 @@ public class QuadTree extends SceneNode {
 		}
 	}
 
+	/**
+	 * Splits the quadtree.
+	 */
 	private void split() {
 		int subWidth = (int) (mQuadTreeBounds.width / 2);
 		int subHeight = (int) (mQuadTreeBounds.height / 2);
@@ -52,6 +70,12 @@ public class QuadTree extends SceneNode {
 		mQuadTreeNodes[3] = new QuadTree(mLevel + 1, new FloatRect(x + subWidth, y + subHeight, subWidth, subHeight));
 	}
 
+	/**
+	 * Returns the index of the quadrant for the given rectangle.
+	 * 
+	 * @param rect rectangle to check
+	 * @return the index of the quadrant
+	 */
 	private int getIndex(FloatRect rect) {
 		int index = -1;
 		double verticalMidpoint = mQuadTreeBounds.left + (mQuadTreeBounds.width / 2);
@@ -79,6 +103,11 @@ public class QuadTree extends SceneNode {
 		return index;
 	}
 
+	/**
+	 * Inserts the given SceneNode into the QuadTree.
+	 * 
+	 * @param sceneNode the SceneNode to insert
+	 */
 	public void insert(SceneNode sceneNode) {
 		if (sceneNode.getBoundingRect() == null) {
 			return;
@@ -117,14 +146,19 @@ public class QuadTree extends SceneNode {
 		}
 	}
 
+	/**
+	 * Retrieve a list of SceneNodes that intersect with the given Rectangle.
+	 * 
+	 * @param returnObjects a list of SceneNodes
+	 * @param rect the collision Rectangle
+	 * @return a list of SceneNodes that intersect with the given Rectangle
+	 */
 	public List<SceneNode> retrieve(List<SceneNode> returnObjects, FloatRect rect) {
 		if (rect != null) {
 			if ((rect.left + rect.width) < mQuadTreeBounds.left
 					|| rect.left > (mQuadTreeBounds.left + mQuadTreeBounds.width)
 					|| (rect.top + rect.height) < mQuadTreeBounds.top
 					|| rect.top > (mQuadTreeBounds.top + mQuadTreeBounds.height)) {
-				// TODO System.err.println("Collision rectangle not in bounds of
-				// the quadtree!");
 				return returnObjects;
 			}
 
@@ -139,6 +173,12 @@ public class QuadTree extends SceneNode {
 		return returnObjects;
 	}
 
+	/**
+	 * Retrieves all leaves of the QuadTree and adds them to the given
+	 * List.
+	 * 
+	 * @param nodes a list of SceneNodes
+	 */
 	public void retrieveAllLeaves(List<SceneNode> nodes) {
 		nodes.addAll(mCollisionObjects);
 		for (int i = 0; i < mQuadTreeNodes.length; i++) {

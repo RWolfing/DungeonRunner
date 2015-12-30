@@ -8,8 +8,24 @@ import de.dungeonrunner.entities.GameEntity;
 import de.dungeonrunner.nodes.SceneNode.CollisionType;
 import de.dungeonrunner.view.Component;
 
+/**
+ * A Helper class to provide needed functionality.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class Helper {
 
+	/**
+	 * Lays out the given components vertically.
+	 * 
+	 * @param windowSize the size of the window
+	 * @param itemSpacing spacing between the items
+	 * @param center if the components should be centered
+	 * @param offSetX x-offset of the components
+	 * @param offsetY y-offset of the components
+	 * @param components components that should be laid out
+	 */
 	public static void layoutVertically(Vector2i windowSize, float itemSpacing, boolean center, float offSetX,
 			float offsetY, Component... components) {
 		int totalLayoutHeight = 0;
@@ -33,11 +49,23 @@ public class Helper {
 		}
 	}
 
+	/**
+	 * Creates the unit vector of the given vector.
+	 * 
+	 * @param vector the vector where the unit vector should be created from
+	 * @return the unit vector
+	 */
 	public static Vector2f unitVector(Vector2f vector) {
 		float length = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
 		return Vector2f.div(vector, length);
 	}
 
+	/**
+	 * 
+	 * @param entity
+	 * @param intersection
+	 * @return
+	 */
 	public static CollisionType resetEntityByCollision(GameEntity entity, FloatRect intersection) {
 		CollisionType type = CollisionType.NONE;
 		if (intersection == null || entity == null) {
@@ -71,6 +99,11 @@ public class Helper {
 		return type;
 	}
 
+	/**
+	 * Returns a random signed integer either 1 or -1.
+	 * 
+	 * @return 1 or -1
+	 */
 	public static int getRandomSigned() {
 		if (Math.random() > 0.5) {
 			return -1;
@@ -78,5 +111,4 @@ public class Helper {
 			return 1;
 		}
 	}
-
 }

@@ -8,6 +8,12 @@ import org.jsfml.system.Vector2i;
 import de.dungeonrunner.singleton.FontHolder.FontID;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
+/**
+ * This container hold the ui of the game world. It contains and handles the different ui items.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class GameUI extends Container{
 
 	private Vector2i mWindowSize;
@@ -31,6 +37,11 @@ public class GameUI extends Container{
 		mDiamondItem.draw(target, states);
 	}
 	
+	/**
+	 * This method layouts the ui components depending on the window size.
+	 * 
+	 * @param windowSize the size of the window
+	 */
 	private void layout(Vector2i windowSize){
 		int posX = windowSize.x / 10;
 		mHPItem.setPosition(posX, 0);
@@ -38,14 +49,29 @@ public class GameUI extends Container{
 		mDiamondItem.setPosition(posX + mHPItem.getWidth() + mAmunitionItem.getWidth(), 0);
 	}
 	
+	/**
+	 * Returns the component holding the lifebar of the player.
+	 * 
+	 * @return the UILifebar
+	 */
 	public UILifebar getLifeComponent(){
 		return mHPItem;
 	}
 	
+	/**
+	 * Returns the component holding the ammunition of the player.
+	 * 
+	 * @return the UIAmmoBar
+	 */
 	public UIAmmoBar getAmmoComponent(){
 		return mAmunitionItem;
 	}
 	
+	/**
+	 * Returns the component holding the collected diamonds of the player.
+	 * 
+	 * @return the UIDiamonds
+	 */
 	public UIDiamonds getDiamondsComponent(){
 		return mDiamondItem;
 	}

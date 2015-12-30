@@ -11,10 +11,21 @@ import tiled.core.TileLayer;
 import tiled.core.TileSet;
 import tiled.io.TMXMapReader;
 
+/**
+ * A helper class to load a .tmx Map into a map object.
+ * 
+ * @author Robert Wolfinger
+ */
 public class TmxMapLoader {
 
 	private static Map mMap;
 
+	/**
+	 * Loads the map from the given filepath.
+	 * 
+	 * @param filepath the filepath of the map
+	 * @return the loaded map
+	 */
 	public static Map loadMap(String filepath) {
 		String fileToOpen = filepath;
 
@@ -31,11 +42,15 @@ public class TmxMapLoader {
 			return null;
 		}
 
-		System.out.println(map.toString() + " loaded");
 		mMap = map;
 		return map;
 	}
 
+	/**
+	 * Retrieves all tiles with the property "BlockVolume".
+	 * 
+	 * @return all blocking tiles
+	 */
 	public static List<Tile> getBlockingTiles() {
 		List<Tile> blockingTiles = new ArrayList<>();
 		Map map = mMap;
@@ -58,6 +73,14 @@ public class TmxMapLoader {
 		return blockingTiles;
 	}
 
+	/**
+	 * Retrieves the properties of the tile at the given x- and y-coordinates.
+	 * 
+	 * @param x x-coordinate
+	 * @param y y-coordinate
+	 * 
+	 * @return the properties of the tile
+	 */
 	public static Properties getTileInstancePropertiesAt(int x, int y) {
 		if (mMap != null) {
 			for (MapLayer layer : mMap) {

@@ -12,9 +12,16 @@ import org.jsfml.window.event.Event;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
+/**
+ * Component to represent the available ammunition of the player.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class UIAmmoBar extends Component {
 
 	private final int mMaxAmmo = 5;
+	//The starting point of the ammunition indicators
 	private final int mAmmoXStart = 75;
 	private final int mAmmoYStart = 61;
 	private final int mAmmoIndicatorWidth = 21;
@@ -24,6 +31,9 @@ public class UIAmmoBar extends Component {
 	private Sprite mBackgroundSprite;
 	private List<Sprite> mAmmoSprites;
 
+	/**
+	 * Default constructor. 
+	 */
 	public UIAmmoBar() {
 		mBackgroundSprite = new Sprite(TextureHolder.getInstance().getTexture(TextureID.UI_AMMO));
 		setWidth(mBackgroundSprite.getLocalBounds().width);
@@ -53,6 +63,9 @@ public class UIAmmoBar extends Component {
 		// Unused
 	}
 
+	/*
+	 * Creates and positions the ammunition indicators in a row.
+	 */
 	private void createAmmo() {
 		mAmmoSprites.clear();
 		Sprite sprite;
@@ -63,10 +76,21 @@ public class UIAmmoBar extends Component {
 		}
 	}
 
+	/**
+	 * Sets the current ammunition.
+	 * 
+	 * @param ammo the ammunition
+	 */
 	public void setCurrentAmmo(int ammo) {
 		mCurrentAmmo = ammo;
 	}
 
+	/**
+	 * Increments the current available ammunition.
+	 * 
+	 * @return if the ammunition could be incremented or if the maximum
+	 * ammount was reached
+	 */
 	public boolean incrementAmmo() {
 		mCurrentAmmo++;
 		if (mCurrentAmmo > mMaxAmmo) {
@@ -76,6 +100,11 @@ public class UIAmmoBar extends Component {
 		return true;
 	}
 
+	/**
+	 * Decrements the current ammunition.
+	 * 
+	 * @return if the ammunition could be decremented or 0 is reached
+	 */
 	public boolean decrementAmmo() {
 		mCurrentAmmo--;
 		if (mCurrentAmmo < 0) {
@@ -84,5 +113,4 @@ public class UIAmmoBar extends Component {
 		}
 		return true;
 	}
-
 }

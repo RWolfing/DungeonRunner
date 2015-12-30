@@ -4,6 +4,12 @@ import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
+/**
+ * A component to represent a button. 
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class Button extends Label {
 
 	private TextureID mSelectedTexture;
@@ -14,6 +20,13 @@ public class Button extends Label {
 
 	private OnButtonClick mOnClickListener;
 
+	/**
+	 * Default constructor. Creates a button with the given text and the given TextureID
+	 * as the default texture.
+	 * 
+	 * @param text the text of the button
+	 * @param inactiveTex the default texture
+	 */
 	public Button(String text, TextureID inactiveTex) {
 		super(text);
 		mIsToggle = false;
@@ -23,8 +36,7 @@ public class Button extends Label {
 
 	@Override
 	public void handleEvent(Event event) {
-		// TODO Auto-generated method stub
-
+		// Unused
 	}
 
 	@Override
@@ -70,22 +82,47 @@ public class Button extends Label {
 		}
 	}
 
+	/**
+	 * Sets the texture for a selected state.
+	 * 
+	 * @param texID the id of the texture
+	 */
 	public void setSelectedTexture(TextureID texID) {
 		mSelectedTexture = texID;
 	}
 
+	/**
+	 * Sets the texture for the activated state.
+	 * 
+	 * @param texID the id of the texture
+	 */
 	public void setActiveTexture(TextureID texID) {
 		mActivatedTexture = texID;
 	}
 
+	/**
+	 * Sets if the button is toggled.
+	 * 
+	 * @param toggle is toggled
+	 */
 	public void setToggle(boolean toggle) {
 		mIsToggle = toggle;
 	}
 
+	/**
+	 * Sets the listener for clicks.
+	 * @param listener click listener
+	 */
 	public void setOnClickListener(OnButtonClick listener) {
 		mOnClickListener = listener;
 	}
 
+	/**
+	 * Interface to check for clicks of the button component.
+	 * 
+	 * @author Robert Wolfinger
+	 *
+	 */
 	public interface OnButtonClick {
 		void onClick(Button bttn);
 	}

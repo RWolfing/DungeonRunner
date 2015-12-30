@@ -4,6 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Decorater to provide functionality to reverse iterate thorugh 
+ * a list. 
+ * 
+ * @author Robert Wolfinger
+ *
+ * @param <T>
+ */
 public class ReverseList<T> implements Iterable<T>{
 
 	private final List<T> mOriginalList;

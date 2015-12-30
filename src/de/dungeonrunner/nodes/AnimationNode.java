@@ -49,7 +49,7 @@ public class AnimationNode extends SpriteNode {
 			while (mElapsedTime.asMilliseconds() >= timePerFrame.asMilliseconds()
 					&& (mCurrentFrame <= mNumFrames || mRepeat)) {
 				int textureLeft = textureRect.left + textureRect.width;
-
+				
 				if (textureLeft + textureRect.width > textureBounds.x) {
 					textureRect = new IntRect(0, 0, mFrameSize.x, mFrameSize.y);
 				} else {
@@ -57,8 +57,8 @@ public class AnimationNode extends SpriteNode {
 				}
 
 				mElapsedTime = Time.sub(mElapsedTime, timePerFrame);
-				notifyListener(mCurrentFrame);
 				mCurrentFrame++;
+				
 
 				if (mRepeat) {
 					if (mCurrentFrame > mNumFrames) {
@@ -66,14 +66,16 @@ public class AnimationNode extends SpriteNode {
 						textureRect = new IntRect(0, 0, mFrameSize.x, mFrameSize.y);
 					}
 				}
-				if (mCurrentFrame == mNumFrames && !mRepeat) {
+				if (mCurrentFrame == mNumFrames -1 && !mRepeat) {
 					stop();
+					notifyListener(mCurrentFrame);
 					return;
+				} else {
+					notifyListener(mCurrentFrame);
 				}
 			}
 			mSprite.setTextureRect(
 					new IntRect(textureRect.left, textureRect.top, textureRect.width, textureRect.height));
-
 		}
 	}
 

@@ -1,5 +1,11 @@
 package de.dungeonrunner.util;
 
+/**
+ * Constants class which contains all available properties.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class TmxKeys {
 
 	public static final String OBJECT_NAME_ENEMY = "Enemy";
