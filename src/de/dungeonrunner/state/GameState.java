@@ -13,14 +13,29 @@ import de.dungeonrunner.PlayerController;
 import de.dungeonrunner.util.Context;
 import de.dungeonrunner.view.GameUI;
 
+/**
+ * The State to represent the actual game. It contains the UI of the game and
+ * the GameWorld.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class GameState extends State {
 
 	private static GameWorld mWorld;
 	private PlayerController mPlayerController;
 	private static GameUI mUIContainer;
 
+	//Member to check if this state was pushed
 	private boolean mStatePushed;
 
+	/**
+	 * Default constructor, creates the State from the given StateStack 
+	 * and Context.
+	 * 
+	 * @param stack the stack
+	 * @param context the context
+	 */
 	public GameState(StateStack stack, Context context) {
 		super(stack, context);
 		mPlayerController = context.mPlayer;
@@ -29,23 +44,31 @@ public class GameState extends State {
 	@Override
 	public void draw() {
 		super.draw();
+		//First we draw the world
 		mWorld.draw();
 		RenderWindow window = getContext().getRenderWindow();
+		//Reset the camera and draw the UI of the game
 		window.setView(getCamera());
 		window.draw(mUIContainer);
 	}
 
 	@Override
 	public boolean update(Time dt) {
+		//First we update the game world
 		mWorld.update(dt);
+		//Handle the realtime input from the PlayerController and add it to the commands
 		mPlayerController.handleRealtimeInput(mWorld.getCommandStack());
+		
+		//Check if the game is over
 		if (mWorld.checkGameFinished()) {
+			//If the game is over, check if the player failed or succeeded
 			States requestState;
 			if (mWorld.levelSuccess()) {
 				requestState = States.LevelSuccess;
 			} else {
 				requestState = States.GameOver;
 			}
+			//Finally push the correct state
 			if (!mStatePushed) {
 				requestStackPush(requestState);
 				mStatePushed = true;
@@ -56,9 +79,13 @@ public class GameState extends State {
 
 	@Override
 	public boolean handleEvent(Event event) {
+		//Pass all events to the PlayerController, with the command stack of the world
 		mPlayerController.handleEvent(event, mWorld.getCommandStack());
+		
+		//Check for events that should be handled by the GameState
 		switch (event.type) {
 		case KEY_RELEASED:
+			//For P and ESCAPE we push the PauseMenu
 			if (event.asKeyEvent().key == Key.P || event.asKeyEvent().key == Key.ESCAPE) {
 				requestStackPush(States.Pause);
 			}
@@ -71,9 +98,10 @@ public class GameState extends State {
 
 	@Override
 	protected void onStateSetup() {
+		//Initially we create the world and setup the ui
 		mWorld = new GameWorld();
 		mStatePushed = false;
-		setupUI();
+		mUIContainer = new GameUI(Application.getRenderWindow().getSize());
 	}
 
 	@Override
@@ -85,18 +113,25 @@ public class GameState extends State {
 	@Override
 	protected void onWindowResized(Vector2i newSize) {
 		super.onWindowResized(newSize);
+		//if the window was resized we have to resize the world too
 		mWorld.resizeWorld(new Vector2f(newSize));
 	}
 
+	/**
+	 * Method to return the current GameWorld.
+	 * 
+	 * @return returns the world
+	 */
 	public static GameWorld getWorld() {
 		return mWorld;
 	}
 
+	/**
+	 * Method to return the UI of the game.
+	 * 
+	 * @return the GameUI
+	 */
 	public static GameUI getGameUI() {
 		return mUIContainer;
-	}
-
-	private void setupUI() {
-		mUIContainer = new GameUI(Application.getRenderWindow().getSize());
 	}
 }

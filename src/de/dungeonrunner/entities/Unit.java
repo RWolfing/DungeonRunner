@@ -124,7 +124,7 @@ public class Unit extends GameEntity {
 
 	//TODO request state is called to often
 	private void requestState(STATE animState) {
-		if (animState == mAnimState || mAnimState == STATE.DYING) {
+		if (mAnimState == STATE.DYING) {
 			return;
 		}
 
@@ -171,7 +171,6 @@ public class Unit extends GameEntity {
 			break;
 		}
 		setSprite(mActiveAnimation);
-		mActiveAnimation.setOrientation(getOrientation());
 		mActiveAnimation.start();
 	}
 

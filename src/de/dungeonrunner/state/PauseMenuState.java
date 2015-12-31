@@ -17,6 +17,12 @@ import de.dungeonrunner.view.Button.OnButtonClick;
 import de.dungeonrunner.view.Container;
 import de.dungeonrunner.view.Label;
 
+/**
+ * The state to represent the pause screen ingame.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class PauseMenuState extends State {
 
 	private Label mPauseLabel;
@@ -26,8 +32,16 @@ public class PauseMenuState extends State {
 	private Container mGUIContainer;
 	private RectangleShape mBackgroundOverlay;
 
+	/**
+	 * Default constructor, creates the State from the given StateStack
+	 * and Context.
+	 * 
+	 * @param stack the StateStack
+	 * @param context the Context
+	 */
 	public PauseMenuState(StateStack stack, Context context) {
 		super(stack, context);
+		//setup of the ui components
 		mPauseLabel = new Label("PAUSE");
 		mPauseLabel.setCentered(true);
 		mPauseLabel.setHeight(Constants.MENU_ITEM_HEIGHT);
@@ -43,6 +57,8 @@ public class PauseMenuState extends State {
 
 			@Override
 			public void onClick(Button bttn) {
+				//If we press the continue button, we wont to pop the pause
+				//menu and carry on with the game
 				requestStackPop();
 			}
 		});
@@ -58,6 +74,8 @@ public class PauseMenuState extends State {
 
 			@Override
 			public void onClick(Button bttn) {
+				//If we switch to the menu, we have to clear all states
+				//and push the menue on top
 				requestStateClear();
 				requestStackPush(States.Menu);
 			}
@@ -95,8 +113,10 @@ public class PauseMenuState extends State {
 	@Override
 	public void layout() {
 		super.layout();
+		//Layout of the components depending on the window size
 		Vector2i windowSize = getContext().getRenderWindow().getSize();
 		mBackgroundOverlay.setSize(new Vector2f(windowSize));
+		//Through the helper method we layout the components vertically
 		Helper.layoutVertically(windowSize, 25, true, 0, 0, mPauseLabel, mContinueButton, mExitButton);
 	}
 }

@@ -15,6 +15,12 @@ import de.dungeonrunner.view.Button;
 import de.dungeonrunner.view.Button.OnButtonClick;
 import de.dungeonrunner.view.Container;
 
+/**
+ * The state to represent the main menu of the application.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class MainMenuState extends State {
 
 	private final int MENU_X_OFFSET = 4; //in % off window width ( 100/MENU_X_OFFSET)
@@ -25,9 +31,17 @@ public class MainMenuState extends State {
 	private Button mCreditsButton;
 	private Button mExitButton;
 
+	/**
+	 * Default constructor, creates the State from the given StateStack
+	 * and Context.
+	 * 
+	 * @param stack the StateStack
+	 * @param context the Context
+	 */
 	public MainMenuState(StateStack stack, Context context) {
 		super(stack, context);
 
+		//Setup of the ui components
 		mGUIContainer = new Container();
 		mBackgroundTexture = new Sprite(TextureHolder.getInstance().getTexture(TextureID.MAIN_MENU_SCREEN));
 
@@ -42,6 +56,8 @@ public class MainMenuState extends State {
 
 			@Override
 			public void onClick(Button bttn) {
+				//If the play button is clicked, we pop the menu
+				//and push the GameState
 				requestStackPop();
 				requestStackPush(States.Game);
 			}
@@ -66,6 +82,7 @@ public class MainMenuState extends State {
 		mExitButton.setOnClickListener(new OnButtonClick() {
 			@Override
 			public void onClick(Button bttn) {
+				//If exist is clicked we just pop the state
 				requestStackPop();
 			}
 		});
@@ -97,7 +114,9 @@ public class MainMenuState extends State {
 	@Override
 	public void layout() {
 		super.layout();
+		//We layout the components depending on the window size
 		Vector2i windowSize = getContext().getRenderWindow().getSize();
+		//layout the components vertically like a menu
 		Helper.layoutVertically(windowSize, Constants.MENU_ITEM_SPACING, true, windowSize.x / MENU_X_OFFSET, Constants.MENU_ITEM_HEIGHT / 2, mPlayButton,
 				mCreditsButton, mExitButton);
 		mBackgroundTexture.setScale(windowSize.x / mBackgroundTexture.getLocalBounds().width,

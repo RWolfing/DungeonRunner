@@ -4,6 +4,12 @@ import java.io.File;
 
 import org.jsfml.system.Vector2f;
 
+/**
+ * Constants class
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class Constants {
 
 	public static final String ROOT_DIR = System.getProperty("user.dir") + File.separator;
@@ -12,7 +18,7 @@ public class Constants {
 	public static final String IMG_DIR = RES_DIR + "images" + File.separator;
 	public static final String TEX_DIR = RES_DIR + "textures" + File.separator;
 	public static final String ANIM_DIR = TEX_DIR + File.separator + "animations" + File.separator;
-	public static boolean IS_DEBUGGING = true;
+	public static boolean IS_DEBUGGING = false;
 
 	// Physics
 	public static final Vector2f GRAVITY = new Vector2f(0, 170);

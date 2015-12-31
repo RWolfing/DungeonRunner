@@ -16,6 +16,12 @@ import de.dungeonrunner.view.Container;
 import de.dungeonrunner.view.Label;
 import de.dungeonrunner.view.Button.OnButtonClick;
 
+/**
+ * The state to represent the level completed screen of the game.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class LevelCompletedState extends State{
 
 	private Label mSuccessTextLabel;
@@ -26,6 +32,13 @@ public class LevelCompletedState extends State{
 	
 	private Container mGUIContainer;
 	
+	/**
+	 * Default constructor, creates a new State with the given StateStack
+	 * and Context.
+	 * 
+	 * @param stack the StateStack
+	 * @param context the Context
+	 */
 	public LevelCompletedState(StateStack stack, Context context) {
 		super(stack, context);
 		
@@ -50,6 +63,8 @@ public class LevelCompletedState extends State{
 
 			@Override
 			public void onClick(Button bttn) {
+				//If the exit button was clicked we clear the
+				//stack and return to the menu
 				requestStateClear();
 				requestStackPush(States.Menu);
 			}
@@ -84,6 +99,7 @@ public class LevelCompletedState extends State{
 	@Override
 	public void layout() {
 		super.layout();
+		//Depending on the window size we layout the components
 		Vector2i windowSize = getContext().getRenderWindow().getSize();
 		mBackgroundOverlay.setSize(new Vector2f(windowSize));
 		Helper.layoutVertically(windowSize, 35, true, 0, 0, mSuccessTextLabel, mSuccessIconLabel, mExitButton);

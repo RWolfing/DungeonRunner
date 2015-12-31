@@ -17,6 +17,12 @@ import de.dungeonrunner.view.Container;
 import de.dungeonrunner.view.Button.OnButtonClick;
 import de.dungeonrunner.view.Label;
 
+/**
+ * State to represent the game over screen of the application.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class GameOverState extends State {
 
 	private Label mGameOverTextLabel;
@@ -27,9 +33,17 @@ public class GameOverState extends State {
 
 	private Container mGUIContainer;
 
+	/**
+	 * Default constructor, creates the State with the given
+	 * parameters.
+	 * 
+	 * @param stack the StateStack
+	 * @param context the Context
+	 */
 	public GameOverState(StateStack stack, Context context) {
 		super(stack, context);
 
+		//Setup of the ui elements
 		mGameOverTextLabel = new Label("FAILURE");
 		mGameOverTextLabel.setCentered(true);
 		mGameOverTextLabel.setHeight(Constants.MENU_ITEM_HEIGHT);
@@ -51,6 +65,8 @@ public class GameOverState extends State {
 
 			@Override
 			public void onClick(Button bttn) {
+				//If the exit button was clicked we clear the stack
+				//and push the main menu
 				requestStateClear();
 				requestStackPush(States.Menu);
 			}
@@ -89,6 +105,7 @@ public class GameOverState extends State {
 	@Override
 	public void layout() {
 		super.layout();
+		//We have to layout the components depending on the window size
 		Vector2i windowSize = getContext().getRenderWindow().getSize();
 		mBackgroundOverlay.setSize(new Vector2f(windowSize));
 		Helper.layoutVertically(windowSize, 35, true, 0, 0, mGameOverTextLabel, mGameOverIconLabel, mExitButton);
