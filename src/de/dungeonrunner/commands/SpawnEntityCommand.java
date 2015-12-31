@@ -28,5 +28,4 @@ public class SpawnEntityCommand extends SceneCommand {
 		diamond.setVelocity(mVelocity);
 		sceneNode.attachChild(diamond);
 	}
-
 }
