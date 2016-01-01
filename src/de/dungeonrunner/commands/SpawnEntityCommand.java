@@ -7,6 +7,13 @@ import de.dungeonrunner.entities.Diamond;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
+/**
+ * This command spawns a diamond entity at the given position with the
+ * given velocity.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class SpawnEntityCommand extends SceneCommand {
 
 	private Vector2f mPosition;

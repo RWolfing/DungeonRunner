@@ -2,6 +2,7 @@ package de.dungeonrunner.singleton;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
@@ -56,18 +57,25 @@ public class TextureHolder {
 	}
 
 	/**
-	 * Loads the Texture from the given filePath and holds it under
-	 * the given id.
+	 * Loads the Texture from the given filePath and holds it under the given
+	 * id.
 	 * 
-	 * @param id id of the loaded texture
-	 * @param filePath file path of the texture
+	 * @param id
+	 *            id of the loaded texture
+	 * @param filePath
+	 *            file path of the texture
 	 * @return if the texture could be loaded
 	 */
 	public boolean loadTexture(TextureID id, String filePath) {
 		Texture texture = null;
 		try {
 			texture = new Texture();
-			texture.loadFromFile(Paths.get(filePath));
+			InputStream textStream = TextureHolder.class.getResourceAsStream(filePath);
+			if (textStream != null) {
+				texture.loadFromStream(textStream);
+			} else {
+				System.out.println("Stream from " + filePath);
+			}
 		} catch (IOException e) {
 			System.err.println("Could not load texture from " + filePath + ", IOException");
 			return false;
@@ -77,11 +85,13 @@ public class TextureHolder {
 	}
 
 	/**
-	 * Loads the Texture form the given awtImage and holds it under
-	 * the given id.
+	 * Loads the Texture form the given awtImage and holds it under the given
+	 * id.
 	 * 
-	 * @param textureId id of the loaded texture
-	 * @param awtImage a java.awt.Image object
+	 * @param textureId
+	 *            id of the loaded texture
+	 * @param awtImage
+	 *            a java.awt.Image object
 	 * @return if the texture could be loaded
 	 */
 	private boolean loadImageTexture(int textureId, java.awt.Image awtImage) {
@@ -103,7 +113,8 @@ public class TextureHolder {
 	/**
 	 * Loads a set of textures from the given Map.
 	 * 
-	 * @param tiledMap a tmx Map object
+	 * @param tiledMap
+	 *            a tmx Map object
 	 */
 	public void loadTiledTextures(Map tiledMap) {
 		final int numberTileSets = tiledMap.getTileSets().size();
@@ -121,7 +132,8 @@ public class TextureHolder {
 	/**
 	 * Returns the texture with the given id.
 	 * 
-	 * @param id the id of the texture
+	 * @param id
+	 *            the id of the texture
 	 * @return a texture
 	 */
 	public Texture getTexture(TextureID id) {
@@ -131,7 +143,8 @@ public class TextureHolder {
 	/**
 	 * Returns a tiled texture with the given id.
 	 * 
-	 * @param id the id of the tiled texture
+	 * @param id
+	 *            the id of the tiled texture
 	 * @return a texture
 	 */
 	public Texture getTileTexture(int id) {

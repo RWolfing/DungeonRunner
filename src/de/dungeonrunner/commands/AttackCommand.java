@@ -4,6 +4,13 @@ import de.dungeonrunner.NodeType;
 import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
 
+/**
+ * This command makes the Unit with the given nodeType execute 
+ * a attack.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class AttackCommand extends SceneCommand{
 
 	public AttackCommand(NodeType nodeType) {
@@ -14,5 +21,4 @@ public class AttackCommand extends SceneCommand{
 	public void execute(SceneNode sceneNode) {
 		((Unit) sceneNode).attack();
 	}
-
 }

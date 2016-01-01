@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jsfml.graphics.FloatRect;
-import org.jsfml.graphics.RectangleShape;
-import org.jsfml.graphics.RenderStates;
-import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 
@@ -20,16 +17,23 @@ import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
 
+/**
+ * A unit representing the player in the game.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class PlayerUnit extends Unit {
 
-	private RectangleShape mCollisionShape = new RectangleShape();
-
+	private final int TOTAL_HP = 100;
+	private final int mShootFrameStart = 3;
+	
+	//Different collision rectangles for different states
 	private FloatRect mDefaultCollisionRect;
 	private FloatRect mAttackCollisionRect;
 
+	//Ammo available to the unit
 	private int mCurrentDynamiteAmmo;
-
-	private static final int mShootFrameStart = 3;
 
 	public PlayerUnit(TextureID textureID, Properties props) {
 		super(textureID, props);
@@ -38,14 +42,8 @@ public class PlayerUnit extends Unit {
 		mDefaultCollisionRect = new FloatRect(27, 11, 62, 118);
 		mAttackCollisionRect = new FloatRect(15, 15, 105, 118);
 		setCollisionRect(mDefaultCollisionRect);
-		setTotalHP(100);
+		setTotalHP(TOTAL_HP);
 		mCurrentDynamiteAmmo = 3;
-	}
-
-	@Override
-	protected void drawCurrent(RenderTarget target, RenderStates states) {
-		super.drawCurrent(target, states);
-		target.draw(mCollisionShape);
 	}
 
 	@Override
@@ -53,17 +51,20 @@ public class PlayerUnit extends Unit {
 		super.updateCurrent(dt);
 		// We move the player through commands so reset the velocity
 		setVelocity(0, getVelocity().y);
+		
+		//Update the game ui
 		GameState.getGameUI().getAmmoComponent().setCurrentAmmo(mCurrentDynamiteAmmo);
 		GameState.getGameUI().getLifeComponent().setHealthBar((float) getHitpoints() / (float) getTotalHP());
 	}
 
-	// TODO Refactor
 	@Override
 	public boolean attack() {
 		if (super.attack()) {
+			//If we attack we have to switch the collision rectangle
 			List<SceneNode> collisions = new ArrayList<>();
 			setCollisionRect(mAttackCollisionRect);
 			GameState.getWorld().getCollisionGraph().retrieve(collisions, getBoundingRect());
+			//And check if we are actually mining any crystals
 			for (SceneNode node : collisions) {
 				if (node instanceof CrystalItem) {
 					if (node.getBoundingRect().intersection(getBoundingRect()) != null) {
@@ -78,6 +79,9 @@ public class PlayerUnit extends Unit {
 
 	}
 
+	/**
+	 * Creates the animations needed and used for this unit.
+	 */
 	private void setupAnimations() {
 		// Create all animations
 		AnimationNode mIdleAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_IDLE, 1000, true, 4,
@@ -98,14 +102,14 @@ public class PlayerUnit extends Unit {
 
 			@Override
 			public void onFrame(AnimationNode node, int frame) {
-				// TODO polishing, verhunzter code sah von der animation her
-				// besser aus, nicht abwarten bevor die animation abgelaufen ist
+				//If shoot frame is reached, create a command to fire the projectile
 				if (frame == mShootFrameStart) {
 					FireProjectileCommand command = new FireProjectileCommand(mEntity, NodeType.WORLD,
 							ProjectileType.Dynamite);
 					addCommand(command);
 				}
 
+				//if the end of the animation was reached, reset the shooting
 				if (node.getNumFrames() - 1 == frame) {
 					mEntity.resetShoot();
 				}
@@ -122,6 +126,7 @@ public class PlayerUnit extends Unit {
 
 			@Override
 			public void onFrame(AnimationNode node, int frame) {
+				//Reset the attack if the end of the animation was reached
 				if (node.getNumFrames() - 1 == frame) {
 					mUnit.resetAttack();
 				}
@@ -145,6 +150,7 @@ public class PlayerUnit extends Unit {
 	@Override
 	public boolean shoot() {
 		if(super.shoot()){
+			//Decrement the ammunition
 			mCurrentDynamiteAmmo--;
 			return true;
 		}

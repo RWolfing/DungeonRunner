@@ -52,7 +52,7 @@ public class FontHolder {
 		Font font = null;
 		try {
 			font = new Font();
-			font.loadFromFile(Paths.get(filePath));
+			font.loadFromStream(FontHolder.class.getResourceAsStream(filePath));
 		} catch (IOException e) {
 			System.err.println("Could not load font from " + filePath + ", IOException");
 			return false;

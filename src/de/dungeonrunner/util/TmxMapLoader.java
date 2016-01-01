@@ -36,9 +36,9 @@ public class TmxMapLoader {
 		Map map;
 		try {
 			TMXMapReader mapReader = new TMXMapReader();
-			map = mapReader.readMap(fileToOpen);
+			map = mapReader.readMap(filepath);
 		} catch (Exception e) {
-			System.out.println("Error while reading the map:\n" + e.getMessage());
+			System.out.println("Error while reading the map " + filepath + ":\n" + e.getMessage());
 			return null;
 		}
 

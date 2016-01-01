@@ -1,5 +1,7 @@
 package de.dungeonrunner;
 
+import java.io.InputStream;
+
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
@@ -24,6 +26,12 @@ import de.dungeonrunner.state.TitleState;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Context;
 
+/**
+ * The Application class.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class Application {
 
 	private final Time FPS = Time.getSeconds(1.0f / 60.0f);
@@ -35,13 +43,15 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
+		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
 //		 mRenderWindow.create(VideoMode.getFullscreenModes()[0],
 //		 "A Miners Day", RenderWindow.FULLSCREEN);
-		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+
 		mRenderWindow.setFramerateLimit(30);
 
 		mClock = new Clock();
 
+		//Load all textures
 		TextureHolder texHolder = TextureHolder.getInstance();
 		texHolder.loadTexture(TextureID.ANIM_IDLE, Constants.ANIM_DIR + "hero_miner_idle.png");
 		texHolder.loadTexture(TextureID.PLAYER_TEXTURE, Constants.ANIM_DIR + "player_stand.png");
@@ -77,7 +87,6 @@ public class Application {
 		texHolder.loadTexture(TextureID.BUTTON_ACTIVATED, Constants.IMG_DIR + "button_activated.png");
 		texHolder.loadTexture(TextureID.ICON_FAILURE, Constants.IMG_DIR + "failure_icon.png");
 		texHolder.loadTexture(TextureID.ICON_SUCCESS, Constants.IMG_DIR + "success_icon.png");
-		//texHolder.loadTexture(Texture, Constants.IMG_DIR + "button_activated.png");
 		
 		//UI
 		texHolder.loadTexture(TextureID.UI_LIFEBAR_BG, Constants.IMG_DIR + "ui_lifebar.png");
@@ -95,9 +104,13 @@ public class Application {
 		mStateStack.pushState(States.Title);
 	}
 
+	/**
+	 * Starts the application.
+	 */
 	public void run() {
 		Time timeSinceLastUpdate = Time.ZERO;
 		while (mRenderWindow.isOpen()) {
+			//While the application window is open, we update, process and render everything
 			timeSinceLastUpdate = Time.add(timeSinceLastUpdate, mClock.restart());
 			while (timeSinceLastUpdate.asMicroseconds() > FPS.asMilliseconds()) {
 				timeSinceLastUpdate = Time.sub(timeSinceLastUpdate, FPS);
@@ -108,10 +121,9 @@ public class Application {
 		}
 	}
 
-	public static RenderWindow getRenderWindow() {
-		return mRenderWindow;
-	}
-
+	/**
+	 * This method processes window events.
+	 */
 	private void processEvents() {
 		for (Event event : mRenderWindow.pollEvents()) {
 			switch (event.type) {
@@ -135,6 +147,11 @@ public class Application {
 		}
 	}
 
+	/**
+	 * Updates the application.
+	 * 
+	 * @param fPS2 frames per second
+	 */
 	private void update(Time fPS2) {
 		if (!mIsPausing) {
 			mStateStack.update(fPS2);
@@ -144,14 +161,20 @@ public class Application {
 		}
 	}
 
+	/**
+	 * Renders the application.
+	 */
 	private void render() {
 		mRenderWindow.clear();
 		mRenderWindow.setView(mRenderWindow.getDefaultView());
 		mStateStack.draw();
 		mRenderWindow.display();
-
 	}
 
+	/**
+	 * This method registers all available application states for 
+	 * later use.
+	 */
 	private void registerStates() {
 		Context ctx = new Context(mRenderWindow, mPlayer);
 		StateHolder holder = StateHolder.getInstance();
@@ -161,6 +184,15 @@ public class Application {
 		holder.registerState(States.Pause, new PauseMenuState(mStateStack, ctx));
 		holder.registerState(States.GameOver, new GameOverState(mStateStack, ctx));
 		holder.registerState(States.LevelSuccess, new LevelCompletedState(mStateStack, ctx));
+	}
+	
+	/**
+	 * Returns the RenderWindow of the application.
+	 * 
+	 * @return the render window
+	 */
+	public static RenderWindow getRenderWindow() {
+		return mRenderWindow;
 	}
 
 	public static void main(String[] args) {

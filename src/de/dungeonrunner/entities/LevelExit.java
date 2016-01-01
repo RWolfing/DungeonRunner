@@ -11,14 +11,28 @@ import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.util.Constants;
 
+/**
+ * A entity of the game that represents the level exit.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class LevelExit extends GameEntity {
 
+	//Is the exit door open or closed
 	private boolean mIsOpen;
 	private TextureID mTexExitClosed;
 	private TextureID mTexExitOpen;
 
 	private boolean mPlayerEntered;
 
+	/**
+	 * Default constructor, creates the LevelExit from the given parameters.
+	 * 
+	 * @param texIDOpen id of the texture for the open state
+	 * @param texIDClosed id of the texture for the closed state
+	 * @param props properties of the node
+	 */
 	public LevelExit(TextureID texIDOpen, TextureID texIDClosed, Properties props) {
 		super(props);
 		mTexExitClosed = texIDClosed;
@@ -29,17 +43,26 @@ public class LevelExit extends GameEntity {
 
 	@Override
 	protected CollisionType processCollision(SceneNode node) {
+		//Check if the exit is open and the player is in the door
 		if (mIsOpen && node.getBoundingRect().intersection(getBoundingRect()) != null && node instanceof PlayerUnit) {
 			mPlayerEntered = true;
 		}
 		return super.processCollision(node);
 	}
 
+	/**
+	 * Opens the level exit
+	 */
 	public void open() {
 		mIsOpen = true;
 		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(mTexExitOpen)), null));
 	}
 
+	/**
+	 * Checks if the player has entered the exit.
+	 * 
+	 * @return did player enter the exit
+	 */
 	public boolean didPlayerEnter() {
 		return mPlayerEntered;
 	}

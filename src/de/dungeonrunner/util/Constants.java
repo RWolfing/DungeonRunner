@@ -12,12 +12,11 @@ import org.jsfml.system.Vector2f;
  */
 public class Constants {
 
-	public static final String ROOT_DIR = System.getProperty("user.dir") + File.separator;
-	public static final String RES_DIR = ROOT_DIR + "resources" + File.separator;
-	public static final String MAP_DIR = RES_DIR + "maps" + File.separator;
-	public static final String IMG_DIR = RES_DIR + "images" + File.separator;
-	public static final String TEX_DIR = RES_DIR + "textures" + File.separator;
-	public static final String ANIM_DIR = TEX_DIR + File.separator + "animations" + File.separator;
+	public static final String RES_DIR = "/";
+	public static final String MAP_DIR = System.getProperty("user.dir") + File.separator +  "maps" + File.separator; 
+	public static final String IMG_DIR = RES_DIR + "images" + "/";
+	public static final String TEX_DIR = RES_DIR + "textures" + "/";
+	public static final String ANIM_DIR = TEX_DIR + "animations" + "/";
 	public static boolean IS_DEBUGGING = false;
 
 	// Physics

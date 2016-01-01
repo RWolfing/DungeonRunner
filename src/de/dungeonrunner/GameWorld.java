@@ -1,7 +1,6 @@
 package de.dungeonrunner;
 
 import java.awt.Rectangle;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,15 +35,27 @@ import tiled.core.ObjectGroup;
 import tiled.core.Tile;
 import tiled.core.TileLayer;
 
+/**
+ * This class represents the world or level of the game.
+ * It loads and read a .tmx map and creates all necessary entities, nodes etc.
+ * 
+ * @author Robert Wolfinger
+ */
 public class GameWorld {
 
+	/**
+	 * Enum for the available render layers.
+	 */
 	private enum RenderLayers {
 		Background, Levelbackground, Levelmiddleground, Levelforeground
 	}
 
 	private SceneNode mSceneGraph;
 	private QuadTree mCollisionTree;
+	private CommandStack mCommandStack;
 
+
+	private View mCamera;
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
 
 	private Map mMap;
@@ -52,60 +63,79 @@ public class GameWorld {
 
 	private PlayerUnit mPlayerEntity;
 	private LevelExit mLevelExit;
-
-	private View mCamera;
-
-	private CommandStack mCommandStack;
-
 	private boolean mLevelExitUsed;
 
+	/**
+	 * Default constructor, creates a new world.
+	 */
 	public GameWorld() {
 		mCommandStack = new CommandStack();
+		//First we load the map
 		loadMap();
-		loadTextures();
+		//Then we can setup and build the scene
 		buildScene();
+		//Finally we resize the world to match the window size
 		resizeWorld(new Vector2f(Application.getRenderWindow().getSize()));
 	}
 
-	private void loadTextures() {
-		if (mMap != null) {
-			TextureHolder.getInstance().loadTiledTextures(mMap);
-		}
-	}
-
 	private void loadMap() {
-		mMap = TmxMapLoader.loadMap(Constants.MAP_DIR + "test" + File.separator + "minetest.tmx");
+		//Try to load the .tmx map TODO filechooser dialog
+		mMap = TmxMapLoader.loadMap(Constants.MAP_DIR + "minetest.tmx");
 
 		if (mMap != null) {
+			//If we could load the map, load the necessary textures for the tiles
 			TextureHolder.getInstance().loadTiledTextures(mMap);
 		}
 	}
 
+	/**
+	 * Build the scene of the level
+	 */
 	private void buildScene() {
+		//Initial setup
 		mSceneGraph = new SceneNode(null);
 		mRenderLayers = new HashMap<>();
+		//The quadtree has to match the level size
 		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
 				(mMap.getHeight() * mMap.getTileHeight()) + 50));
 
+		//Create the scene of the level (all necessary tiles, objects etc)
 		createLevelScene();
+		//Create the entities of the level (units, pickups etc)
 		createLevelEntities();
 	}
 
+	/**
+	 * Draws the world.
+	 */
 	public void draw() {
 		RenderWindow window = Application.getRenderWindow();
 		window.setView(mCamera);
 		window.draw(mSceneGraph);
+		//Debug only
 		window.draw(mCollisionTree);
 	}
 
+	/**
+	 * Updates the world.
+	 * 
+	 * @param dt delta time
+	 */
 	public void update(Time dt) {
 		if (!mIsPausing) {
+			//Not pausing, update everything
+			//First we execute all commands
 			executeCommands();
+			//Then we update every node in the scene graph
 			mSceneGraph.update(dt);
+			//After moving the nodes, we check for collisions
 			checkCollision();
+			//Remove all destroyed nodes
 			mSceneGraph.cleanDestroyedNodes();
+			//Adapt the camera position the the player position
 			adaptCameraPosition();
 
+			//And check if the player has finished the level
 			if(checkDiamondsCollected()){
 				mLevelExit.open();
 				if(levelSuccess()){
@@ -115,18 +145,36 @@ public class GameWorld {
 		}
 	}
 
+	/**
+	 * Returns the command stack of the world.
+	 * 
+	 * @return the command stack
+	 */
 	public CommandStack getCommandStack() {
 		return mCommandStack;
 	}
 	
+	/**
+	 * Returns the camera of the world.
+	 * 
+	 * @return the world camera
+	 */
 	public View getWorldCamera(){
 		return mCamera;
 	}
 
+	/**
+	 * Returns the QuadTree to check for collisions.
+	 * 
+	 * @return the collision graph
+	 */
 	public QuadTree getCollisionGraph() {
 		return mCollisionTree;
 	}
 
+	/**
+	 * Executes all pending commands of the world.
+	 */
 	private void executeCommands() {
 		// First handle input commands
 		while (!mCommandStack.isEmpty()) {
@@ -134,27 +182,44 @@ public class GameWorld {
 		}
 		// Collect entity commands
 		mSceneGraph.collectCommands(mCommandStack);
+		// Through executing a command, maybe a new command 
+		// has been created so check again until there are no commands
 		recursiveSceneOnCommad();
 	}
 
+	/**
+	 * Executes all commands in a loop and collects resulting
+	 * commands until no commands are left
+	 */
 	private void recursiveSceneOnCommad() {
 		if (mCommandStack.isEmpty())
+			//All commands executes we can return
 			return;
 
 		while (!mCommandStack.isEmpty()) {
+			//Execute every pending command
 			mSceneGraph.onCommand(mCommandStack.pop());
 		}
+		//Collect all resulting commands
 		mSceneGraph.collectCommands(mCommandStack);
+		//And do it again
 		recursiveSceneOnCommad();
 	}
 
+	/**
+	 * Checks for collisions between nodes in the world.
+	 */
 	private void checkCollision() {
+		//we clear the quadtree
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {
+			//And put every node that can collide back into 
+			//the quadtree
 			if (node.getBoundingRect() != null) {
 				mCollisionTree.insert(node);
 			}
 		}
+		//we check for collisions
 		mSceneGraph.checkCollisions(mCollisionTree);
 	}
 
@@ -199,23 +264,49 @@ public class GameWorld {
 		}
 	}
 
+	/**
+	 * Resizes the world to match the given size.
+	 * 
+	 * @param size the size of the world
+	 */
 	public void resizeWorld(Vector2f size) {
 		mCamera = new View(new Vector2f(size.x / 2, size.y / 2), size);
 	}
 
+	/**
+	 * Checks if the game has ended.
+	 * 
+	 * @return player is dead or level exit was used
+	 */
 	public boolean checkGameFinished() {
 		return mPlayerEntity.getHitpoints() <= 0 || mLevelExitUsed;
 	}
 
+	/**
+	 * Checks if the level was successfully finished.
+	 * 
+	 * @return if the player used the level exit
+	 */
 	public boolean levelSuccess() {
 		return mLevelExit.didPlayerEnter();
 	}
 
+	/**
+	 * Check if all diamonds were collected by the player.
+	 * 
+	 * @return if all diamonds were collected
+	 */
 	private boolean checkDiamondsCollected() {
 		return GameState.getGameUI().getDiamondsComponent().collectedAll();
 	}
 	
+	/**
+	 * Creates the scene of the level.
+	 * The level scene contains the different tiles and other static 
+	 * objects of the game.
+	 */
 	private void createLevelScene() {
+		//Setup of the different render layers
 		for (RenderLayers layer : RenderLayers.values()) {
 			SceneNode node = new SceneNode(null);
 			switch (layer) {
@@ -232,6 +323,7 @@ public class GameWorld {
 		if (mMap != null) {
 			for (int i = 0; i < mMap.getLayerCount(); i++) {
 				if (mMap.getLayer(i) instanceof TileLayer) {
+					//We iterate over every TileLayer of the map
 					TileLayer tileLayer = (TileLayer) mMap.getLayer(i);
 					final int tileWidth = mMap.getTileWidth();
 					final int tileHeight = mMap.getTileHeight();
@@ -240,11 +332,13 @@ public class GameWorld {
 					TextureHolder textureHolder = TextureHolder.getInstance();
 
 					for (int x = 0; x < boundsInTiles.getWidth(); x++) {
+						//Through the bounds of the layer we can iterate over all containing tiles
 						for (int y = 0; y < boundsInTiles.getHeight(); y++) {
 							Tile tile = tileLayer.getTileAt(x, y);
 							if (tile == null) {
 								continue;
 							} else {
+								//For each tile we create a new sprite and sprite node
 								Sprite cachedTile = new Sprite();
 								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
 
@@ -259,6 +353,8 @@ public class GameWorld {
 								}
 								node.setPosition(x * tileWidth, y * tileHeight);
 
+								//Depending on the position of the layer we attach the created node to the correct
+								//render layer
 								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
 									mRenderLayers.get(RenderLayers.Background).attachChild(node);
 								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)) {
@@ -279,15 +375,22 @@ public class GameWorld {
 		}
 	}
 
+	/**
+	 * Creates the entities of the level.
+	 * Level entities are units, pickups etc.
+	 */
 	private void createLevelEntities() {
 		if (mMap != null) {
 			for (MapLayer layer : mMap.getLayers()) {
+				//We iterate over every defined ObjectGroup
 				if (layer instanceof ObjectGroup) {
 					ObjectGroup objGroup = (ObjectGroup) layer;
 
 					for (Iterator<MapObject> i = objGroup.getObjects(); i.hasNext();) {
 						MapObject object = i.next();
-
+						// For each object we check what kind it is and create the appropriate
+						// game entity. 
+						
 						// Player
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
 							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE, object.getProperties());
@@ -312,6 +415,7 @@ public class GameWorld {
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
 						}
 						
+						//Level Exit
 						if(object.getType().equals(TmxKeys.OBJECT_NAME_LEVELEXIT)) {
 							mLevelExit = new LevelExit(TextureID.LEVEL_EXIT_OPEN, TextureID.LEVEL_EXIT_CLOSED, object.getProperties());
 							mLevelExit.setPosition((float) object.getBounds().x, (float) object.getBounds().y);

@@ -4,6 +4,12 @@ import de.dungeonrunner.NodeType;
 import de.dungeonrunner.entities.GameEntity;
 import de.dungeonrunner.nodes.SceneNode;
 
+/**
+ * This command adds the given delta x and y to the velocity of a GameEntity with the given nodeType.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class MoveCommand extends SceneCommand{
 
 	private int mDeltaX = 0;
@@ -22,5 +28,4 @@ public class MoveCommand extends SceneCommand{
 			entity.setVelocity(entity.getVelocity().x + mDeltaX, entity.getVelocity().y + mDeltaY);
 		}
 	}
-
 }

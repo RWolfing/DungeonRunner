@@ -11,6 +11,13 @@ import de.dungeonrunner.entities.Projectile.ProjectileType;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
+/**
+ * This command spawns a new projectile depending on the given ProjectileType
+ * and attaches it to the SceneNode with the given NodeType. 
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class FireProjectileCommand extends SceneCommand {
 
 	private Unit mShooter;

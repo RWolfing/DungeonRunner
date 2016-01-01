@@ -16,8 +16,18 @@ import de.dungeonrunner.util.TmxKeys;
 import de.dungeonrunner.view.LifeBar;
 import tiled.core.MapObject;
 
+/**
+ * This class represents a crystal item in the game.
+ * The player has to mine it in order to receive diamonds.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class CrystalItem extends Item {
 
+	/**
+	 * Enum for the different types of crystals available.
+	 */
 	public enum Type {
 		SMALL, NORMAL, BIG;
 		public static Type getType(String type) {
@@ -35,12 +45,24 @@ public class CrystalItem extends Item {
 		}
 	}
 
+	//Diamonds that the crystal contains
 	private int mTotalDiamonds;
 	private int mContainingDiamonds;
+	
+	//Lifebar of the crystal
 	private LifeBar mLifeBar;
+	
+	//Texture for the crystal if it was successfully mined
 	private TextureID mMinedTexture;
 	private boolean mWasMined;
 
+	/**
+	 * Default constructor, creates a new crystal with the 
+	 * given parameters.
+	 * 
+	 * @param texID id of the texture to use
+	 * @param props properties of the nodes
+	 */
 	public CrystalItem(TextureID texID, Properties props) {
 		super(texID, props);
 		mLifeBar = new LifeBar();
@@ -50,24 +72,37 @@ public class CrystalItem extends Item {
 		attachChild(mLifeBar);
 	}
 
+	/**
+	 * Mines the crystal
+	 */
 	public void mine() {
 		if (!mWasMined) {
+			//decrement the containing crystals
 			mContainingDiamonds--;
 			if (mContainingDiamonds < 1) {
+				//if no crystals are left we can destroy the node
 				destroy();
 			}
+			//Update the lifebar
 			mLifeBar.setCurrent(mContainingDiamonds);
 		}
 	}
 
+	/**
+	 * Sets the amount of diamonds that the crystal contains.
+	 * 
+	 * @param diamonds the amount of diamonds
+	 */
 	public void setContainingDiamonds(int diamonds) {
 		mTotalDiamonds = mContainingDiamonds = diamonds;
-		mLifeBar.setCurrent(mTotalDiamonds);
-		mLifeBar.setMaximum(mTotalDiamonds);
+		mLifeBar.setCurrent(mContainingDiamonds);
+		mLifeBar.setMaximum(mContainingDiamonds);
 	}
 
 	@Override
 	public void destroy() {
+		//If the node was destroyed we change to sprite to the mined texture
+		//and spawn all containing diamonds
 		mWasMined = true;
 		setSprite(new SpriteNode(new Sprite(TextureHolder.getInstance().getTexture(mMinedTexture)), null));
 		Vector2f diamondSpawnVel = new Vector2f(40, -400);
@@ -79,10 +114,22 @@ public class CrystalItem extends Item {
 		}
 	}
 
+	/**
+	 * Sets the id of the texture to use as a the mined texture.
+	 * 
+	 * @param texID the id of the texture
+	 */
 	public void setMinedTexture(TextureID texID) {
 		mMinedTexture = texID;
 	}
 
+	/**
+	 * Helper method to create a CrystalItem by its different types
+	 * from a MapObject.
+	 * 
+	 * @param object the map object
+	 * @return a crystal item
+	 */
 	public static CrystalItem getCrystalItem(MapObject object) {
 		Properties props = object.getProperties();
 		Type type = Type.getType(props.getProperty(TmxKeys.CRYSTAL_TYPE, null));

@@ -59,3 +59,4 @@ $RECYCLE.BIN/
 .settings/org.eclipse.jdt.core.prefs
 .classpath
 *.project
+bin/

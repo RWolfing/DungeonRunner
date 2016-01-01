@@ -1,9 +1,16 @@
 package de.dungeonrunner.commands;
 
 import de.dungeonrunner.NodeType;
-import de.dungeonrunner.entities.PlayerUnit;
+import de.dungeonrunner.entities.Unit;
 import de.dungeonrunner.nodes.SceneNode;
 
+/**
+ * This command makes the Unit with the given nodeType execute
+ * a jump.
+ * 
+ * @author Robert Wolfinger
+ *
+ */
 public class JumpCommand extends SceneCommand{
 
 	public JumpCommand(NodeType nodeType) {
@@ -12,7 +19,6 @@ public class JumpCommand extends SceneCommand{
 
 	@Override
 	public void execute(SceneNode sceneNode) {
-		((PlayerUnit) sceneNode).jump();
+		((Unit) sceneNode).jump();
 	}
-
 }
