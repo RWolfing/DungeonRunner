@@ -24,7 +24,7 @@ import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
-import de.dungeonrunner.util.Constants;
+import de.dungeonrunner.state.LevelSelectionState;
 import de.dungeonrunner.util.QuadTree;
 import de.dungeonrunner.util.TmxKeys;
 import de.dungeonrunner.util.TmxMapLoader;
@@ -36,8 +36,8 @@ import tiled.core.Tile;
 import tiled.core.TileLayer;
 
 /**
- * This class represents the world or level of the game.
- * It loads and read a .tmx map and creates all necessary entities, nodes etc.
+ * This class represents the world or level of the game. It loads and read a
+ * .tmx map and creates all necessary entities, nodes etc.
  * 
  * @author Robert Wolfinger
  */
@@ -54,7 +54,6 @@ public class GameWorld {
 	private QuadTree mCollisionTree;
 	private CommandStack mCommandStack;
 
-
 	private View mCamera;
 	private HashMap<RenderLayers, SceneNode> mRenderLayers;
 
@@ -70,41 +69,26 @@ public class GameWorld {
 	 */
 	public GameWorld() {
 		mCommandStack = new CommandStack();
-		//First we load the map
-		loadMap();
-		//Then we can setup and build the scene
-		buildScene();
-		//Finally we resize the world to match the window size
-		resizeWorld(new Vector2f(Application.getRenderWindow().getSize()));
-	}
-
-	private void loadMap() {
-		//Try to load the .tmx map TODO filechooser dialog
-		mMap = TmxMapLoader.loadMap(Constants.MAP_DIR + "minetest.tmx");
-
-		if (mMap != null) {
-			//If we could load the map, load the necessary textures for the tiles
-			TextureHolder.getInstance().loadTiledTextures(mMap);
-		}
-	}
-
-	/**
-	 * Build the scene of the level
-	 */
-	private void buildScene() {
-		//Initial setup
 		mSceneGraph = new SceneNode(null);
 		mRenderLayers = new HashMap<>();
-		//The quadtree has to match the level size
-		mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
-				(mMap.getHeight() * mMap.getTileHeight()) + 50));
+		mCollisionTree = new QuadTree(0, FloatRect.EMPTY);
+		
+		// First we load the map
+		if (loadMap()) {
+			// Then we can setup and build the scene
+			// The quadtree has to match the level size
+			mCollisionTree = new QuadTree(0, new FloatRect(-5, -5, mMap.getWidth() * mMap.getTileWidth(),
+					(mMap.getHeight() * mMap.getTileHeight()) + 50));
 
-		//Create the scene of the level (all necessary tiles, objects etc)
-		createLevelScene();
-		//Create the entities of the level (units, pickups etc)
-		createLevelEntities();
+			// Create the scene of the level (all necessary tiles, objects etc)
+			createLevelScene();
+			// Create the entities of the level (units, pickups etc)
+			createLevelEntities();
+		}
+		// Finally we resize the world to match the window size
+		resizeWorld(new Vector2f(Application.getRenderWindow().getSize()));
 	}
-
+	
 	/**
 	 * Draws the world.
 	 */
@@ -112,33 +96,34 @@ public class GameWorld {
 		RenderWindow window = Application.getRenderWindow();
 		window.setView(mCamera);
 		window.draw(mSceneGraph);
-		//Debug only
+		// Debug only
 		window.draw(mCollisionTree);
 	}
 
 	/**
 	 * Updates the world.
 	 * 
-	 * @param dt delta time
+	 * @param dt
+	 *            delta time
 	 */
 	public void update(Time dt) {
 		if (!mIsPausing) {
-			//Not pausing, update everything
-			//First we execute all commands
+			// Not pausing, update everything
+			// First we execute all commands
 			executeCommands();
-			//Then we update every node in the scene graph
+			// Then we update every node in the scene graph
 			mSceneGraph.update(dt);
-			//After moving the nodes, we check for collisions
+			// After moving the nodes, we check for collisions
 			checkCollision();
-			//Remove all destroyed nodes
+			// Remove all destroyed nodes
 			mSceneGraph.cleanDestroyedNodes();
-			//Adapt the camera position the the player position
+			// Adapt the camera position the the player position
 			adaptCameraPosition();
 
-			//And check if the player has finished the level
-			if(checkDiamondsCollected()){
+			// And check if the player has finished the level
+			if (checkDiamondsCollected()) {
 				mLevelExit.open();
-				if(levelSuccess()){
+				if (levelSuccess()) {
 					mLevelExitUsed = true;
 				}
 			}
@@ -153,13 +138,13 @@ public class GameWorld {
 	public CommandStack getCommandStack() {
 		return mCommandStack;
 	}
-	
+
 	/**
 	 * Returns the camera of the world.
 	 * 
 	 * @return the world camera
 	 */
-	public View getWorldCamera(){
+	public View getWorldCamera() {
 		return mCamera;
 	}
 
@@ -182,27 +167,27 @@ public class GameWorld {
 		}
 		// Collect entity commands
 		mSceneGraph.collectCommands(mCommandStack);
-		// Through executing a command, maybe a new command 
+		// Through executing a command, maybe a new command
 		// has been created so check again until there are no commands
 		recursiveSceneOnCommad();
 	}
 
 	/**
-	 * Executes all commands in a loop and collects resulting
-	 * commands until no commands are left
+	 * Executes all commands in a loop and collects resulting commands until no
+	 * commands are left
 	 */
 	private void recursiveSceneOnCommad() {
 		if (mCommandStack.isEmpty())
-			//All commands executes we can return
+			// All commands executes we can return
 			return;
 
 		while (!mCommandStack.isEmpty()) {
-			//Execute every pending command
+			// Execute every pending command
 			mSceneGraph.onCommand(mCommandStack.pop());
 		}
-		//Collect all resulting commands
+		// Collect all resulting commands
 		mSceneGraph.collectCommands(mCommandStack);
-		//And do it again
+		// And do it again
 		recursiveSceneOnCommad();
 	}
 
@@ -210,19 +195,160 @@ public class GameWorld {
 	 * Checks for collisions between nodes in the world.
 	 */
 	private void checkCollision() {
-		//we clear the quadtree
+		// we clear the quadtree
 		mCollisionTree.clear();
 		for (SceneNode node : mSceneGraph.getSceneGraph()) {
-			//And put every node that can collide back into 
-			//the quadtree
+			// And put every node that can collide back into
+			// the quadtree
 			if (node.getBoundingRect() != null) {
 				mCollisionTree.insert(node);
 			}
 		}
-		//we check for collisions
+		// we check for collisions
 		mSceneGraph.checkCollisions(mCollisionTree);
 	}
 
+	private boolean loadMap() {
+		mMap = TmxMapLoader.loadMap(LevelSelectionState.getChosenMapPath());
+		if (mMap != null) {
+			// If we could load the map, load the necessary textures for the
+			// tiles
+			TextureHolder.getInstance().loadTiledTextures(mMap);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Creates the scene of the level. The level scene contains the different
+	 * tiles and other static objects of the game.
+	 */
+	private void createLevelScene() {
+		// Setup of the different render layers
+		for (RenderLayers layer : RenderLayers.values()) {
+			SceneNode node = new SceneNode(null);
+			switch (layer) {
+			case Levelforeground:
+				node.setNodeType(NodeType.WORLD);
+				break;
+			default:
+				break;
+			}
+			mRenderLayers.put(layer, node);
+			mSceneGraph.attachChild(node);
+		}
+
+		if (mMap != null) {
+			for (int i = 0; i < mMap.getLayerCount(); i++) {
+				if (mMap.getLayer(i) instanceof TileLayer) {
+					// We iterate over every TileLayer of the map
+					TileLayer tileLayer = (TileLayer) mMap.getLayer(i);
+					final int tileWidth = mMap.getTileWidth();
+					final int tileHeight = mMap.getTileHeight();
+					final Rectangle boundsInTiles = tileLayer.getBounds();
+
+					TextureHolder textureHolder = TextureHolder.getInstance();
+
+					for (int x = 0; x < boundsInTiles.getWidth(); x++) {
+						// Through the bounds of the layer we can iterate over
+						// all containing tiles
+						for (int y = 0; y < boundsInTiles.getHeight(); y++) {
+							Tile tile = tileLayer.getTileAt(x, y);
+							if (tile == null) {
+								continue;
+							} else {
+								// For each tile we create a new sprite and
+								// sprite node
+								Sprite cachedTile = new Sprite();
+								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
+
+								SpriteNode node;
+								switch (tile.getId()) {
+								case 4:
+									node = new Spikes(cachedTile, tile.getProperties());
+									break;
+								default:
+									node = new SpriteNode(cachedTile, tile.getProperties());
+
+								}
+								node.setPosition(x * tileWidth, y * tileHeight);
+
+								// Depending on the position of the layer we
+								// attach the created node to the correct
+								// render layer
+								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
+									mRenderLayers.get(RenderLayers.Background).attachChild(node);
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)) {
+									mRenderLayers.get(RenderLayers.Levelbackground).attachChild(node);
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_MIDDLE)) {
+									mRenderLayers.get(RenderLayers.Levelmiddleground).attachChild(node);
+								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_FRONT)) {
+									mRenderLayers.get(RenderLayers.Levelforeground).attachChild(node);
+								} else {
+									System.err
+											.println("GameWorld, Could not find the tilelayer " + tileLayer.getName());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Creates the entities of the level. Level entities are units, pickups etc.
+	 */
+	private void createLevelEntities() {
+		if (mMap != null) {
+			for (MapLayer layer : mMap.getLayers()) {
+				// We iterate over every defined ObjectGroup
+				if (layer instanceof ObjectGroup) {
+					ObjectGroup objGroup = (ObjectGroup) layer;
+
+					for (Iterator<MapObject> i = objGroup.getObjects(); i.hasNext();) {
+						MapObject object = i.next();
+						// For each object we check what kind it is and create
+						// the appropriate
+						// game entity.
+
+						// Player
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
+							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE, object.getProperties());
+							float spawnX = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_X, "0"));
+							float spawnY = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_Y, "0"));
+							mPlayerEntity.setPosition(spawnX, spawnY);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(mPlayerEntity);
+							continue;
+						}
+
+						// Enemy
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
+							LeashedUnit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
+							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y,
+									(float) object.getBounds().width, (float) object.getBounds().height);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
+						}
+
+						// Item
+						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
+							Item item = CrystalItem.getCrystalItem(object);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
+						}
+
+						// Level Exit
+						if (object.getType().equals(TmxKeys.OBJECT_NAME_LEVELEXIT)) {
+							mLevelExit = new LevelExit(TextureID.LEVEL_EXIT_OPEN, TextureID.LEVEL_EXIT_CLOSED,
+									object.getProperties());
+							mLevelExit.setPosition((float) object.getBounds().x, (float) object.getBounds().y);
+							mRenderLayers.get(RenderLayers.Levelbackground).attachChild(mLevelExit);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Adapt the camera position, to only see the level with the player centered
 	 * if possible
@@ -267,7 +393,8 @@ public class GameWorld {
 	/**
 	 * Resizes the world to match the given size.
 	 * 
-	 * @param size the size of the world
+	 * @param size
+	 *            the size of the world
 	 */
 	public void resizeWorld(Vector2f size) {
 		mCamera = new View(new Vector2f(size.x / 2, size.y / 2), size);
@@ -299,131 +426,9 @@ public class GameWorld {
 	private boolean checkDiamondsCollected() {
 		return GameState.getGameUI().getDiamondsComponent().collectedAll();
 	}
-	
-	/**
-	 * Creates the scene of the level.
-	 * The level scene contains the different tiles and other static 
-	 * objects of the game.
-	 */
-	private void createLevelScene() {
-		//Setup of the different render layers
-		for (RenderLayers layer : RenderLayers.values()) {
-			SceneNode node = new SceneNode(null);
-			switch (layer) {
-			case Levelforeground:
-				node.setNodeType(NodeType.WORLD);
-				break;
-			default:
-				break;
-			}
-			mRenderLayers.put(layer, node);
-			mSceneGraph.attachChild(node);
-		}
 
-		if (mMap != null) {
-			for (int i = 0; i < mMap.getLayerCount(); i++) {
-				if (mMap.getLayer(i) instanceof TileLayer) {
-					//We iterate over every TileLayer of the map
-					TileLayer tileLayer = (TileLayer) mMap.getLayer(i);
-					final int tileWidth = mMap.getTileWidth();
-					final int tileHeight = mMap.getTileHeight();
-					final Rectangle boundsInTiles = tileLayer.getBounds();
+	public boolean validWorld() {
+		return mMap != null && mPlayerEntity != null;
 
-					TextureHolder textureHolder = TextureHolder.getInstance();
-
-					for (int x = 0; x < boundsInTiles.getWidth(); x++) {
-						//Through the bounds of the layer we can iterate over all containing tiles
-						for (int y = 0; y < boundsInTiles.getHeight(); y++) {
-							Tile tile = tileLayer.getTileAt(x, y);
-							if (tile == null) {
-								continue;
-							} else {
-								//For each tile we create a new sprite and sprite node
-								Sprite cachedTile = new Sprite();
-								cachedTile.setTexture(textureHolder.getTileTexture(tile.getId()));
-
-								SpriteNode node;
-								switch (tile.getId()) {
-								case 4:
-									node = new Spikes(cachedTile, tile.getProperties());
-									break;
-								default:
-									node = new SpriteNode(cachedTile, tile.getProperties());
-
-								}
-								node.setPosition(x * tileWidth, y * tileHeight);
-
-								//Depending on the position of the layer we attach the created node to the correct
-								//render layer
-								if (tileLayer.getName().equals(TmxKeys.TILE_LAYER_BG)) {
-									mRenderLayers.get(RenderLayers.Background).attachChild(node);
-								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_BG)) {
-									mRenderLayers.get(RenderLayers.Levelbackground).attachChild(node);
-								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_MIDDLE)) {
-									mRenderLayers.get(RenderLayers.Levelmiddleground).attachChild(node);
-								} else if (tileLayer.getName().equals(TmxKeys.TITLE_LAYER_LEVEL_FRONT)) {
-									mRenderLayers.get(RenderLayers.Levelforeground).attachChild(node);
-								} else {
-									System.err
-											.println("GameWorld, Could not find the tilelayer " + tileLayer.getName());
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Creates the entities of the level.
-	 * Level entities are units, pickups etc.
-	 */
-	private void createLevelEntities() {
-		if (mMap != null) {
-			for (MapLayer layer : mMap.getLayers()) {
-				//We iterate over every defined ObjectGroup
-				if (layer instanceof ObjectGroup) {
-					ObjectGroup objGroup = (ObjectGroup) layer;
-
-					for (Iterator<MapObject> i = objGroup.getObjects(); i.hasNext();) {
-						MapObject object = i.next();
-						// For each object we check what kind it is and create the appropriate
-						// game entity. 
-						
-						// Player
-						if (object.getType().equals(TmxKeys.OBJECT_TAG_PLAYER)) {
-							mPlayerEntity = new PlayerUnit(TextureID.ANIM_IDLE, object.getProperties());
-							float spawnX = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_X, "0"));
-							float spawnY = Float.valueOf(mPlayerEntity.getProperty(TmxKeys.OBJECT_SPAWN_Y, "0"));
-							mPlayerEntity.setPosition(spawnX, spawnY);
-							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(mPlayerEntity);
-							continue;
-						}
-
-						// Enemy
-						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
-							LeashedUnit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
-							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y,
-									(float) object.getBounds().width, (float) object.getBounds().height);
-							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
-						}
-
-						// Item
-						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
-							Item item = CrystalItem.getCrystalItem(object);
-							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
-						}
-						
-						//Level Exit
-						if(object.getType().equals(TmxKeys.OBJECT_NAME_LEVELEXIT)) {
-							mLevelExit = new LevelExit(TextureID.LEVEL_EXIT_OPEN, TextureID.LEVEL_EXIT_CLOSED, object.getProperties());
-							mLevelExit.setPosition((float) object.getBounds().x, (float) object.getBounds().y);
-							mRenderLayers.get(RenderLayers.Levelbackground).attachChild(mLevelExit);
-						}
-					}
-				}
-			}
-		}
 	}
 }

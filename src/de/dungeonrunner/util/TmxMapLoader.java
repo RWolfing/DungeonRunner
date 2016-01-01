@@ -18,8 +18,6 @@ import tiled.io.TMXMapReader;
  */
 public class TmxMapLoader {
 
-	private static Map mMap;
-
 	/**
 	 * Loads the map from the given filepath.
 	 * 
@@ -41,19 +39,17 @@ public class TmxMapLoader {
 			System.out.println("Error while reading the map " + filepath + ":\n" + e.getMessage());
 			return null;
 		}
-
-		mMap = map;
 		return map;
 	}
 
 	/**
-	 * Retrieves all tiles with the property "BlockVolume".
+	 * Retrieves all tiles with the property "BlockVolume" of the given map.
 	 * 
+	 * @param map a .tmx map
 	 * @return all blocking tiles
 	 */
-	public static List<Tile> getBlockingTiles() {
+	public static List<Tile> getBlockingTiles(Map map) {
 		List<Tile> blockingTiles = new ArrayList<>();
-		Map map = mMap;
 		if (map != null) {
 			for (int i = 0; i < map.getTileSets().size(); i++) {
 				TileSet tileSet = map.getTileSets().get(i);
@@ -74,16 +70,18 @@ public class TmxMapLoader {
 	}
 
 	/**
-	 * Retrieves the properties of the tile at the given x- and y-coordinates.
+	 * Retrieves the properties of the tile at the given x- and y-coordinates
+	 * for the given map.
 	 * 
+	 * @param map the .tmx map
 	 * @param x x-coordinate
 	 * @param y y-coordinate
 	 * 
 	 * @return the properties of the tile
 	 */
-	public static Properties getTileInstancePropertiesAt(int x, int y) {
-		if (mMap != null) {
-			for (MapLayer layer : mMap) {
+	public static Properties getTileInstancePropertiesAt(Map map, int x, int y) {
+		if (map != null) {
+			for (MapLayer layer : map) {
 				if (layer instanceof TileLayer) {
 					TileLayer tilelayer = (TileLayer) layer;
 					return tilelayer.getTileInstancePropertiesAt(x, y);
@@ -91,9 +89,5 @@ public class TmxMapLoader {
 			}
 		}
 		return null;
-	}
-
-	public static Map getMap() {
-		return mMap;
 	}
 }

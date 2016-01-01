@@ -150,4 +150,13 @@ public class Container extends BasicTransformable implements Drawable {
 	public Vector<Component> getComponents(){
 		return mChildren;
 	}
+	
+	/**
+	 * Returns the selected child.
+	 * 
+	 * @return the selected child
+	 */
+	public Component getSelectedChild(){
+		return mChildren.get(mSelectedChild);
+	}
 }

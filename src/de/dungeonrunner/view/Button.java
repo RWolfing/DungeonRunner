@@ -19,6 +19,8 @@ public class Button extends Label {
 	private boolean mIsToggle;
 
 	private OnButtonClick mOnClickListener;
+	
+	private Object mTag;
 
 	/**
 	 * Default constructor. Creates a button with the given text and the given TextureID
@@ -115,6 +117,24 @@ public class Button extends Label {
 	 */
 	public void setOnClickListener(OnButtonClick listener) {
 		mOnClickListener = listener;
+	}
+	
+	/**
+	 * Adds a tag to the button.
+	 * 
+	 * @param tag the tag
+	 */
+	public void setTag(Object tag){
+		mTag = tag;
+	}
+	
+	/**
+	 * Returns the tag of the button.
+	 * 
+	 * @return the tag
+	 */
+	public Object getTag(){
+		return mTag;
 	}
 
 	/**

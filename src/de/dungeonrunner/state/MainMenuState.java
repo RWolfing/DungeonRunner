@@ -59,7 +59,7 @@ public class MainMenuState extends State {
 				//If the play button is clicked, we pop the menu
 				//and push the GameState
 				requestStackPop();
-				requestStackPush(States.Game);
+				requestStackPush(States.LevelSelection);
 			}
 		});
 

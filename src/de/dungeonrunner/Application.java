@@ -1,7 +1,5 @@
 package de.dungeonrunner;
 
-import java.io.InputStream;
-
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
@@ -18,6 +16,7 @@ import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameOverState;
 import de.dungeonrunner.state.GameState;
 import de.dungeonrunner.state.LevelCompletedState;
+import de.dungeonrunner.state.LevelSelectionState;
 import de.dungeonrunner.state.MainMenuState;
 import de.dungeonrunner.state.PauseMenuState;
 import de.dungeonrunner.state.StateStack;
@@ -43,7 +42,7 @@ public class Application {
 
 	public Application() {
 		mRenderWindow = new RenderWindow();
-		mRenderWindow.create(new VideoMode(800, 600, 16), "A Miners Day");
+		mRenderWindow.create(new VideoMode(1024, 768, 16), "A Miners Day");
 //		 mRenderWindow.create(VideoMode.getFullscreenModes()[0],
 //		 "A Miners Day", RenderWindow.FULLSCREEN);
 
@@ -79,6 +78,7 @@ public class Application {
 		texHolder.loadTexture(TextureID.DIAMOND, Constants.IMG_DIR + "diamond.png");
 		texHolder.loadTexture(TextureID.LEVEL_EXIT_OPEN, Constants.IMG_DIR + "door_open.png");
 		texHolder.loadTexture(TextureID.LEVEL_EXIT_CLOSED, Constants.IMG_DIR + "door_closed.png");
+		texHolder.loadTexture(TextureID.LEVEL_SELECTION_BACKGROUND, Constants.IMG_DIR + "level_selection.png");
 		
 		// Menu
 		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
@@ -181,6 +181,7 @@ public class Application {
 		holder.registerState(States.Title, new TitleState(mStateStack, ctx));
 		holder.registerState(States.Game, new GameState(mStateStack, ctx));
 		holder.registerState(States.Menu, new MainMenuState(mStateStack, ctx));
+		holder.registerState(States.LevelSelection, new LevelSelectionState(mStateStack, ctx));
 		holder.registerState(States.Pause, new PauseMenuState(mStateStack, ctx));
 		holder.registerState(States.GameOver, new GameOverState(mStateStack, ctx));
 		holder.registerState(States.LevelSuccess, new LevelCompletedState(mStateStack, ctx));
