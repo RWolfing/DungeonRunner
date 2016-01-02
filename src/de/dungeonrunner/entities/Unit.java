@@ -74,7 +74,7 @@ public class Unit extends GameEntity {
 		mNodeType = NodeType.UNIT;
 		//Initial setup
 		mIsJumping = false;
-		mCanJump = false;
+		mCanJump = true;
 		mIsShooting = false;
 		mIsAttacking = false;
 		mHitPointsTotal = mHitPoints = 0;

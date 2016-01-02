@@ -57,7 +57,7 @@ public class Application {
 		texHolder.loadTexture(TextureID.BULLET, Constants.TEX_DIR + "projectile.png");
 		texHolder.loadTexture(TextureID.TITLE_BG_SCREEN, Constants.IMG_DIR + "title_screen_background.jpg");
 
-		texHolder.loadTexture(TextureID.ENEMY, Constants.TEX_DIR + "enemy.png");
+		texHolder.loadTexture(TextureID.STONE_THROWER, Constants.TEX_DIR + "stone_thrower.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_RUN, Constants.ANIM_DIR + "hero_miner_run.png");
 		texHolder.loadTexture(TextureID.ANIM_PLAYER_JUMP, Constants.ANIM_DIR + "hero_miner_jump.png");
 		texHolder.loadTexture(TextureID.DYNAMITE_SINGLE, Constants.TEX_DIR + "dynamite.png");

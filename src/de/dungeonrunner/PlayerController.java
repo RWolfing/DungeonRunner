@@ -72,13 +72,13 @@ public class PlayerController {
 
 		//Move the player to the left
 		if (isLeftPressed) {
-			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, -100, 0);
+			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, -130, 0);
 			commands.push(moveCommand);
 		}
 
 		//Move the player to the right
 		if (isRightKeyPressed) {
-			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, 100, 0);
+			MoveCommand moveCommand = new MoveCommand(NodeType.PLAYER, 130, 0);
 			commands.push(moveCommand);
 		}
 	}

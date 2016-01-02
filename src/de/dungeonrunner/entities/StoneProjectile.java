@@ -17,7 +17,7 @@ import de.dungeonrunner.util.Constants;
 public class StoneProjectile extends Projectile {
 
 	//The velocity of the projectile (add the gravity to it to make in fly in a straight line)
-	private final Vector2f mVelocity = new Vector2f(180f, Constants.GRAVITY_DOWN);
+	private final Vector2f mVelocity = new Vector2f(180f, -Constants.GRAVITY_DOWN);
 
 	/**
 	 * Default constructor, creates the projectile from the given parameters.
@@ -44,11 +44,10 @@ public class StoneProjectile extends Projectile {
 		//projectile can damage
 		if (checkIsBlocking(node)) {
 			destroy();
-			if (node instanceof Unit) {
-				((Unit) node).damage(getDamage());
+			if (node instanceof PlayerUnit) {
+				((PlayerUnit) node).damage(getDamage());
 			}
 		}
 		return CollisionType.NONE;
 	}
-
 }

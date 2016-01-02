@@ -67,7 +67,7 @@ public class DynamitProjectile extends Projectile {
 	public boolean explode() {
 		if (!mIsExploding) {
 			//Set the velocity to zero
-			setVelocity(Vector2f.ZERO);
+			setVelocity(0, - Constants.GRAVITY_DOWN);
 			//Create the explosion
 			AnimationNode mExplosion = AnimationNode.createAnimationNode(TextureID.ANIM_EXPLOSION, 1000, false, 11,
 					new Vector2i(266, 210));

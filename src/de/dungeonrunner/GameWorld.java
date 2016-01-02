@@ -324,7 +324,7 @@ public class GameWorld {
 
 						// Enemy
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_ENEMY)) {
-							LeashedUnit eunit = new StoneThrower(TextureID.ENEMY, object.getProperties());
+							LeashedUnit eunit = new StoneThrower(TextureID.STONE_THROWER, object.getProperties());
 							eunit.setLeashBounds((float) object.getBounds().x, (float) object.getBounds().y,
 									(float) object.getBounds().width, (float) object.getBounds().height);
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
