@@ -1,7 +1,6 @@
 package de.dungeonrunner.singleton;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.jsfml.graphics.Font;

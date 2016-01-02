@@ -34,7 +34,7 @@ public class StoneThrower extends LeashedUnit {
 
 	//At which frame of the shoot animation does the projectile spawn
 	private static final int mShootFrameStart = 4;
-	private static final int mHitpoints = 200;
+	private static final int mHitpoints = 100;
 	private final float mXVelocity = 30f;
 	private final float mReloadDuration = 2000;
 

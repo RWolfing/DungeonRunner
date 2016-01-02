@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="25" tilewidth="64" tileheight="64" nextobjectid="19">
+ <tileset firstgid="1" source="minetiles.tsx"/>
+ <layer name="Hintergrund" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztzsEJACAQA8GUYpmWbwX6805hBvYbkiSjoZ1XvsymAPjbuLB3qvILALUWuXgWkQ==
+  </data>
+ </layer>
+ <layer name="LevelBackground" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20ND6AAAAB4Mw2sAAE=
+  </data>
+ </layer>
+ <layer name="LevelMiddleground" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20ND6AAAAB4Mw2sAAE=
+  </data>
+ </layer>
+ <layer name="LevelFrontground" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztlEEKgCAQRf8myO4QHaL2zVK6Sus8fwpFIWooTBr54K2c4KXiBqBDfqR2w3db5I9axo+2tMwt5ozU4VpAiw+Bq3PWDhlb3qK2uLm3zA9OzC0t4vaFsye2xcDVk9JiCJ2l8mi/W4v1Xa+lhH/ggFBbXBDKawndMRG5njp7tpQAoba4IJTRQh4by6c533rsnHEH9uQsdg==
+  </data>
+ </layer>
+ <objectgroup name="Entities">
+  <object id="1" name="Player" type="Player" x="134.667" y="241" width="135" height="135">
+   <properties>
+    <property name="spawnX" value="200"/>
+    <property name="spawnY" value="241"/>
+   </properties>
+  </object>
+  <object id="8" name="Enemy" type="Enemy" x="725.333" y="566.667" width="982.667" height="322.333">
+   <properties>
+    <property name="spawnX" value="1200"/>
+    <property name="spawnY" value="600"/>
+   </properties>
+  </object>
+  <object id="9" name="Crystal" type="Crystal" x="583.333" y="360.667" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="small"/>
+   </properties>
+  </object>
+  <object id="10" name="Crystal" type="Crystal" x="2013" y="811" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="normal"/>
+   </properties>
+  </object>
+  <object id="14" name="LevelExit" type="LevelExit" x="1934" y="1377.33" width="135" height="150"/>
+  <object id="15" name="Crystal" type="Crystal" x="624.667" y="1129.5" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="big"/>
+   </properties>
+  </object>
+  <object id="16" name="Crystal" type="Crystal" x="1245" y="1449.83" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="normal"/>
+   </properties>
+  </object>
+  <object id="17" name="Enemy" type="Enemy" x="1026.67" y="1002.67" width="513.333" height="210.5">
+   <properties>
+    <property name="spawnX" value="1200"/>
+    <property name="spawnY" value="1050"/>
+   </properties>
+  </object>
+  <object id="18" name="Enemy" type="Enemy" x="68.6668" y="1000.08" width="250" height="210.5">
+   <properties>
+    <property name="spawnX" value="120"/>
+    <property name="spawnY" value="1050"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

@@ -57,6 +57,14 @@ public class AnimationNode extends SpriteNode {
 		mNumFrames = 0;
 		mCurrentFrame = 0;
 		mAnimationListener = new ArrayList<>();
+		/**
+		 * This is important, when we create and set a new animation node
+		 * as a sprite MAYBE draw will be called before update so we ll 
+		 * see a short flash of the whole sprite. 
+		 * TODO This should be reworked in the future.
+		 */
+		//Mean hotfix, just set the default to zerod
+		mSprite.setTextureRect(new IntRect(0, 0, 0, 0));
 	}
 
 	@Override
@@ -98,7 +106,7 @@ public class AnimationNode extends SpriteNode {
 				} else {
 					textureRect = new IntRect(textureLeft, textureRect.top, textureRect.width, textureRect.height);
 				}
-				
+
 				notifyListener(mCurrentFrame);
 				// We are showing a new frame, so we have to substract the timer
 				// per frame from the elapsed time
@@ -108,8 +116,8 @@ public class AnimationNode extends SpriteNode {
 			}
 			// Set the rectangle of the frame we want to show to the computes
 			// position
-			mSprite.setTextureRect(
-					new IntRect(textureRect.left, textureRect.top, textureRect.width, textureRect.height));
+			IntRect chacheRect = new IntRect(textureRect.left, textureRect.top, textureRect.width, textureRect.height);
+			mSprite.setTextureRect(chacheRect);
 		}
 	}
 

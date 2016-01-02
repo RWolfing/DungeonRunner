@@ -111,7 +111,7 @@ public class Unit extends GameEntity {
 			}
 
 			//Check if the unit should be dead
-			if (mHitPoints < 0) {
+			if (mHitPoints <= 0) {
 				mIsDead = true;
 			}
 
