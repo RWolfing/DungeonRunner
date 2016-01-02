@@ -84,6 +84,25 @@ public class UIAmmoBar extends Component {
 	public void setCurrentAmmo(int ammo) {
 		mCurrentAmmo = ammo;
 	}
+	
+	/**
+	 * Retrieves the currently available ammunition.
+	 * 
+	 * @return the ammunition left
+	 */
+	public int getCurrentAmmo(){
+		return mCurrentAmmo;
+	}
+	
+	/**
+	 * Checks if the maximum possible amount of ammunition
+	 * is reached.
+	 * 
+	 * @return if the current ammo is the max ammo
+	 */
+	public boolean isMaxReached(){
+		return mCurrentAmmo >= mMaxAmmo;
+	}
 
 	/**
 	 * Increments the current available ammunition.

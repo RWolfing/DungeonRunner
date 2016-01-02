@@ -46,7 +46,7 @@ public class StoneThrower extends LeashedUnit {
 
 	//Different collision rectangles for different states
 	private FloatRect mDefaultCollisionRect = new FloatRect(15, 18, 90, 100);
-	private FloatRect mDeadCollisionRect = new FloatRect(0, 10, 105, 107);
+	private FloatRect mDeadCollisionRect = new FloatRect(20, 75, 80, 42);
 	private Clock mShootTimer;
 
 	/**

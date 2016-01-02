@@ -41,7 +41,7 @@ public class UIDiamonds extends Component{
 		setWidth(mBackground.getLocalBounds().width);
 		setHeight(mBackground.getLocalBounds().height);
 		mText = new Text(mCurrentDiamonds + "/" + mTotalDiamonds, FontHolder.getInstance().getFont(font));
-		mText.setPosition(64, 57);
+		mText.setPosition(72, 64);
 		mText.setCharacterSize(18);
 	}
 	

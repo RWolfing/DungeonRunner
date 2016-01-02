@@ -3,9 +3,10 @@ package de.dungeonrunner.view;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
+import de.dungeonrunner.util.Constants;
 
 /**
- * A component to represent a button. 
+ * A component to represent a button.
  * 
  * @author Robert Wolfinger
  *
@@ -17,21 +18,25 @@ public class Button extends Label {
 	private TextureID mActivatedTexture;
 
 	private boolean mIsToggle;
+	private boolean mIsActivated;
 
 	private OnButtonClick mOnClickListener;
-	
+
 	private Object mTag;
 
 	/**
-	 * Default constructor. Creates a button with the given text and the given TextureID
-	 * as the default texture.
+	 * Default constructor. Creates a button with the given text and the given
+	 * TextureID as the default texture.
 	 * 
-	 * @param text the text of the button
-	 * @param inactiveTex the default texture
+	 * @param text
+	 *            the text of the button
+	 * @param inactiveTex
+	 *            the default texture
 	 */
 	public Button(String text, TextureID inactiveTex) {
 		super(text);
 		mIsToggle = false;
+		mIsActivated = false;
 		mDefaultTexture = inactiveTex;
 		setBackground(mDefaultTexture);
 	}
@@ -49,19 +54,24 @@ public class Button extends Label {
 	@Override
 	public void select() {
 		super.select();
-		setBackground(mSelectedTexture);
+		if (!(mIsToggle && mIsActivated))
+			setBackground(mSelectedTexture);
 	}
 
 	@Override
 	public void deselect() {
 		super.deselect();
-		setBackground(mDefaultTexture);
+		if (!(mIsToggle && mIsActivated)){
+			setBackground(mDefaultTexture);
+		} 
 	}
 
 	@Override
 	public void activate() {
 		super.activate();
-		if (mIsToggle) {
+		if (mIsToggle && !mIsActivated) {
+			mIsActivated = true;
+			
 			setBackground(mActivatedTexture);
 		} else {
 			deactivate();
@@ -74,20 +84,20 @@ public class Button extends Label {
 	@Override
 	public void deactivate() {
 		super.deactivate();
-
-		if (mIsToggle) {
-			if (isSelected()) {
-				setBackground(mSelectedTexture);
-			} else {
-				setBackground(mDefaultTexture);
-			}
+		
+		mIsActivated = false;
+		if (isSelected()) {
+			setBackground(mSelectedTexture);
+		} else {
+			setBackground(mDefaultTexture);
 		}
 	}
 
 	/**
 	 * Sets the texture for a selected state.
 	 * 
-	 * @param texID the id of the texture
+	 * @param texID
+	 *            the id of the texture
 	 */
 	public void setSelectedTexture(TextureID texID) {
 		mSelectedTexture = texID;
@@ -96,7 +106,8 @@ public class Button extends Label {
 	/**
 	 * Sets the texture for the activated state.
 	 * 
-	 * @param texID the id of the texture
+	 * @param texID
+	 *            the id of the texture
 	 */
 	public void setActiveTexture(TextureID texID) {
 		mActivatedTexture = texID;
@@ -105,35 +116,48 @@ public class Button extends Label {
 	/**
 	 * Sets if the button is toggled.
 	 * 
-	 * @param toggle is toggled
+	 * @param toggle
+	 *            is toggled
 	 */
 	public void setToggle(boolean toggle) {
 		mIsToggle = toggle;
 	}
 
 	/**
+	 * Returns if the button is toogled and active or not.
+	 * 
+	 * @return is toggled
+	 */
+	public boolean isToggled() {
+		return mIsActivated;
+	}
+
+	/**
 	 * Sets the listener for clicks.
-	 * @param listener click listener
+	 * 
+	 * @param listener
+	 *            click listener
 	 */
 	public void setOnClickListener(OnButtonClick listener) {
 		mOnClickListener = listener;
 	}
-	
+
 	/**
 	 * Adds a tag to the button.
 	 * 
-	 * @param tag the tag
+	 * @param tag
+	 *            the tag
 	 */
-	public void setTag(Object tag){
+	public void setTag(Object tag) {
 		mTag = tag;
 	}
-	
+
 	/**
 	 * Returns the tag of the button.
 	 * 
 	 * @return the tag
 	 */
-	public Object getTag(){
+	public Object getTag() {
 		return mTag;
 	}
 
@@ -145,5 +169,22 @@ public class Button extends Label {
 	 */
 	public interface OnButtonClick {
 		void onClick(Button bttn);
+	}
+	
+	/**
+	 * Convenience method to create a button with the default settings.
+	 * 
+	 * @param text text to display
+	 * @return a new button
+	 */
+	public static Button createButton(String text){
+		Button button = new Button(text, TextureID.BUTTON_DEFAULT);
+		button.setSelectedTexture(TextureID.BUTTON_SELECTED);
+		button.setActiveTexture(TextureID.BUTTON_ACTIVATED);
+		button.setWidth(Constants.MENU_ITEM_WIDTH);
+		button.setHeight(Constants.MENU_ITEM_HEIGHT);
+		button.setCentered(true);
+		button.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
+		return button;
 	}
 }

@@ -33,7 +33,7 @@ public class DynamitProjectile extends Projectile {
 	public DynamitProjectile(Unit shooter, TextureID textureID) {
 		super(shooter, textureID);
 		setVelocity(mVelocity);
-		setCollisionRect(new FloatRect(0, 0, 66, 76));
+		setCollisionRect(new FloatRect(0, 0, 29, 44));
 		setDamage(50);
 		mIsExploding = false;
 	}

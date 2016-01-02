@@ -25,15 +25,13 @@ import de.dungeonrunner.state.GameState;
  */
 public class PlayerUnit extends Unit {
 
+	public static final int START_AMMUNITION = 3;
 	private final int TOTAL_HP = 100;
 	private final int mShootFrameStart = 3;
 	
 	//Different collision rectangles for different states
 	private FloatRect mDefaultCollisionRect;
 	private FloatRect mAttackCollisionRect;
-
-	//Ammo available to the unit
-	private int mCurrentDynamiteAmmo;
 
 	public PlayerUnit(TextureID textureID, Properties props) {
 		super(textureID, props);
@@ -43,7 +41,6 @@ public class PlayerUnit extends Unit {
 		mAttackCollisionRect = new FloatRect(15, 15, 105, 118);
 		setCollisionRect(mDefaultCollisionRect);
 		setTotalHP(TOTAL_HP);
-		mCurrentDynamiteAmmo = 3;
 	}
 
 	@Override
@@ -53,7 +50,6 @@ public class PlayerUnit extends Unit {
 		setVelocity(0, getVelocity().y);
 		
 		//Update the game ui
-		GameState.getGameUI().getAmmoComponent().setCurrentAmmo(mCurrentDynamiteAmmo);
 		GameState.getGameUI().getLifeComponent().setHealthBar((float) getHitpoints() / (float) getTotalHP());
 	}
 
@@ -151,16 +147,13 @@ public class PlayerUnit extends Unit {
 	public boolean shoot() {
 		if(super.shoot()){
 			//Decrement the ammunition
-			mCurrentDynamiteAmmo--;
-			return true;
+			return GameState.getGameUI().getAmmoComponent().decrementAmmo();
 		}
 		return false;
 	}
 
 	@Override
 	public boolean canShoot() {
-		return super.canShoot() && mCurrentDynamiteAmmo > 0;
+		return super.canShoot() && GameState.getGameUI().getAmmoComponent().getCurrentAmmo() > 0;
 	}
-	
-	
 }

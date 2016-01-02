@@ -28,7 +28,7 @@ public class MainMenuState extends State {
 	private Container mGUIContainer;
 
 	private Button mPlayButton;
-	private Button mCreditsButton;
+	private Button mOptionsButton;
 	private Button mExitButton;
 
 	/**
@@ -45,40 +45,26 @@ public class MainMenuState extends State {
 		mGUIContainer = new Container();
 		mBackgroundTexture = new Sprite(TextureHolder.getInstance().getTexture(TextureID.MAIN_MENU_SCREEN));
 
-		mPlayButton = new Button("PLAY", TextureID.BUTTON_DEFAULT);
-		mPlayButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
-		mPlayButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
-		mPlayButton.setWidth(Constants.MENU_ITEM_WIDTH);
-		mPlayButton.setHeight(Constants.MENU_ITEM_HEIGHT);
-		mPlayButton.setCentered(true);
-		mPlayButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
+		mPlayButton = Button.createButton("PLAY");
 		mPlayButton.setOnClickListener(new OnButtonClick() {
 
 			@Override
 			public void onClick(Button bttn) {
-				//If the play button is clicked, we pop the menu
-				//and push the GameState
-				requestStackPop();
+				//If the play button is clicked, we push the level selection
 				requestStackPush(States.LevelSelection);
 			}
 		});
 
-		mCreditsButton = new Button("CREDITS", TextureID.BUTTON_DEFAULT);
-		mCreditsButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
-		mCreditsButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
-		mCreditsButton.setWidth(Constants.MENU_ITEM_WIDTH);
-		mCreditsButton.setHeight(Constants.MENU_ITEM_HEIGHT);
-		mCreditsButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
-		mCreditsButton.setCentered(true);
+		mOptionsButton = Button.createButton("HELP");
+		mOptionsButton.setOnClickListener(new OnButtonClick() {
+			
+			@Override
+			public void onClick(Button bttn) {
+				requestStackPush(States.Help);
+			}
+		});
 
-		mExitButton = new Button("EXIT", TextureID.BUTTON_DEFAULT);
-		mExitButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
-		mExitButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
-		mExitButton.setWidth(Constants.MENU_ITEM_WIDTH);
-		mExitButton.setHeight(Constants.MENU_ITEM_HEIGHT);
-		mExitButton.setCentered(true);
-		mExitButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
-
+		mExitButton = Button.createButton("EXIT");
 		mExitButton.setOnClickListener(new OnButtonClick() {
 			@Override
 			public void onClick(Button bttn) {
@@ -88,7 +74,7 @@ public class MainMenuState extends State {
 		});
 
 		mGUIContainer.pack(mPlayButton);
-		mGUIContainer.pack(mCreditsButton);
+		mGUIContainer.pack(mOptionsButton);
 		mGUIContainer.pack(mExitButton);
 	}
 
@@ -118,7 +104,7 @@ public class MainMenuState extends State {
 		Vector2i windowSize = getContext().getRenderWindow().getSize();
 		//layout the components vertically like a menu
 		Helper.layoutVertically(windowSize, Constants.MENU_ITEM_SPACING, true, windowSize.x / MENU_X_OFFSET, Constants.MENU_ITEM_HEIGHT / 2, mPlayButton,
-				mCreditsButton, mExitButton);
+				mOptionsButton, mExitButton);
 		mBackgroundTexture.setScale(windowSize.x / mBackgroundTexture.getLocalBounds().width,
 				windowSize.y / mBackgroundTexture.getLocalBounds().height);
 	}

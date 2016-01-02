@@ -45,10 +45,7 @@ public class Container extends BasicTransformable implements Drawable {
 	 * @param event a click or key event
 	 */
 	public void handleEvent(Event event) {
-		if (hasSelection() && mChildren.get(mSelectedChild).isActive()) {
-			//If the selected child is active, forward the event to the child
-			mChildren.get(mSelectedChild).handleEvent(event);
-		} else if (event.type == Type.KEY_PRESSED) {
+		if (event.type == Type.KEY_PRESSED) {
 			// Handle up and down to navigate through the containing components
 			if (event.asKeyEvent().key == Keyboard.Key.W || event.asKeyEvent().key == Key.UP) {
 				selectPrevious();
@@ -57,6 +54,9 @@ public class Container extends BasicTransformable implements Drawable {
 			} else if (event.asKeyEvent().key == Key.RETURN && hasSelection()) {
 				//Return key was pressed, activate the selected child
 				mChildren.get(mSelectedChild).activate();
+			} else if(hasSelection() && mChildren.get(mSelectedChild).isActive()) {
+				//If the selected child is active, forward the event to the child
+				mChildren.get(mSelectedChild).handleEvent(event);
 			}
 		}
 	}

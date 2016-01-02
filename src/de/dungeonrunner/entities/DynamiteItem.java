@@ -12,48 +12,25 @@ import de.dungeonrunner.singleton.TextureHolder.TextureID;
 import de.dungeonrunner.state.GameState;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Helper;
-import de.dungeonrunner.view.UIDiamonds;
+import de.dungeonrunner.view.UIAmmoBar;
 
 /**
- * A diamond that is spawned by crytals in the game.
- * The player needs to collect diamonds to win the game.
+ * A dynamite item that can be picked up by the player.
+ * For implementation details see {@link Diamond} as the only
+ * change between those classes is the UI Component.
  * 
  * @author Robert Wolfinger
  *
  */
-public class Diamond extends Item {
+public class DynamiteItem extends Item{
 
 	private long mPassedTime;
-	
-	//Can the diamond collide with its environment
 	private boolean mIsCollidable;
+	private final Vector2f mDiamondOvershoot = new Vector2f(0,5);
 	
-	/*
-	 * We add a little overshoot when moving the diamond to the ui component, to prevent it
-	 * to get stuck due to getBoundingRect().contains(...)...
-	 * TODO Check for a better solution. Must the target direction be rounded? Seems to 
-	 * get stuck right in front of the component...
-	 */
-	private final Vector2f mDiamondOvershoot = new Vector2f(0, 5);
-
-	/**
-	 * Default constructor, creates a new diamond with the given 
-	 * parameters.
-	 * 
-	 * @param texID id of the texture to use
-	 * @param props properties of the node
-	 */
-	public Diamond(TextureID texID, Properties props) {
+	public DynamiteItem(TextureID texID, Properties props) {
 		super(texID, props);
 		mIsCollidable = true;
-	}
-
-	@Override
-	protected CollisionType processCollision(SceneNode node) {
-		if (mIsCollidable) {
-			return super.processCollision(node);
-		}
-		return CollisionType.NONE;
 	}
 
 	@Override
@@ -66,7 +43,7 @@ public class Diamond extends Item {
 			float approachRate = 2000f;
 			mPassedTime += dt.asMilliseconds();
 
-			UIDiamonds ui_comp = GameState.getGameUI().getDiamondsComponent();
+			UIAmmoBar ui_comp = GameState.getGameUI().getAmmoComponent();
 			//Compute the target position (the diamonds ui)
 			Vector2f targetPosition = Vector2f.add(ui_comp.getPosition(),
 					new Vector2f(ui_comp.getWidth() / 2, ui_comp.getHeight() / 2));
@@ -87,11 +64,24 @@ public class Diamond extends Item {
 				setVelocity(Vector2f.ZERO);
 				setPosition(targetPosition);
 				destroy();
-				ui_comp.incrementDiamonds();
+				ui_comp.incrementAmmo();
 			}
 		} else {
 			setVelocity(getVelocity().x, getVelocity().y + Constants.GRAVITY_DOWN * dt.asSeconds());
 		}
 		super.updateCurrent(dt);
+	}
+
+	@Override
+	protected CollisionType processCollision(SceneNode node) {
+		if (mIsCollidable) {
+			return super.processCollision(node);
+		}
+		return CollisionType.NONE;
+	}
+
+	@Override
+	public boolean pickUpCondition() {
+		return !GameState.getGameUI().getAmmoComponent().isMaxReached();
 	}
 }

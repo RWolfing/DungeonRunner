@@ -10,6 +10,7 @@ import org.jsfml.window.event.Event;
 import de.dungeonrunner.Application;
 import de.dungeonrunner.GameWorld;
 import de.dungeonrunner.PlayerController;
+import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.util.Context;
 import de.dungeonrunner.view.GameUI;
 
@@ -111,6 +112,7 @@ public class GameState extends State {
 		}
 		mStatePushed = false;
 		mUIContainer = new GameUI(Application.getRenderWindow().getSize());
+		mUIContainer.getAmmoComponent().setCurrentAmmo(PlayerUnit.START_AMMUNITION);
 	}
 
 	@Override

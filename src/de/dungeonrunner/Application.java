@@ -18,10 +18,12 @@ import de.dungeonrunner.state.GameState;
 import de.dungeonrunner.state.LevelCompletedState;
 import de.dungeonrunner.state.LevelSelectionState;
 import de.dungeonrunner.state.MainMenuState;
+import de.dungeonrunner.state.HelpMenuState;
 import de.dungeonrunner.state.PauseMenuState;
 import de.dungeonrunner.state.StateStack;
 import de.dungeonrunner.state.States;
 import de.dungeonrunner.state.TitleState;
+import de.dungeonrunner.state.TutorialState;
 import de.dungeonrunner.util.Constants;
 import de.dungeonrunner.util.Context;
 
@@ -79,6 +81,11 @@ public class Application {
 		texHolder.loadTexture(TextureID.LEVEL_EXIT_OPEN, Constants.IMG_DIR + "door_open.png");
 		texHolder.loadTexture(TextureID.LEVEL_EXIT_CLOSED, Constants.IMG_DIR + "door_closed.png");
 		texHolder.loadTexture(TextureID.LEVEL_SELECTION_BACKGROUND, Constants.IMG_DIR + "level_selection.png");
+		
+		texHolder.loadTexture(TextureID.TUT_MINING, Constants.IMG_DIR + "tut_mining.png");
+		texHolder.loadTexture(TextureID.TUT_SHOOTING, Constants.IMG_DIR + "tut_shooting.png");
+		texHolder.loadTexture(TextureID.TUT_MOVING, Constants.IMG_DIR + "tut_movement.png");
+		texHolder.loadTexture(TextureID.TUT_GOAL, Constants.IMG_DIR + "tut_goal.png");
 		
 		// Menu
 		texHolder.loadTexture(TextureID.MAIN_MENU_SCREEN, Constants.IMG_DIR + "miners_day_background.png");
@@ -181,6 +188,8 @@ public class Application {
 		holder.registerState(States.Title, new TitleState(mStateStack, ctx));
 		holder.registerState(States.Game, new GameState(mStateStack, ctx));
 		holder.registerState(States.Menu, new MainMenuState(mStateStack, ctx));
+		holder.registerState(States.Help, new HelpMenuState(mStateStack, ctx));
+		holder.registerState(States.Tutorial, new TutorialState(mStateStack, ctx));
 		holder.registerState(States.LevelSelection, new LevelSelectionState(mStateStack, ctx));
 		holder.registerState(States.Pause, new PauseMenuState(mStateStack, ctx));
 		holder.registerState(States.GameOver, new GameOverState(mStateStack, ctx));

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="25" tilewidth="64" tileheight="64" nextobjectid="24">
+ <tileset firstgid="1" source="minetiles.tsx"/>
+ <layer name="Hintergrund" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzNlr0OgzAMhLOzd2KAnbnM3XkKdsZKffwSiUgnyz+xQ6EnnUBghy/GCaSU0uB0kRXjHcPKiTrC8glae1a5L+VKLFQPwyhrzpi37p4O17IsR14Hx0lgoRp39wzLpvBqWpjcefcTWKR6bT9gWQWW7YjJtXoxPB6WGjaJhY5ZrtHavBmWzD0att5/Uliwh6LGfm5hye4bOCI95GXpFC+NLCiLxerRWYmNqIWl6CwW5KEsHnEsQ/L1HOaV8zPlWYN0Lnex9AzDELQkbv1Z3+hWFomHi8P1p+kKluzavbmVCbm4/67sUptfcyCLtF/9Ewv+P93NUrufamPX8EqiLFfqC72BVIw=
+  </data>
+ </layer>
+ <layer name="LevelBackground" width="35" height="25" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20ND6AAAAB4Mw2sAAE=
+  </data>
+ </layer>
+ <layer name="LevelMiddleground" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztlLEKwjAURQOKYz7AqQidu6uzbhYd1Tm4iv8PvuC7GEpiTBrzEHrg0FLS9DQNVWriX7iSR+kIpieX0hHM1OIHLVvyxO4FWzryoF77WHIvN9zTsivyIthi1Wwv2OIjt2VBPgLeyqRFmZMb9d5vIXcVGtakccTec8+t3Q960GCZJVi6B+vQ8vz6w1F7rpfowToYnjOX3B73W6DBvl8zogU9JrHnTp75PjTAsS34l30LWtz1GFqLWEtNppZyLcMxoXE5LaFnxUjpeAJqJyG8
+  </data>
+ </layer>
+ <layer name="LevelFrontground" width="35" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzNlc2qwjAQRmeh2MpdqCB3cRG5GxFdqghurK7Ut3BrdenP4zvFFIYxGTOp1X5woNBMetJM0y4ANME/G2SMnIQxc6QrzOuaQ6r5lku7Qi5ZfivgMjHXP54uZ2RvQeuyQm7Iv0HrEiEjC0elC1/PitRcDKmHi2t+X5eZ8b8SjpaaAauLiecS6QsuZ4b2+6R7lOVPUU+Tr5Xi8i7bpWiq6NKBRy9ITAOfsSbXvBdpIuPCe85Gp4BPHumdR54e7/LxcbGdXS6ys0Day4uDlLnErK6HJAHrqwXUAMjvZQs6l9xhEejSeuFyUMwV6pBH+o60LkXjs0e8x2hi5f3QsQmE9W4Z0fZumfl0v0ipissOHmcd/S82kDpjCM9na+PFfe24xHAHpURIWA==
+  </data>
+ </layer>
+ <objectgroup name="Entities">
+  <object id="1" name="Player" type="Player" x="134.667" y="241" width="135" height="135">
+   <properties>
+    <property name="spawnX" value="200"/>
+    <property name="spawnY" value="241"/>
+   </properties>
+  </object>
+  <object id="8" name="Enemy" type="Enemy" x="725.333" y="566.667" width="982.667" height="322.333">
+   <properties>
+    <property name="spawnX" value="1200"/>
+    <property name="spawnY" value="600"/>
+   </properties>
+  </object>
+  <object id="9" name="Crystal" type="Crystal" x="583.333" y="367.667" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="small"/>
+   </properties>
+  </object>
+  <object id="10" name="Crystal" type="Crystal" x="2013" y="812" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="normal"/>
+   </properties>
+  </object>
+  <object id="14" name="LevelExit" type="LevelExit" x="1934" y="1384.33" width="135" height="150"/>
+  <object id="15" name="Crystal" type="Crystal" x="624.667" y="1134.5" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="big"/>
+   </properties>
+  </object>
+  <object id="16" name="Crystal" type="Crystal" x="1245" y="1449.83" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="normal"/>
+   </properties>
+  </object>
+  <object id="17" name="Enemy" type="Enemy" x="1026.67" y="1002.67" width="513.333" height="210.5">
+   <properties>
+    <property name="spawnX" value="1200"/>
+    <property name="spawnY" value="1050"/>
+   </properties>
+  </object>
+  <object id="18" name="Enemy" type="Enemy" x="70" y="1002.08" width="249.667" height="204.92">
+   <properties>
+    <property name="spawnX" value="200"/>
+    <property name="spawnY" value="1050"/>
+   </properties>
+  </object>
+  <object id="19" name="Dynamite" type="Dynamite" x="2102" y="816" width="66" height="76"/>
+  <object id="20" name="Dynamite" type="Dynamite" x="528" y="1137" width="66" height="76"/>
+  <object id="23" name="Dynamite" type="Dynamite" x="2042" y="1135" width="66" height="76"/>
+ </objectgroup>
+</map>

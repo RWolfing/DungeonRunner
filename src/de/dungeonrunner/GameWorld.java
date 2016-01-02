@@ -13,6 +13,7 @@ import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.entities.CrystalItem;
+import de.dungeonrunner.entities.DynamiteItem;
 import de.dungeonrunner.entities.Item;
 import de.dungeonrunner.entities.LeashedUnit;
 import de.dungeonrunner.entities.LevelExit;
@@ -330,9 +331,15 @@ public class GameWorld {
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(eunit);
 						}
 
-						// Item
+						// Crystal Items
 						if (object.getType().equals(TmxKeys.OBJECT_TAG_CRYSTAL)) {
 							Item item = CrystalItem.getCrystalItem(object);
+							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
+						}
+						// Dynamite Pickup
+						if(object.getType().equals(TmxKeys.OBJECT_TAG_DYNAMITE)) {
+							Item item = new DynamiteItem(TextureID.DYNAMITE_SINGLE, object.getProperties());
+							item.setPosition((float) object.getX(), (float) object.getY());
 							mRenderLayers.get(RenderLayers.Levelforeground).attachChild(item);
 						}
 

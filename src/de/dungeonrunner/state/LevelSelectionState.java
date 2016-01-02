@@ -13,6 +13,7 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
+import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import de.dungeonrunner.singleton.TextureHolder;
@@ -46,6 +47,8 @@ public class LevelSelectionState extends State implements OnButtonClick {
 	
 	private RectangleShape mBackgroundOverlay;
 	private Sprite mBackgroundImage;
+	
+	private Button mBackButton;
 
 	/**
 	 * Default constructor, creates the State with the given 
@@ -98,6 +101,24 @@ public class LevelSelectionState extends State implements OnButtonClick {
 			mSelectionContainer.pack(button);
 		}
 		
+		mBackButton = new Button("BACK", TextureID.BUTTON_DEFAULT);
+		mBackButton.setSelectedTexture(TextureID.BUTTON_SELECTED);
+		mBackButton.setActiveTexture(TextureID.BUTTON_ACTIVATED);
+		mBackButton.setWidth(Constants.MENU_ITEM_WIDTH);
+		mBackButton.setHeight(Constants.MENU_ITEM_HEIGHT);
+		mBackButton.setCentered(true);
+		mBackButton.offsetText(Constants.MENU_ITEM_TEXT_OFFSET);
+		mBackButton.setOnClickListener(new OnButtonClick() {
+			
+			@Override
+			public void onClick(Button bttn) {
+				requestStackPop();
+			}
+		});
+		
+		mComponents.add(mBackButton);
+		mSelectionContainer.pack(mBackButton);
+		
 		mBackgroundImage = new Sprite(TextureHolder.getInstance().getTexture(TextureID.LEVEL_SELECTION_BACKGROUND));
 		mBackgroundOverlay = new RectangleShape();
 		mBackgroundOverlay.setSize(new Vector2f(context.getRenderWindow().getSize()));
@@ -118,6 +139,11 @@ public class LevelSelectionState extends State implements OnButtonClick {
 
 	@Override
 	public boolean handleEvent(Event event) {
+		if(event.asKeyEvent() != null && event.asKeyEvent().key == Key.ESCAPE){
+			requestStackPop();
+			return true;
+		}
+		
 		mSelectionContainer.handleEvent(event);
 		mSelectionCamera.setCenter(mSelectionContainer.getSelectedChild().getPosition());
 		return super.handleEvent(event);
@@ -138,7 +164,7 @@ public class LevelSelectionState extends State implements OnButtonClick {
 	@Override
 	public void onClick(Button bttn) {
 		mChosenMapFilePath = (String) bttn.getTag();
-		requestStackPop();
+		requestStateClear();
 		requestStackPush(States.Game);
 	}
 	

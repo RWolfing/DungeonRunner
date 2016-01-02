@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="64" tileheight="64" nextobjectid="16">
+ <tileset firstgid="1" source="minetiles.tsx"/>
+ <layer name="LevelFrontground" width="35" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjALKATsWPApGwSggDVCSj1ihmFI1+AAAqtwAWw==
+  </data>
+ </layer>
+ <layer name="LevelMiddleground" width="35" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUUArKsOBsHGo5SVQ/WAG6P+ht51ALL2oBLyA2GWhHMEDcIQvEQkDMTiUz7YnA6HbB3JEJxKJAzEUlt9gRwKVAHIykXgPqjlwoXxRNHgRw5X1K8xG6vz2AWBuIzfC4hVwAAG96FS0=
+  </data>
+ </layer>
+ <layer name="LevelBackground" width="35" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSggDAAINAAB
+  </data>
+ </layer>
+ <layer name="Hintergrund" width="35" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxTYGBgUBgAjA0MhDtwuaVigPAoGAWjYBSMgqENFGhgHj5MT7cAAETpFtE=
+  </data>
+ </layer>
+ <objectgroup name="Entities">
+  <object id="1" name="Player" type="Player" x="24" y="249" width="135" height="135">
+   <properties>
+    <property name="spawnX" value="100"/>
+    <property name="spawnY" value="249"/>
+   </properties>
+  </object>
+  <object id="8" name="Enemy" type="Enemy" x="725" y="198" width="414" height="207">
+   <properties>
+    <property name="spawnX" value="1000"/>
+    <property name="spawnY" value="260"/>
+   </properties>
+  </object>
+  <object id="9" name="Crystal" type="Crystal" x="254" y="306" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="small"/>
+   </properties>
+  </object>
+  <object id="10" name="Crystal" type="Crystal" x="377" y="687" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="big"/>
+   </properties>
+  </object>
+  <object id="14" name="LevelExit" type="LevelExit" x="62" y="620" width="135" height="150"/>
+  <object id="15" name="Crystal" type="Crystal" x="942" y="545.5" width="94" height="79">
+   <properties>
+    <property name="crystal_type" value="big"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

@@ -28,4 +28,6 @@ public class TmxKeys {
 
 	public static final String OBJECT_TAG_CRYSTAL = "Crystal";
 	public static final String CRYSTAL_TYPE = "crystal_type";
+	
+	public static final String OBJECT_TAG_DYNAMITE = "Dynamite";
 }
