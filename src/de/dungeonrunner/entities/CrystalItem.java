@@ -6,8 +6,8 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.SpawnEntityCommand;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;

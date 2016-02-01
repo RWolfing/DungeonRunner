@@ -8,10 +8,10 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
 import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
@@ -86,7 +86,7 @@ public class PlayerUnit extends Unit {
 				new Vector2i(135, 135));
 		AnimationNode mJumpAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_PLAYER_JUMP, 1000, true, 5,
 				new Vector2i(135, 135));
-		AnimationNode mShootAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_MINER_THROW, 1200, false, 6,
+		AnimationNode mShootAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_MINER_THROW, 800, false, 6,
 				new Vector2i(135, 135));
 		AnimationNode mAttackAnimation = AnimationNode.createAnimationNode(TextureID.ANIM_MINER_ATTACK, 1000, false, 6,
 				new Vector2i(135, 135));

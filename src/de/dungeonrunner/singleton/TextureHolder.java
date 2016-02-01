@@ -73,7 +73,7 @@ public class TextureHolder {
 			if (textStream != null) {
 				texture.loadFromStream(textStream);
 			} else {
-				System.out.println("Stream from " + filePath);
+				System.err.println("Stream from " + filePath + " could not be created! Image will not be loaded!");
 			}
 		} catch (IOException e) {
 			System.err.println("Could not load texture from " + filePath + ", IOException");

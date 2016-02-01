@@ -1,4 +1,4 @@
-package de.dungeonrunner;
+package de.dungeonrunner.nodes;
 
 /**
  * Enum of the available node types.

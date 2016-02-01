@@ -14,10 +14,10 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.FireProjectileCommand;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
 import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.AnimationNode.AnimationListener;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;

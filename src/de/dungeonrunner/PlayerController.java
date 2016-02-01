@@ -11,6 +11,7 @@ import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.commands.JumpCommand;
 import de.dungeonrunner.commands.MoveCommand;
 import de.dungeonrunner.commands.ShootCommand;
+import de.dungeonrunner.nodes.NodeType;
 
 /**
  * This class controls the input of key and click events provided by the player.

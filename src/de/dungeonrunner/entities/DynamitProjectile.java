@@ -20,7 +20,7 @@ import de.dungeonrunner.util.Constants;
 public class DynamitProjectile extends Projectile {
 
 	//The velocity of the projectile (add the gravity to it to make in fly in a straight line)
-	private final Vector2f mVelocity = new Vector2f(200f, -Constants.GRAVITY_DOWN);
+	private final Vector2f mVelocity = new Vector2f(250f, -Constants.GRAVITY_DOWN);
 	
 	private boolean mIsExploding;
 

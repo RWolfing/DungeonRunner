@@ -19,7 +19,6 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
 import de.dungeonrunner.Collidable;
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.commands.CommandStack;
 import de.dungeonrunner.commands.SceneCommand;
 import de.dungeonrunner.singleton.FontHolder;

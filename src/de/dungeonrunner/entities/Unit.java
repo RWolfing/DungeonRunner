@@ -7,8 +7,8 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.nodes.AnimationNode;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;

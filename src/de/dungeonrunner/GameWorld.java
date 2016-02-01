@@ -20,6 +20,7 @@ import de.dungeonrunner.entities.LevelExit;
 import de.dungeonrunner.entities.PlayerUnit;
 import de.dungeonrunner.entities.Spikes;
 import de.dungeonrunner.entities.StoneThrower;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.nodes.SpriteNode;
 import de.dungeonrunner.singleton.TextureHolder;
@@ -217,6 +218,7 @@ public class GameWorld {
 			TextureHolder.getInstance().loadTiledTextures(mMap);
 			return true;
 		}
+		System.err.println("GameWorld: Map setup failed!");
 		return false;
 	}
 	
@@ -436,6 +438,5 @@ public class GameWorld {
 
 	public boolean validWorld() {
 		return mMap != null && mPlayerEntity != null;
-
 	}
 }

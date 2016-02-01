@@ -2,8 +2,8 @@ package de.dungeonrunner.commands;
 
 import org.jsfml.system.Vector2f;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.entities.Diamond;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 

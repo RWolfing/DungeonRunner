@@ -109,6 +109,8 @@ public class GameState extends State {
 		mWorld = new GameWorld();
 		if(!mWorld.validWorld()){
 			System.err.println("World is missing map or player!");
+		} else {
+			System.out.println("Successfully created game world!");
 		}
 		mStatePushed = false;
 		mUIContainer = new GameUI(Application.getRenderWindow().getSize());

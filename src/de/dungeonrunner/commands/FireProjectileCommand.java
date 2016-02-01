@@ -1,11 +1,11 @@
 package de.dungeonrunner.commands;
 
-import de.dungeonrunner.NodeType;
 import de.dungeonrunner.entities.DynamitProjectile;
 import de.dungeonrunner.entities.Projectile;
 import de.dungeonrunner.entities.Projectile.ProjectileType;
 import de.dungeonrunner.entities.StoneProjectile;
 import de.dungeonrunner.entities.Unit;
+import de.dungeonrunner.nodes.NodeType;
 import de.dungeonrunner.nodes.SceneNode;
 import de.dungeonrunner.singleton.TextureHolder.TextureID;
 
